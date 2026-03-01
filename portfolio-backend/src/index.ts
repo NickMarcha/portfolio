@@ -1,5 +1,9 @@
+import { createRequire } from 'node:module';
 import cors from 'cors';
 import express from 'express';
+
+const require = createRequire(import.meta.url);
+const { version } = require('../package.json') as { version: string };
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
@@ -23,7 +27,7 @@ app.get('/health', (_req, res) => {
 });
 
 app.get('/', (_req, res) => {
-	res.json({ message: 'Portfolio API', version: '0.0.1' });
+	res.json({ message: 'Portfolio API', version });
 });
 
 app.listen(PORT, () => {
