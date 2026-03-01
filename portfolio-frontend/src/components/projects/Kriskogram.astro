@@ -1,0 +1,14 @@
+---
+---
+<div class="kriskogram">
+	<p>
+		Traditional flow maps struggle to convey human migration patterns due to visual clutter and spatial layout constraints. Kriskograms address these limitations through an abstract representation: nodes arranged along a horizontal axis with migration flows as semicircular arcs. This project implements an interactive kriskogram application with two novel interaction features: <strong>Ego Focus</strong> (k-neighbor filtering centered on a single node for pattern recognition) and <strong>Temporal Overlay</strong> (multiple time periods rendered simultaneously in static or animated mode). The animated mode segments arcs and maps segment speed to flow weight, enabling direct comparison of flow magnitudes through motion.
+	</p>
+	<p>
+		Built with React, Vite, D3.js, IndexedDB, and TanStack Router. Uses U.S. Census state-to-state migration data (2005-2019). Done for <a href="https://vis.uib.no/courses/inf358/" target="_blank" rel="noopener noreferrer">INF358 Seminar in Visualization</a> at the University of Bergen.
+	</p>
+	<p>
+		<a href="https://nickmarcha.github.io/INF358_Project_Kriskogram/about" target="_blank" rel="noopener noreferrer">Full paper / about</a><br />
+		<a href="https://nickmarcha.github.io/INF358_Project_Kriskogram/explorer?view=kriskogram&minThreshold=1&maxThreshold=118552&maxEdges=20&edgeWeightScale=linear&edgeWidthMultiplier=3&egoNodeId=null&egoNeighborSteps=2&egoStepColoring=false&showAllNodes=true&temporalOverlay=true&temporalOverlayEdgeStyle=segmented&temporalOverlayNodeStyle=filled&temporalOverlayYearsPast=3&temporalOverlayYearsFuture=0&temporalOverlayColorPast=%23f7fcb9&temporalOverlayColorMid=%2331a354&temporalOverlayColorFuture=%2391bfdb&temporalOverlayCurrentBlack=false&nodeOrderMode=alphabetical&arcOpacity=0.85&edgeWidthMode=weight&edgeColorAdvanced=true&edgeColorHue=single&edgeColorHueAttribute=null&edgeColorIntensity=weight&edgeColorIntensityAttribute=null&edgeColorIntensityConst=0.6&edgeColorInterGrayscale=true&intraFilter=none&baseEdgeWidth=2&nodeColorMode=net_year&nodeColorAttribute=null&nodeSizeMode=visible_incoming&nodeSizeAttribute=null&nodeSizeWeightScale=linear&nodeSizeMultiplier=1&interactionMode=pan&lensRadius=80&edgeSegmentLength=8&edgeSegmentGap=17&edgeSegmentAnimate=true&edgeSegmentOffset=15&edgeSegmentSpeed=1&edgeSegmentScaleByWeight=true&edgeSegmentCap=butt&edgeOutlineGap=3&nodeFilterAttribute=region&nodeFilterValues=%5B%22West%22%5D&dataset=csv-usa-pre-2020&year=2008&labelScale=1.8&egoNodeSecondaryId=null" target="_blank" rel="noopener noreferrer">Live demo</a>
+	</p>
+</div>

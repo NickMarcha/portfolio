@@ -45,6 +45,19 @@ export const projectData: IProjectData[] = [
 		},
 	},
 	{
+		slug: "kriskogram",
+		short: {
+			title: "Exploring Interactive Kriskograms",
+			description: "Interactive migration visualization with Ego Focus and Temporal Overlay. React, D3.js, U.S. Census data.",
+			image: "/Kriskogram.png",
+		},
+		long: {
+			title: "Exploring Interactive Kriskograms",
+			descriptionComponent: "Kriskogram",
+			images: [],
+		},
+	},
+	{
 		slug: "raffle-dashboard",
 		short: {
 			title: "Raffle Dashboard",

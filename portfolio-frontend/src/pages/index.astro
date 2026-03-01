@@ -5,6 +5,7 @@ import Header from '../components/Header.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import { projectData } from '../data/projectData';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import KriskogramImage from '../assets/Kriskogram.png';
 ---
 
 <!doctype html>
@@ -22,7 +23,7 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 					<ProjectCard
 						title={project.short.title}
 						description={project.short.description}
-						image={project.short.image}
+						image={project.slug === 'kriskogram' ? KriskogramImage.src : project.short.image}
 						slug={project.slug}
 					/>
 				))}
