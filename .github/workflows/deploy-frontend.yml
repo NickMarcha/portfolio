@@ -23,7 +23,10 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      - run: npm install
+      - name: Install dependencies
+        run: |
+          rm -rf node_modules portfolio-frontend/node_modules portfolio-backend/node_modules
+          npm install
       - run: npm run build:frontend
 
       - name: Upload artifact

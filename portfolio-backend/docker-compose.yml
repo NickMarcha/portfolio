@@ -24,7 +24,7 @@ services:
       - --token
       - "${CLOUDFLARE_TOKEN}"
     env_file:
-      - .env
+      - stack.env
     networks:
       - tunnel-net
 
