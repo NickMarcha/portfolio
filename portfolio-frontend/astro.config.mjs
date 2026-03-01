@@ -6,7 +6,7 @@ import { defineConfig } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
-	site: 'https://nickmarcha.github.io',
-	base: '/portfolio/',
+	site: 'https://portfolio.nickmarcha.com',
+	base: '/',
 	integrations: [mdx(), sitemap()],
 });
