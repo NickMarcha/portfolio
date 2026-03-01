@@ -30,6 +30,7 @@ Monorepo: Astro frontend (static, GitHub Pages) + Node/Express backend (Docker, 
 
 ## Common Tasks
 
+- **Install**: Run `npm install` (or `npm run install:all`) from repo root — installs both frontend and backend via workspaces.
 - **Add project**: Update `portfolio-frontend/src/data/projectData.ts`, add component in `src/components/projects/`
 - **Deploy frontend**: `git tag frontend-v0.0.2 && git push origin frontend-v0.0.2`
 - **Deploy backend**: `git tag backend-v0.0.2 && git push origin backend-v0.0.2`
