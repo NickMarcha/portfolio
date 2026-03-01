@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  backend:
+    build: .
+    container_name: portfolio-backend
+    restart: always
+    ports:
+      - "3000:3000"
+    networks:
+      - tunnel-net
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared
+    restart: always
+    depends_on:
+      - backend
+    entrypoint: cloudflared
+    command:
+      - tunnel
+      - --no-autoupdate
+      - run
+      - --token
+      - "${CLOUDFLARE_TOKEN}"
+    env_file:
+      - .env
+    networks:
+      - tunnel-net
+
+networks:
+  tunnel-net:
+    driver: bridge

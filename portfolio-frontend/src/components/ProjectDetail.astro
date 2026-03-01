@@ -1,0 +1,61 @@
+---
+import type { IProjectData } from '../../data/projectData';
+import Bio from './projects/Bio.astro';
+import InkyPen from './projects/InkyPen.astro';
+import RaffleDashboard from './projects/RaffleDashboard.astro';
+import BachelorsProject from './projects/BachelorsProject.astro';
+import GameJams from './projects/GameJams.astro';
+import BadlandsRP from './projects/BadlandsRP.astro';
+import SchoolAssignments from './projects/SchoolAssignments.astro';
+
+interface Props {
+	project: IProjectData;
+	slug: string;
+}
+
+const { project, slug } = Astro.props;
+const components: Record<string, typeof Bio> = {
+	Bio,
+	InkyPen,
+	RaffleDashboard,
+	BachelorsProject,
+	GameJams,
+	BadlandsRP,
+	SchoolAssignments,
+};
+const DescriptionComponent = components[project.long.descriptionComponent];
+---
+
+<article class="project-detail">
+	<h1>{project.long.title}</h1>
+	{project.long.images.length > 0 && (
+		<div class="project-images">
+			{project.long.images.map((src) => (
+				<img src={src} alt="" loading="lazy" />
+			))}
+		</div>
+	)}
+	<div class="project-description">
+		{DescriptionComponent && <DescriptionComponent />}
+	</div>
+</article>
+
+<style>
+	.project-detail {
+		margin-bottom: 2em;
+	}
+	.project-images {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+		gap: 1em;
+		margin: 1.5em 0;
+	}
+	.project-images img {
+		width: 100%;
+		height: auto;
+		border-radius: 8px;
+	}
+	.project-description {
+		margin-top: 1.5em;
+	}
+</style>

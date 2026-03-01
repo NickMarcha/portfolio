@@ -1,0 +1,23 @@
+{
+	"name": "portfolio",
+	"version": "0.0.1",
+	"private": true,
+	"scripts": {
+		"dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+		"dev:frontend": "npm run dev --workspace=portfolio-frontend",
+		"dev:backend": "npm run dev --workspace=portfolio-backend",
+		"build": "npm run build --workspaces",
+		"build:frontend": "npm run build --workspace=portfolio-frontend",
+		"build:backend": "npm run build --workspace=portfolio-backend",
+		"test": "npm run test --workspaces --if-present",
+		"test:frontend": "npm run test --workspace=portfolio-frontend --if-present",
+		"test:backend": "npm run test --workspace=portfolio-backend --if-present"
+	},
+	"devDependencies": {
+		"concurrently": "^9.0.0"
+	},
+	"workspaces": [
+		"portfolio-frontend",
+		"portfolio-backend"
+	]
+}
