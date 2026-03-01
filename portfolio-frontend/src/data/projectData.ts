@@ -31,7 +31,7 @@ export const projectData: IProjectData[] = [
 		short: {
 			title: "InkyPen",
 			description: "Fullstack Developer at InkyPen AS",
-			image: "https://inky-pen.com/assets/23881e83663bae689789.png",
+			image: "/inkypen.jpg",
 		},
 		long: {
 			title: "InkyPen AS",

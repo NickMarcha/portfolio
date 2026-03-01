@@ -8,6 +8,7 @@ npm create astro@latest -- --template blog
 
 Features:
 
+- ✅ Tailwind CSS v4 (utility-first styling)
 - ✅ Minimal styling (make it your own!)
 - ✅ 100/100 Lighthouse performance
 - ✅ SEO-friendly with canonical URLs and OpenGraph data

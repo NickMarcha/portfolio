@@ -7,7 +7,7 @@ How frontend and backend are deployed.
 | Component | Host | Trigger | URL |
 |-----------|------|---------|-----|
 | Frontend | GitHub Pages | Tag `frontend-v*` | https://portfolio.nickmarcha.com |
-| Backend | Homeserver (Docker + Portainer) | Tag `backend-v*` | https://api.portfolio.nickmarcha.com |
+| Backend | Homeserver (Docker + Portainer) | Tag `backend-v*` | https://api-portfolio.nickmarcha.com |
 
 ---
 
@@ -43,7 +43,7 @@ git push origin frontend-v0.0.2
 3. Workflow force-pushes current commit to `backend-deploy` branch
 4. Portainer polls `backend-deploy`, rebuilds and redeploys the stack
 5. Backend runs in Docker; cloudflared exposes it via Cloudflare Tunnel
-6. API is reachable at https://api.portfolio.nickmarcha.com
+6. API is reachable at https://api-portfolio.nickmarcha.com
 
 ### Deploy
 
@@ -66,7 +66,7 @@ git push origin backend-v0.0.2
 1. Create a tunnel in Cloudflare Zero Trust (Networks → Tunnels)
 2. Copy the token into Portainer's stack env as `CLOUDFLARE_TOKEN`
 3. Add public hostname:
-   - **Subdomain**: `api.portfolio` (or `api` depending on domain)
+   - **Subdomain**: `api-portfolio`
    - **Domain**: `nickmarcha.com`
    - **Service type**: HTTP
    - **URL**: `backend:3000` (no protocol; Cloudflare adds it)

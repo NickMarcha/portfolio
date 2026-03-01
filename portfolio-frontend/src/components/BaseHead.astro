@@ -20,6 +20,7 @@ const { title, description, image = FallbackImage } = Astro.props;
 <!-- Global Metadata -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="icon" type="image/png" href="/icon-me.png" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="icon" href="/favicon.ico" />
 <link rel="sitemap" href="/sitemap-index.xml" />
@@ -56,3 +57,23 @@ const { title, description, image = FallbackImage } = Astro.props;
 <meta property="twitter:title" content={title} />
 <meta property="twitter:description" content={description} />
 <meta property="twitter:image" content={new URL(image.src, Astro.url)} />
+
+<script>
+	(async () => {
+		const isLocal =
+			typeof window !== 'undefined' &&
+			(window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+		const apiUrl = isLocal ? 'http://localhost:3000' : 'https://api-portfolio.nickmarcha.com';
+		try {
+			const res = await fetch(`${apiUrl}/`);
+			const data = (await res.json()) as { message?: string; version?: string };
+			if (res.ok) {
+				console.log('[Portfolio] Backend connected. Version:', data.version ?? 'unknown');
+			} else {
+				console.warn('[Portfolio] Backend returned', res.status, data);
+			}
+		} catch (err) {
+			console.warn('[Portfolio] Backend unreachable:', err instanceof Error ? err.message : err);
+		}
+	})();
+</script>

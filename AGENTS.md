@@ -24,7 +24,7 @@ Monorepo: Astro frontend (static, GitHub Pages) + Node/Express backend (Docker, 
 
 ## Tech Notes
 
-- **Frontend**: Uses `passthroughImageService()` (no Sharp). Optional dep `@rollup/rollup-linux-x64-gnu` for CI.
+- **Frontend**: Tailwind CSS v4 (`@tailwindcss/vite`). Uses `passthroughImageService()` (no Sharp). Optional dep `@rollup/rollup-linux-x64-gnu` for CI.
 - **Backend**: `npm install` in Dockerfile (no package-lock in backend folder). `stack.env` for Portainer.
 - **Cloudflare**: Public hostname URL is `backend:3000` (no protocol). Tunnel and backend share `tunnel-net`.
 
