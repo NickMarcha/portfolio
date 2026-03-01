@@ -1,6 +1,6 @@
 # Portfolio
 
-Personal portfolio for Nick Marcha — frontend (Astro) and backend (Node/Express) in a monorepo.
+Personal portfolio for Nick Marcha: frontend (Astro) and backend (Node/Express) in a monorepo.
 
 ## Structure
 
@@ -51,5 +51,5 @@ npm run dev:backend      # Express at http://localhost:3000
 
 ## Docs
 
-- [DEPLOYMENT.md](DEPLOYMENT.md) — How to deploy frontend and backend
-- [AGENTS.md](AGENTS.md) — Context for AI assistants
+- [DEPLOYMENT.md](DEPLOYMENT.md): How to deploy frontend and backend
+- [AGENTS.md](AGENTS.md): Context for AI assistants

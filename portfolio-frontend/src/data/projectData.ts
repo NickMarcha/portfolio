@@ -21,7 +21,7 @@ export const projectData: IProjectData[] = [
 			image: "https://cdn.icon-icons.com/icons2/1747/PNG/512/profile_113589.png",
 		},
 		long: {
-			title: "Nick Marcha",
+			title: "Nick",
 			descriptionComponent: "Bio",
 			images: [],
 		},
@@ -30,7 +30,7 @@ export const projectData: IProjectData[] = [
 		slug: "inkypen",
 		short: {
 			title: "InkyPen",
-			description: "Fullstack Developer at InkyPen AS",
+			description: "Full Stack Engineer at InkyPen AS (Sep 2023 – Aug 2025)",
 			image: "/inkypen.jpg",
 		},
 		long: {

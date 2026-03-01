@@ -73,9 +73,9 @@ git push origin backend-v0.0.2
 
 ### Files
 
-- [`portfolio-backend/docker-compose.yml`](portfolio-backend/docker-compose.yml) — backend + cloudflared
-- [`portfolio-backend/stack.env`](portfolio-backend/stack.env) — env template (must exist for repo deploy; real token in Portainer UI)
-- [`portfolio-backend/Dockerfile`](portfolio-backend/Dockerfile) — Node 25 Alpine, multi-stage build
+- [`portfolio-backend/docker-compose.yml`](portfolio-backend/docker-compose.yml): backend + cloudflared
+- [`portfolio-backend/stack.env`](portfolio-backend/stack.env): env template (must exist for repo deploy; real token in Portainer UI)
+- [`portfolio-backend/Dockerfile`](portfolio-backend/Dockerfile): Node 25 Alpine, multi-stage build
 
 ---
 

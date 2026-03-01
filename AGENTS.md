@@ -19,7 +19,7 @@ Monorepo: Astro frontend (static, GitHub Pages) + Node/Express backend (Docker, 
 
 - **Node**: 25 (see `.nvmrc`)
 - **Versions**: Start at 0.0.1
-- **Tags**: `frontend-v0.0.1`, `backend-v0.0.1` — separate tags avoid cross-deploys
+- **Tags**: `frontend-v0.0.1`, `backend-v0.0.1`: separate tags avoid cross-deploys
 - **Backend deploy**: Workflow pushes to `backend-deploy`; Portainer polls that branch
 
 ## Tech Notes
@@ -30,7 +30,7 @@ Monorepo: Astro frontend (static, GitHub Pages) + Node/Express backend (Docker, 
 
 ## Common Tasks
 
-- **Install**: Run `npm install` (or `npm run install:all`) from repo root — installs both frontend and backend via workspaces.
+- **Install**: Run `npm install` (or `npm run install:all`) from repo root: installs both frontend and backend via workspaces.
 - **Add project**: Update `portfolio-frontend/src/data/projectData.ts`, add component in `src/components/projects/`
 - **Deploy frontend**: `git tag frontend-v0.0.2 && git push origin frontend-v0.0.2`
 - **Deploy backend**: `git tag backend-v0.0.2 && git push origin backend-v0.0.2`

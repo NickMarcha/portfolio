@@ -1,12 +1,79 @@
 ---
+import YoutubeEmbed from './YoutubeEmbed.astro';
 ---
 <div class="game-jams">
 	<p>
-		I've participated in various game development events including Global Game Jam and
-		Ludum Dare, creating games from concept to playable prototype within tight time constraints.
+		I went to a <a href="https://en.wikipedia.org/wiki/Folk_high_school" target="_blank" rel="noopener noreferrer">Folk High School</a> called <a href="https://aasane.fhs.no/" target="_blank" rel="noopener noreferrer">Åsane folkehøgskole</a> and participated in game jams for some time after. I have 6 projects listed on <a href="https://nickmarcha.itch.io/" target="_blank" rel="noopener noreferrer">Itch.io</a> where I mainly programmed in the Unity Game Engine, also Unreal. I included some highlights below. Also <a href="https://drive.google.com/file/d/19uXqn4diQexkrQakip6cty6j8HX_iQqC/view?usp=sharing" target="_blank" rel="noopener noreferrer">here</a> is APK for puzzle game I made in Unity with a friend.
 	</p>
-	<p>
-		These jams have been a great way to experiment with game design, learn new tools,
-		and collaborate with other developers.
-	</p>
+	<div class="game-jams-buttons">
+		<button type="button" class="btn btn-secondary" data-video="first" aria-pressed="true">
+			Dainty Deprivation
+		</button>
+		<button type="button" class="btn btn-secondary" data-video="second" aria-pressed="false">
+			Hvite Jackmarker
+		</button>
+	</div>
+	<div id="video-first" class="video-container">
+		<YoutubeEmbed embedId="RrQcQ7Dxrbo" />
+	</div>
+	<div id="video-second" class="video-container" hidden>
+		<YoutubeEmbed embedId="jvdWtKLPFmc" />
+	</div>
 </div>
+
+<script>
+	function initGameJams() {
+		document.querySelectorAll('.game-jams-buttons [data-video]').forEach((btn) => {
+			btn.addEventListener('click', () => {
+				const video = (btn as HTMLElement).dataset.video;
+				if (!video) return;
+				const first = document.getElementById('video-first');
+				const second = document.getElementById('video-second');
+				if (!first || !second) return;
+				if (video === 'first') {
+					first.hidden = false;
+					second.hidden = true;
+					document.querySelector('[data-video="first"]')?.setAttribute('aria-pressed', 'true');
+					document.querySelector('[data-video="second"]')?.setAttribute('aria-pressed', 'false');
+				} else {
+					first.hidden = true;
+					second.hidden = false;
+					document.querySelector('[data-video="first"]')?.setAttribute('aria-pressed', 'false');
+					document.querySelector('[data-video="second"]')?.setAttribute('aria-pressed', 'true');
+				}
+			});
+		});
+	}
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', initGameJams);
+	} else {
+		initGameJams();
+	}
+</script>
+
+<style>
+	.game-jams-buttons {
+		display: flex;
+		gap: 0.5rem;
+		margin: 1rem 0;
+	}
+	.btn {
+		padding: 0.5rem 1rem;
+		border-radius: 0.375rem;
+		border: 1px solid var(--accent);
+		background: transparent;
+		color: var(--accent);
+		cursor: pointer;
+		font-size: 1rem;
+	}
+	.btn:hover {
+		opacity: 0.9;
+	}
+	.btn[aria-pressed="true"] {
+		background: var(--accent);
+		color: white;
+	}
+	.video-container {
+		margin: 1rem 0;
+	}
+</style>

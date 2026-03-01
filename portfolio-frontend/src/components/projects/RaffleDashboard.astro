@@ -2,14 +2,31 @@
 ---
 <div class="raffle-dashboard">
 	<p>
-		A web application built for charity raffles, enabling organizations to manage raffles,
-		track participants, and handle the drawing process.
+		A web app which was used in a charity drive to gather raffle entries and roll them, and subsequently update a Google Spreadsheet Database. The entries were scraped from an ASPX website using node libraries Cheerio and Axios. A backend API was created using Express and NodeJS to handle the scraping and database updating as well as providing a JWT authenticated REST API for the front end to use. The charity drive has raised <span id="raffle-total" title="Fetched from API when available">…</span> USD so far!
 	</p>
 	<p>
-		Features include a raffle management page, home dashboard, history tracking, and statistics
-		visualization to help organizers run successful charity events.
-	</p>
-	<p>
-		<a href="https://github.com/NickMarcha/RaffleDashboard" target="_blank" rel="noopener noreferrer">View on GitHub</a>
+		<a href="https://www.againstmalaria.com/Fundraiser.aspx?FundraiserID=8960" target="_blank" rel="noopener noreferrer">Against Malaria Charity</a><br />
+		<a href="https://github.com/NickMarcha/RaffleDashboard" target="_blank" rel="noopener noreferrer">GitHub Repository for web app</a> (includes documentation)
 	</p>
 </div>
+
+<script>
+	(async () => {
+		const el = document.getElementById('raffle-total');
+		if (!el) return;
+		const isLocal =
+			typeof window !== 'undefined' &&
+			(window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+		const apiUrl = isLocal ? 'http://localhost:3000' : 'https://api-portfolio.nickmarcha.com';
+		try {
+			const res = await fetch(`${apiUrl}/api/raffledashboardlatest`);
+			if (res.ok) {
+				const data = (await res.json()) as { donationTotal?: number };
+				el.textContent = Math.round(data.donationTotal ?? 0).toString();
+				el.title = '';
+			}
+		} catch {
+			// API not available, keep placeholder
+		}
+	})();
+</script>
