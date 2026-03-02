@@ -1,8 +1,28 @@
 import { createRequire } from 'node:module';
+import * as cheerio from 'cheerio';
 import cors from 'cors';
 import express from 'express';
 
 const require = createRequire(import.meta.url);
+
+const AGAINST_MALARIA_URL =
+	'https://www.againstmalaria.com/Fundraiser.aspx?FundraiserID=8960';
+
+async function scrapeAgainstMalariaTotal(): Promise<number | null> {
+	try {
+		const res = await fetch(AGAINST_MALARIA_URL);
+		if (!res.ok) return null;
+		const html = await res.text();
+		const $ = cheerio.load(html);
+		const text = $('#MainContent_lblGrandTotal').text().trim();
+		if (!text) return null;
+		const parsed = parseFloat(text.replace(/,/g, ''));
+		return Number.isFinite(parsed) ? parsed : null;
+	} catch (err) {
+		console.error('[scrapeAgainstMalariaTotal]', err);
+		return null;
+	}
+}
 const { version } = require('../package.json') as { version: string };
 
 const app = express();
@@ -28,6 +48,11 @@ app.get('/health', (_req, res) => {
 
 app.get('/', (_req, res) => {
 	res.json({ message: 'Portfolio API', version });
+});
+
+app.get('/api/raffledashboardlatest', async (_req, res) => {
+	const donationTotal = await scrapeAgainstMalariaTotal();
+	res.json({ donationTotal: donationTotal ?? 0 });
 });
 
 app.listen(PORT, () => {

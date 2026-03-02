@@ -22,7 +22,7 @@
 			const res = await fetch(`${apiUrl}/api/raffledashboardlatest`);
 			if (res.ok) {
 				const data = (await res.json()) as { donationTotal?: number };
-				el.textContent = Math.round(data.donationTotal ?? 0).toString();
+				el.textContent = Math.round(data.donationTotal ?? 0).toLocaleString('en-US');
 				el.title = '';
 			}
 		} catch {
