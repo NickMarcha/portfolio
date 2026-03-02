@@ -4,13 +4,14 @@ interface Props {
 	description: string;
 	image: string;
 	slug: string;
+	pixelArt?: boolean;
 }
 
-const { title, description, image, slug } = Astro.props;
+const { title, description, image, slug, pixelArt = false } = Astro.props;
 ---
 
 <a href={`/projects/${slug}`} class="project-card">
-	<img src={image} alt={title} loading="lazy" />
+	<img src={image} alt={title} loading="lazy" class:list={[{ 'pixel-art': pixelArt }]} />
 	<div class="card-content">
 		<h3>{title}</h3>
 		<p>{description}</p>
@@ -37,6 +38,9 @@ const { title, description, image, slug } = Astro.props;
 		height: 180px;
 		object-fit: cover;
 		display: block;
+	}
+	.project-card img.pixel-art {
+		image-rendering: pixelated;
 	}
 	.card-content {
 		padding: 1em 1.25em;

@@ -18,7 +18,7 @@ export const projectData: IProjectData[] = [
 		short: {
 			title: "Bio",
 			description: "Who am I?",
-			image: "https://cdn.icon-icons.com/icons2/1747/PNG/512/profile_113589.png",
+			image: "/icon-me.png",
 		},
 		long: {
 			title: "Nick",
