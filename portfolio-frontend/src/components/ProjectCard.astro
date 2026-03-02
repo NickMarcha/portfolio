@@ -23,15 +23,15 @@ const { title, description, image, slug, pixelArt = false } = Astro.props;
 		display: block;
 		text-decoration: none;
 		color: inherit;
-		background: white;
+		background: var(--surface);
 		border-radius: 8px;
 		overflow: hidden;
-		box-shadow: var(--box-shadow);
+		box-shadow: var(--shadow);
 		transition: transform 0.2s, box-shadow 0.2s;
 	}
 	.project-card:hover {
 		transform: translateY(-2px);
-		box-shadow: 0 4px 12px rgba(var(--gray), 30%);
+		box-shadow: var(--shadow-hover);
 	}
 	.project-card img {
 		width: 100%;
@@ -52,6 +52,6 @@ const { title, description, image, slug, pixelArt = false } = Astro.props;
 	.card-content p {
 		margin: 0;
 		font-size: 0.9em;
-		color: rgb(var(--gray));
+		color: var(--text-muted);
 	}
 </style>

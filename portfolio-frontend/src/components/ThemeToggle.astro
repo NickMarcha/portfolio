@@ -1,0 +1,165 @@
+---
+---
+<div id="theme-toggle" class="theme-toggle">
+	<button type="button" class="theme-toggle-btn" aria-haspopup="listbox" aria-expanded="false" aria-label="Theme">
+		<span class="theme-icon" aria-hidden="true">
+			<svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+			<svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+		</span>
+		<span class="theme-label">Theme</span>
+	</button>
+	<ul class="theme-menu" role="listbox" aria-label="Theme selection">
+		<li role="option" data-theme="light" class="theme-option">Light</li>
+		<li role="option" data-theme="dark" class="theme-option">Dark</li>
+		<li role="option" data-theme="system" class="theme-option">System</li>
+	</ul>
+</div>
+
+<script>
+	const STORAGE_KEY = 'portfolio-theme';
+
+	function getStoredTheme(): string | null {
+		if (typeof document === 'undefined') return null;
+		try {
+			return localStorage.getItem(STORAGE_KEY);
+		} catch {
+			return null;
+		}
+	}
+
+	function setTheme(theme: 'light' | 'dark' | 'system') {
+		document.documentElement.setAttribute('data-theme', theme);
+		try {
+			localStorage.setItem(STORAGE_KEY, theme);
+		} catch {}
+		updateActiveOption(theme);
+	}
+
+	function updateActiveOption(theme: string) {
+		const options = document.querySelectorAll('.theme-option');
+		options.forEach((opt) => {
+			opt.setAttribute('aria-selected', opt.getAttribute('data-theme') === theme ? 'true' : 'false');
+		});
+	}
+
+	function initThemeToggle() {
+		const container = document.getElementById('theme-toggle');
+		const btn = container?.querySelector('.theme-toggle-btn');
+		const menu = container?.querySelector('.theme-menu');
+		const options = container?.querySelectorAll('.theme-option');
+
+		if (!container || !btn || !menu) return;
+
+		btn.addEventListener('click', () => {
+			const expanded = btn.getAttribute('aria-expanded') === 'true';
+			btn.setAttribute('aria-expanded', String(!expanded));
+			menu.classList.toggle('open', !expanded);
+		});
+
+		document.addEventListener('click', (e) => {
+			if (!container.contains(e.target as Node)) {
+				btn.setAttribute('aria-expanded', 'false');
+				menu.classList.remove('open');
+			}
+		});
+
+		options.forEach((opt) => {
+			opt.addEventListener('click', () => {
+				const theme = opt.getAttribute('data-theme') as 'light' | 'dark' | 'system';
+				setTheme(theme);
+				btn.setAttribute('aria-expanded', 'false');
+				menu.classList.remove('open');
+			});
+		});
+
+		updateActiveOption(getStoredTheme() || 'system');
+	}
+
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', initThemeToggle);
+	} else {
+		initThemeToggle();
+	}
+</script>
+
+<style>
+	.theme-toggle {
+		position: fixed;
+		bottom: 1.5rem;
+		right: 1.5rem;
+		z-index: 100;
+	}
+
+	.theme-toggle-btn {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.5rem 1rem;
+		background: var(--surface);
+		color: var(--text);
+		border: 1px solid var(--border);
+		border-radius: 8px;
+		box-shadow: var(--shadow);
+		cursor: pointer;
+		font-family: inherit;
+		font-size: 0.9rem;
+		transition: box-shadow 0.2s;
+	}
+	.theme-toggle-btn:hover {
+		box-shadow: var(--shadow-hover);
+	}
+
+	.theme-icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	.theme-icon .icon-sun { display: block; }
+	.theme-icon .icon-moon { display: none; }
+	:global([data-theme="dark"]) .theme-icon .icon-sun { display: none !important; }
+	:global([data-theme="dark"]) .theme-icon .icon-moon { display: block !important; }
+	@media (prefers-color-scheme: dark) {
+		:global(:root:not([data-theme="light"]):not([data-theme="dark"])) .theme-icon .icon-sun { display: none !important; }
+		:global(:root:not([data-theme="light"]):not([data-theme="dark"])) .theme-icon .icon-moon { display: block !important; }
+	}
+
+	.theme-menu {
+		position: absolute;
+		bottom: 100%;
+		right: 0;
+		margin-bottom: 0.5rem;
+		min-width: 120px;
+		padding: 0.25rem;
+		background: var(--surface);
+		border: 1px solid var(--border);
+		border-radius: 8px;
+		box-shadow: var(--shadow-hover);
+		list-style: none;
+		margin: 0;
+		opacity: 0;
+		visibility: hidden;
+		transform: translateY(4px);
+		transition: opacity 0.2s, visibility 0.2s, transform 0.2s;
+	}
+	.theme-menu.open {
+		opacity: 1;
+		visibility: visible;
+		transform: translateY(0);
+	}
+
+	.theme-option {
+		padding: 0.5rem 0.75rem;
+		border-radius: 6px;
+		cursor: pointer;
+		font-size: 0.9rem;
+		transition: background 0.15s;
+	}
+	.theme-option:hover {
+		background: var(--primary-soft);
+	}
+	.theme-option[aria-selected="true"] {
+		background: var(--primary-soft);
+		color: var(--primary);
+		font-weight: 600;
+	}
+</style>

@@ -2,6 +2,7 @@
 import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
 import Header from '../../components/Header.astro';
+import ThemeToggle from '../../components/ThemeToggle.astro';
 import ProjectDetail from '../../components/ProjectDetail.astro';
 import { projectData } from '../../data/projectData';
 import { SITE_TITLE } from '../../consts';
@@ -31,6 +32,7 @@ const { project, slug } = Astro.props;
 			<ProjectDetail project={project} slug={slug} />
 		</main>
 		<Footer />
+		<ThemeToggle />
 	</body>
 </html>
 
@@ -39,7 +41,7 @@ const { project, slug } = Astro.props;
 		display: inline-block;
 		margin-bottom: 1.5em;
 		text-decoration: none;
-		color: var(--accent);
+		color: var(--primary);
 	}
 	.back-link:hover {
 		text-decoration: underline;
