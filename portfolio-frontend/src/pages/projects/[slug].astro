@@ -1,7 +1,7 @@
 ---
 import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
-import Header from '../../components/Header.astro';
+import GitHubButton from '../../components/GitHubButton.astro';
 import ThemeToggle from '../../components/ThemeToggle.astro';
 import ProjectDetail from '../../components/ProjectDetail.astro';
 import { projectData } from '../../data/projectData';
@@ -26,12 +26,12 @@ const { project, slug } = Astro.props;
 		/>
 	</head>
 	<body>
-		<Header />
 		<main>
 			<a href="/" class="back-link">← Back to projects</a>
 			<ProjectDetail project={project} slug={slug} />
 		</main>
 		<Footer />
+		<GitHubButton />
 		<ThemeToggle />
 	</body>
 </html>

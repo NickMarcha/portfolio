@@ -1,7 +1,7 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
-import Header from '../components/Header.astro';
+import GitHubButton from '../components/GitHubButton.astro';
 import ThemeToggle from '../components/ThemeToggle.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import { projectData } from '../data/projectData';
@@ -15,7 +15,6 @@ import KriskogramImage from '../assets/Kriskogram.png';
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 	</head>
 	<body>
-		<Header />
 		<main>
 			<h1>Projects</h1>
 			<p class="intro">{SITE_DESCRIPTION}</p>
@@ -32,6 +31,7 @@ import KriskogramImage from '../assets/Kriskogram.png';
 			</div>
 		</main>
 		<Footer />
+		<GitHubButton />
 		<ThemeToggle />
 	</body>
 </html>

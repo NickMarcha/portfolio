@@ -4,7 +4,7 @@ import type { CollectionEntry } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
-import Header from '../components/Header.astro';
+import GitHubButton from '../components/GitHubButton.astro';
 import ThemeToggle from '../components/ThemeToggle.astro';
 
 type Props = CollectionEntry<'blog'>['data'];
@@ -57,7 +57,6 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 	</head>
 
 	<body>
-		<Header />
 		<main>
 			<article>
 				<div class="hero-image">
@@ -83,6 +82,7 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 			</article>
 		</main>
 		<Footer />
+		<GitHubButton />
 		<ThemeToggle />
 	</body>
 </html>

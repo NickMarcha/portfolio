@@ -9,6 +9,7 @@ import GameJams from './projects/GameJams.astro';
 import BadlandsRP from './projects/BadlandsRP.astro';
 import SchoolAssignments from './projects/SchoolAssignments.astro';
 import Kriskogram from './projects/Kriskogram.astro';
+import { ProjectImageCarousel } from './ProjectImageCarousel';
 
 interface Props {
 	project: IProjectData;
@@ -38,9 +39,7 @@ const DescriptionComponent = components[project.long.descriptionComponent];
 	<h1>{project.long.title}</h1>
 	{project.long.images.length > 0 && (
 		<div class="project-images">
-			{project.long.images.map((src) => (
-				<img src={src} alt="" loading="lazy" />
-			))}
+			<ProjectImageCarousel images={project.long.images} client:visible />
 		</div>
 	)}
 	<div class="project-description">
@@ -66,15 +65,7 @@ const DescriptionComponent = components[project.long.descriptionComponent];
 		display: block;
 	}
 	.project-images {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-		gap: 1em;
 		margin: 1.5em 0;
-	}
-	.project-images img {
-		width: 100%;
-		height: auto;
-		border-radius: 8px;
 	}
 	.project-description {
 		margin-top: 1.5em;
