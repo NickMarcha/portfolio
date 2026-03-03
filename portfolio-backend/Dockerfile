@@ -1,4 +1,4 @@
-FROM node:25-alpine AS builder
+FROM node:25-slim AS builder
 
 WORKDIR /app
 
@@ -9,7 +9,7 @@ COPY tsconfig.json ./
 COPY src ./src
 RUN npm run build
 
-FROM node:25-alpine
+FROM node:25-slim
 
 WORKDIR /app
 
