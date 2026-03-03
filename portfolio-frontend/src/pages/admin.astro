@@ -1,0 +1,30 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import AdminVisitsTable from '../components/AdminVisitsTable';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title="Admin | Visits" description="Site visit analytics" />
+		<meta name="robots" content="noindex" />
+	</head>
+	<body>
+		<main class="admin-page">
+			<h1>Visit Analytics</h1>
+			<AdminVisitsTable client:load />
+		</main>
+	</body>
+</html>
+
+<style>
+	.admin-page {
+		max-width: 1400px;
+		margin: 0 auto;
+		padding: 2rem 1rem;
+	}
+	.admin-page h1 {
+		margin-bottom: 1.5rem;
+		font-size: 1.5rem;
+	}
+</style>

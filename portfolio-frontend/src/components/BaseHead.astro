@@ -84,5 +84,10 @@ const { title, description, image = FallbackImage } = Astro.props;
 		} catch (err) {
 			console.warn('[Portfolio] Backend unreachable:', err instanceof Error ? err.message : err);
 		}
+		fetch(`${apiUrl}/api/visits`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ path: window.location.pathname }),
+		}).catch(() => {});
 	})();
 </script>

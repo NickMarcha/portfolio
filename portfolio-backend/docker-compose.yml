@@ -7,6 +7,10 @@ services:
     restart: always
     ports:
       - "3000:3000"
+    volumes:
+      - visit-data:/app/data
+    env_file:
+      - stack.env
     networks:
       - tunnel-net
 
@@ -27,6 +31,9 @@ services:
       - stack.env
     networks:
       - tunnel-net
+
+volumes:
+  visit-data:
 
 networks:
   tunnel-net:
