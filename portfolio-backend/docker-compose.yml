@@ -11,6 +11,8 @@ services:
       - visit-data:/app/data
     env_file:
       - stack.env
+    environment:
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
     networks:
       - tunnel-net
 
