@@ -37,9 +37,9 @@ const DescriptionComponent = components[project.long.descriptionComponent];
 		</div>
 	)}
 	<h1>{project.long.title}</h1>
-	{project.long.images.length > 0 && (
+	{project.long.carouselItems.length > 0 && (
 		<div class="project-images">
-			<ProjectImageCarousel images={project.long.images} client:visible />
+			<ProjectImageCarousel items={project.long.carouselItems} client:load />
 		</div>
 	)}
 	<div class="project-description">

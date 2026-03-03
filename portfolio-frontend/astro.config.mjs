@@ -13,6 +13,9 @@ export default defineConfig({
 	integrations: [mdx(), react(), sitemap()],
 	vite: {
 		plugins: [tailwindcss()],
+		optimizeDeps: {
+			include: ['embla-carousel-react'],
+		},
 	},
 	image: {
 		service: passthroughImageService(),

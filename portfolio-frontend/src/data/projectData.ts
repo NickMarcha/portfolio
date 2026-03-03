@@ -1,3 +1,7 @@
+export type CarouselItem =
+	| { type: "image"; src: string; caption?: string }
+	| { type: "youtube"; videoId: string; caption?: string };
+
 export interface IProjectData {
 	slug: string;
 	short: {
@@ -8,7 +12,7 @@ export interface IProjectData {
 	long: {
 		title: string;
 		descriptionComponent: string;
-		images: string[];
+		carouselItems: CarouselItem[];
 	};
 }
 
@@ -23,7 +27,7 @@ export const projectData: IProjectData[] = [
 		long: {
 			title: "Nick",
 			descriptionComponent: "Bio",
-			images: [],
+			carouselItems: [],
 		},
 	},
 	{
@@ -36,11 +40,11 @@ export const projectData: IProjectData[] = [
 		long: {
 			title: "InkyPen AS",
 			descriptionComponent: "InkyPen",
-			images: [
-				"https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/681220/4115ec2ddf096633f73d020985a2bd3ecaad7c23/ss_4115ec2ddf096633f73d020985a2bd3ecaad7c23.600x338.jpg?t=1740484986",
-				"https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/681220/1000bcd6cb8b70f2ba57e32ac9cc96213b1d9215/ss_1000bcd6cb8b70f2ba57e32ac9cc96213b1d9215.600x338.jpg?t=1740484986",
-				"https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/681220/a2622806bcf8a7a0958e3e7abd949edb79968f4f/ss_a2622806bcf8a7a0958e3e7abd949edb79968f4f.600x338.jpg?t=1740484986",
-				"https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/681220/00fa5e93039377669cb22c7b4b22bf59f06b2273/ss_00fa5e93039377669cb22c7b4b22bf59f06b2273.600x338.jpg?t=1740484986",
+			carouselItems: [
+				{ type: "image", src: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/681220/4115ec2ddf096633f73d020985a2bd3ecaad7c23/ss_4115ec2ddf096633f73d020985a2bd3ecaad7c23.600x338.jpg?t=1740484986" },
+				{ type: "image", src: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/681220/1000bcd6cb8b70f2ba57e32ac9cc96213b1d9215/ss_1000bcd6cb8b70f2ba57e32ac9cc96213b1d9215.600x338.jpg?t=1740484986" },
+				{ type: "image", src: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/681220/a2622806bcf8a7a0958e3e7abd949edb79968f4f/ss_a2622806bcf8a7a0958e3e7abd949edb79968f4f.600x338.jpg?t=1740484986" },
+				{ type: "image", src: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/681220/00fa5e93039377669cb22c7b4b22bf59f06b2273/ss_00fa5e93039377669cb22c7b4b22bf59f06b2273.600x338.jpg?t=1740484986" },
 			],
 		},
 	},
@@ -54,26 +58,7 @@ export const projectData: IProjectData[] = [
 		long: {
 			title: "Exploring Interactive Kriskograms",
 			descriptionComponent: "Kriskogram",
-			images: [],
-		},
-	},
-	{
-		slug: "raffle-dashboard",
-		short: {
-			title: "Raffle Dashboard",
-			description: "A Web App for charity raffles",
-			image: "https://github.com/NickMarcha/RaffleDashboard/blob/main/documentation/images/RafflePageA.PNG?raw=true",
-		},
-		long: {
-			title: "Charity Raffle Dashboard",
-			descriptionComponent: "RaffleDashboard",
-			images: [
-				"https://github.com/NickMarcha/RaffleDashboard/blob/main/documentation/images/RafflePageA.PNG?raw=true",
-				"https://github.com/NickMarcha/RaffleDashboard/blob/main/documentation/images/HomePage.PNG?raw=true",
-				"https://github.com/NickMarcha/RaffleDashboard/blob/main/documentation/images/HistoryPage.PNG?raw=true",
-				"https://github.com/NickMarcha/RaffleDashboard/blob/main/documentation/images/Stats.PNG?raw=true",
-				"https://github.com/NickMarcha/RaffleDashboard/blob/main/documentation/images/RafflePageB.PNG?raw=true",
-			],
+			carouselItems: [],
 		},
 	},
 	{
@@ -86,7 +71,33 @@ export const projectData: IProjectData[] = [
 		long: {
 			title: "Live Video Bachelor's Project",
 			descriptionComponent: "BachelorsProject",
-			images: ["https://i.imgur.com/xvYLPXT.png"],
+			carouselItems: [
+				{
+					type: "youtube",
+					videoId: "kBrzMsZ9Ka8",
+					caption: 'Demo video demonstrating streaming from a 5G device across the city to the Transmit server using SRT (<a href="https://en.wikipedia.org/wiki/Secure_Reliable_Transport" target="_blank" rel="noopener noreferrer">Secure Reliable Transport</a>), which is then forwarded on our transmit server locally through NDI (<a href="https://en.wikipedia.org/wiki/Network_Device_Interface" target="_blank" rel="noopener noreferrer">Network Device Interface</a>). The connection is set up through a simple QR code scan which opens the Larix App with appropriate settings for instant setup.',
+				},
+				{ type: "image", src: "https://i.imgur.com/xvYLPXT.png" },
+			],
+		},
+	},
+	{
+		slug: "raffle-dashboard",
+		short: {
+			title: "Raffle Dashboard",
+			description: "A Web App for charity raffles",
+			image: "https://github.com/NickMarcha/RaffleDashboard/blob/main/documentation/images/RafflePageA.PNG?raw=true",
+		},
+		long: {
+			title: "Charity Raffle Dashboard",
+			descriptionComponent: "RaffleDashboard",
+			carouselItems: [
+				{ type: "image", src: "https://github.com/NickMarcha/RaffleDashboard/blob/main/documentation/images/RafflePageA.PNG?raw=true" },
+				{ type: "image", src: "https://github.com/NickMarcha/RaffleDashboard/blob/main/documentation/images/HomePage.PNG?raw=true" },
+				{ type: "image", src: "https://github.com/NickMarcha/RaffleDashboard/blob/main/documentation/images/HistoryPage.PNG?raw=true" },
+				{ type: "image", src: "https://github.com/NickMarcha/RaffleDashboard/blob/main/documentation/images/Stats.PNG?raw=true" },
+				{ type: "image", src: "https://github.com/NickMarcha/RaffleDashboard/blob/main/documentation/images/RafflePageB.PNG?raw=true" },
+			],
 		},
 	},
 	{
@@ -99,7 +110,7 @@ export const projectData: IProjectData[] = [
 		long: {
 			title: "Games, dares, jams",
 			descriptionComponent: "GameJams",
-			images: [],
+			carouselItems: [],
 		},
 	},
 	{
@@ -112,10 +123,10 @@ export const projectData: IProjectData[] = [
 		long: {
 			title: "Badlands Projects",
 			descriptionComponent: "BadlandsRP",
-			images: [
-				"https://github.com/NickMarcha/BL-SmallProjects/raw/main/Media/blmap.gif",
-				"https://github.com/NickMarcha/BL-SmallProjects/raw/main/Media/blledger.gif",
-				"https://github.com/NickMarcha/BL-SmallProjects/raw/main/Media/blauction.png",
+			carouselItems: [
+				{ type: "image", src: "https://github.com/NickMarcha/BL-SmallProjects/raw/main/Media/blmap.gif" },
+				{ type: "image", src: "https://github.com/NickMarcha/BL-SmallProjects/raw/main/Media/blledger.gif" },
+				{ type: "image", src: "https://github.com/NickMarcha/BL-SmallProjects/raw/main/Media/blauction.png" },
 			],
 		},
 	},
@@ -129,7 +140,7 @@ export const projectData: IProjectData[] = [
 		long: {
 			title: "School Assignments",
 			descriptionComponent: "SchoolAssignments",
-			images: [],
+			carouselItems: [],
 		},
 	},
 ];
