@@ -59,7 +59,7 @@ git push origin backend-v0.0.2
 - **Compose path**: `portfolio-backend/docker-compose.yml`
 - **Auth**: GitHub PAT (Contents read-only)
 - **Auto-update**: Enabled (polling, e.g. 5–15 min)
-- **Environment**: Set `CLOUDFLARE_TOKEN` in the stack's Environment variables (overrides `stack.env`)
+- **Environment**: Set `CLOUDFLARE_TOKEN` and `ADMIN_PASSWORD` in the stack's Environment variables (overrides `stack.env`). `ADMIN_PASSWORD` is required for the admin API (`/admin` visit analytics).
 
 ### Cloudflare Tunnel Setup
 
@@ -75,7 +75,7 @@ git push origin backend-v0.0.2
 
 - [`portfolio-backend/docker-compose.yml`](portfolio-backend/docker-compose.yml): backend + cloudflared
 - [`portfolio-backend/stack.env`](portfolio-backend/stack.env): env template (must exist for repo deploy; real token in Portainer UI)
-- [`portfolio-backend/Dockerfile`](portfolio-backend/Dockerfile): Node 25 Alpine, multi-stage build
+- [`portfolio-backend/Dockerfile`](portfolio-backend/Dockerfile): Node 25 slim, multi-stage build (build tools for `better-sqlite3`)
 
 ---
 

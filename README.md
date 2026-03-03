@@ -16,7 +16,7 @@ portfolio/
 ## Tech Stack
 
 - **Frontend**: Astro 5, TypeScript, Tailwind CSS, MDX, passthrough image service
-- **Backend**: Node 25, Express, TypeScript
+- **Backend**: Node 25, Express, TypeScript, SQLite (visit tracking)
 - **Deployment**: GitHub Pages (frontend), Docker + Portainer + Cloudflare Tunnel (backend)
 
 ## Local Development
@@ -48,6 +48,7 @@ npm run dev:backend      # Express at http://localhost:3000
 
 - **Frontend**: https://portfolio.nickmarcha.com
 - **Backend API**: https://api-portfolio.nickmarcha.com
+- **Admin** (visit analytics): https://portfolio.nickmarcha.com/admin (password-protected)
 
 ## Docs
 
