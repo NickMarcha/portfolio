@@ -24,6 +24,18 @@ function CarouselMedia({ item }: { item: CarouselItemType }) {
 			</div>
 		)
 	}
+	if (item.type === "video") {
+		return (
+			<div className="overflow-hidden rounded-lg aspect-video w-full">
+				<video
+					src={item.src}
+					controls
+					playsInline
+					className="w-full h-full object-contain"
+				/>
+			</div>
+		)
+	}
 	// YouTube embed
 	return (
 		<div className="overflow-hidden rounded-lg aspect-video w-full">

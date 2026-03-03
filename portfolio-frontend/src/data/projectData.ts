@@ -1,6 +1,7 @@
 export type CarouselItem =
 	| { type: "image"; src: string; caption?: string }
-	| { type: "youtube"; videoId: string; caption?: string };
+	| { type: "youtube"; videoId: string; caption?: string }
+	| { type: "video"; src: string; caption?: string };
 
 export interface IProjectData {
 	slug: string;
@@ -41,6 +42,8 @@ export const projectData: IProjectData[] = [
 			title: "InkyPen AS",
 			descriptionComponent: "InkyPen",
 			carouselItems: [
+				{ type: "video", src: "/video/inkypen-video-1.mp4" },
+				{ type: "video", src: "/video/inkypen-video-2.mp4" },
 				{ type: "image", src: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/681220/4115ec2ddf096633f73d020985a2bd3ecaad7c23/ss_4115ec2ddf096633f73d020985a2bd3ecaad7c23.600x338.jpg?t=1740484986" },
 				{ type: "image", src: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/681220/1000bcd6cb8b70f2ba57e32ac9cc96213b1d9215/ss_1000bcd6cb8b70f2ba57e32ac9cc96213b1d9215.600x338.jpg?t=1740484986" },
 				{ type: "image", src: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/681220/a2622806bcf8a7a0958e3e7abd949edb79968f4f/ss_a2622806bcf8a7a0958e3e7abd949edb79968f4f.600x338.jpg?t=1740484986" },

@@ -25,13 +25,13 @@ Monorepo: Astro frontend (static, GitHub Pages) + Node/Express backend (Docker, 
 ## Tech Notes
 
 - **Frontend**: Tailwind CSS v4 (`@tailwindcss/vite`). Uses `passthroughImageService()` (no Sharp). Optional dep `@rollup/rollup-linux-x64-gnu` for CI.
-- **Carousel**: Project carousel (`ProjectImageCarousel`) supports images and YouTube embeds via `carouselItems` in `projectData.ts`. Use `client:load` (not `client:visible`) so Embla initializes and buttons work. `embla-carousel-react` is in `optimizeDeps.include` to avoid hydration errors.
+- **Carousel**: Project carousel (`ProjectImageCarousel`) supports images, YouTube embeds, and native video (MP4/WebM) via `carouselItems` in `projectData.ts`. Use `client:load` (not `client:visible`) so Embla initializes and buttons work. `embla-carousel-react` is in `optimizeDeps.include` to avoid hydration errors.
 - **Backend**: `npm install` in Dockerfile (no package-lock in backend folder). `stack.env` for Portainer.
 - **Cloudflare**: Public hostname URL is `backend:3000` (no protocol). Tunnel and backend share `tunnel-net`.
 
 ## Common Tasks
 
 - **Install**: Run `npm install` (or `npm run install:all`) from repo root: installs both frontend and backend via workspaces.
-- **Add project**: Update `portfolio-frontend/src/data/projectData.ts` (including `carouselItems` for images/YouTube), add component in `src/components/projects/`
+- **Add project**: Update `portfolio-frontend/src/data/projectData.ts` (including `carouselItems` for images/YouTube/video), add component in `src/components/projects/`
 - **Deploy frontend**: `git tag frontend-v0.0.2 && git push origin frontend-v0.0.2`
 - **Deploy backend**: `git tag backend-v0.0.2 && git push origin backend-v0.0.2`
