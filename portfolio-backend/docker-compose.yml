@@ -13,6 +13,9 @@ services:
       - stack.env
     environment:
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - NTFY_TOKEN=${NTFY_TOKEN}
+      - NTFY_BASE_URL=${NTFY_BASE_URL}
+      - NTFY_TOPIC=${NTFY_TOPIC}
     networks:
       - tunnel-net
 

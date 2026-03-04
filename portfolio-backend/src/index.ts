@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { createRequire } from 'node:module';
 import * as cheerio from 'cheerio';
 import Database from 'better-sqlite3';
@@ -37,6 +38,47 @@ async function enrichIp(ip: string): Promise<IpApiResponse | null> {
 		return data.status === 'success' ? data : null;
 	} catch {
 		return null;
+	}
+}
+
+const NTFY_BASE_URL = process.env.NTFY_BASE_URL;
+const NTFY_TOPIC = process.env.NTFY_TOPIC;
+const NTFY_TOKEN = process.env.NTFY_TOKEN;
+
+async function notifyVisit(data: {
+	path: string;
+	ip: string | null;
+	country: string | null;
+	city: string | null;
+	regionName: string | null;
+	isp: string | null;
+	enriched: boolean;
+}): Promise<void> {
+	if (!NTFY_TOKEN || !NTFY_BASE_URL || !NTFY_TOPIC) return;
+
+	const parts = [`Visit: ${data.path}`, data.ip ?? '?', data.country ?? 'XX'];
+	if (data.enriched && (data.city || data.regionName || data.isp)) {
+		const loc = [data.city, data.regionName].filter(Boolean).join(', ');
+		if (loc) parts.push(loc);
+		if (data.isp) parts.push(data.isp);
+	} else {
+		parts.push('IP lookup failed');
+	}
+	const message = parts.join(' | ');
+
+	try {
+		const res = await fetch(`${NTFY_BASE_URL}/${NTFY_TOPIC}`, {
+			method: 'POST',
+			headers: {
+				'Authorization': `Bearer ${NTFY_TOKEN}`,
+				'Title': 'Portfolio visit',
+				'Content-Type': 'text/plain',
+			},
+			body: message,
+		});
+		if (!res.ok) throw new Error(`ntfy ${res.status}`);
+	} catch (err) {
+		console.warn('[ntfy]', err);
 	}
 }
 
@@ -190,6 +232,10 @@ app.post('/api/visits', async (req, res) => {
 	}
 
 	insertVisit.run(path, timestamp, ip, country, city, region, regionName, timezone, isp, org);
+
+	const enriched = !!(city || isp);
+	notifyVisit({ path, ip, country, city, regionName, isp, enriched }).catch(() => {});
+
 	res.status(204).send();
 });
 

@@ -59,7 +59,7 @@ git push origin backend-v0.0.2
 - **Compose path**: `portfolio-backend/docker-compose.yml`
 - **Auth**: GitHub PAT (Contents read-only)
 - **Auto-update**: Enabled (polling, e.g. 5–15 min)
-- **Environment**: Set `CLOUDFLARE_TOKEN` and `ADMIN_PASSWORD` in the stack's Environment variables (overrides `stack.env`). `ADMIN_PASSWORD` is required for the admin API (`/admin` visit analytics).
+- **Environment**: Set `CLOUDFLARE_TOKEN`, `ADMIN_PASSWORD`, and optionally `NTFY_TOKEN`, `NTFY_BASE_URL`, `NTFY_TOPIC` in the stack's Environment variables (overrides `stack.env`). `ADMIN_PASSWORD` is required for the admin API (`/admin` visit analytics). For ntfy push notifications on each visit, set all three: `NTFY_TOKEN`, `NTFY_BASE_URL`, `NTFY_TOPIC`; if any are missing, notifications are skipped.
 
 ### Cloudflare Tunnel Setup
 
