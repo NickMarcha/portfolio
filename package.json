@@ -3,6 +3,9 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
+		"version": "node scripts/version.mjs",
+		"version:frontend": "node scripts/version.mjs frontend",
+		"version:backend": "node scripts/version.mjs backend",
 		"install:all": "npm install",
 		"install:ci": "npm ci",
 		"dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",

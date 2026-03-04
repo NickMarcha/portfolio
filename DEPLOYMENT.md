@@ -23,8 +23,10 @@ How frontend and backend are deployed.
 ### Deploy
 
 ```bash
-git tag frontend-v0.0.2
-git push origin frontend-v0.0.2
+npm run version -- frontend patch   # or minor/major; bumps version and creates tag
+git add portfolio-frontend/package.json
+git commit -m "chore: bump frontend to X.Y.Z"
+git push origin frontend-vX.Y.Z
 ```
 
 ### Requirements
@@ -48,8 +50,10 @@ git push origin frontend-v0.0.2
 ### Deploy
 
 ```bash
-git tag backend-v0.0.2
-git push origin backend-v0.0.2
+npm run version -- backend patch   # or minor/major; bumps version, updates compose image tag, creates tag
+git add portfolio-backend/package.json portfolio-backend/docker-compose.yml
+git commit -m "chore: bump backend to X.Y.Z"
+git push origin backend-vX.Y.Z
 ```
 
 ### Portainer Setup
@@ -79,11 +83,19 @@ git push origin backend-v0.0.2
 
 ---
 
-## Version Tags
+## Version Management
 
-Use separate tags so only the changed part redeploys:
+Use `npm run version` to bump and tag interactively:
 
-- `frontend-v0.0.1` → frontend only
-- `backend-v0.0.1` → backend only
+```bash
+npm run version                    # prompts for target (frontend/backend) and bump type (patch/minor/major)
+npm run version -- frontend patch  # non-interactive: bump frontend patch
+npm run version -- backend minor  # non-interactive: bump backend minor
+```
 
-Increment independently (e.g. `frontend-v0.0.2`, `backend-v0.0.1`).
+The script updates the chosen package's `package.json` and, for backend, the `image:` tag in `docker-compose.yml`. It creates the corresponding Git tag (`frontend-vX.Y.Z` or `backend-vX.Y.Z`). Commit the changes and push the tag to deploy.
+
+Version tags are independent; deploy only what changed:
+
+- `frontend-v0.0.8` → frontend only (GitHub Pages)
+- `backend-v0.0.8` → backend only (Portainer rebuilds)
