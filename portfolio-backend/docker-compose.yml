@@ -3,7 +3,7 @@ version: '3.8'
 services:
   backend:
     build: .
-    image: portfolio-backend:0.0.7
+    image: portfolio-backend:0.0.11
     container_name: portfolio-backend
     restart: always
     ports:
