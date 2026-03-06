@@ -5,7 +5,7 @@ import GitHubButton from '../components/GitHubButton.astro';
 import ThemeToggle from '../components/ThemeToggle.astro';
 import LanguageButton from '../components/LanguageButton.astro';
 import ShareButton from '../components/ShareButton.astro';
-import { SearchCommandButton } from '../components/SearchCommand';
+import { GlobalSearch, SearchCommandTrigger } from '../components/SearchCommand';
 import ProjectCard from '../components/ProjectCard.astro';
 import { projectData } from '../data/projectData';
 import { getLangFromUrl, getProjectContent, t, withLang } from '../i18n';
@@ -14,15 +14,6 @@ import KriskogramImage from '../assets/Kriskogram.png';
 const lang = getLangFromUrl(Astro.url);
 const siteTitle = t('siteTitle', lang);
 const siteDescription = t('siteDescription', lang);
-const searchProjects = projectData.map((p) => {
-	const c = getProjectContent(p.slug, lang);
-	return {
-		slug: p.slug,
-		shortTitle: c?.shortTitle ?? p.slug,
-		shortDescription: c?.shortDescription ?? '',
-		searchKeywords: p.searchKeywords,
-	};
-});
 ---
 
 <!doctype html>
@@ -34,7 +25,7 @@ const searchProjects = projectData.map((p) => {
 		<main>
 			<div class="title-row">
 				<h1 data-i18n-key="projects">{t('projects', lang)}</h1>
-				<SearchCommandButton projects={searchProjects} lang={lang} client:load />
+				<SearchCommandTrigger lang={lang} showLabel client:load />
 			</div>
 			<p class="intro" data-i18n-key="siteDescription">{siteDescription}</p>
 			<div class="projects-grid">
@@ -48,12 +39,15 @@ const searchProjects = projectData.map((p) => {
 							href={withLang(`/projects/${project.slug}`, lang)}
 							slug={project.slug}
 							pixelArt={project.slug === 'bio'}
+							tags={project.tags}
+							lang={lang}
 						/>
 					);
 				})}
 			</div>
 		</main>
 		<Footer />
+		<GlobalSearch lang={lang} client:load />
 		<ShareButton pathname="/" lang={lang} />
 		<LanguageButton />
 		<GitHubButton lang={lang} />
@@ -65,6 +59,7 @@ const searchProjects = projectData.map((p) => {
 	.title-row {
 		display: flex;
 		align-items: center;
+		justify-content: space-between;
 		gap: 0.75rem;
 		margin-bottom: 0.5em;
 	}

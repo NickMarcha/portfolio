@@ -6,6 +6,7 @@ import ThemeToggle from '../../../components/ThemeToggle.astro';
 import LanguageButton from '../../../components/LanguageButton.astro';
 import ShareButton from '../../../components/ShareButton.astro';
 import ProjectDetail from '../../../components/ProjectDetail.astro';
+import { GlobalSearch, SearchCommandTrigger } from '../../../components/SearchCommand';
 import { projectData } from '../../../data/projectData';
 import { getProjectContent, t, withLang } from '../../../i18n';
 
@@ -35,7 +36,10 @@ const carouselItemsWithCaptions = project.long.carouselItems.map((item, i) => ({
 	</head>
 	<body>
 		<main>
-			<a href={withLang('/', lang)} class="back-link">{t('backToProjects', lang)}</a>
+			<div class="back-row">
+				<a href={withLang('/', lang)} class="back-link">{t('backToProjects', lang)}</a>
+				<SearchCommandTrigger lang={lang} client:load />
+			</div>
 			<ProjectDetail
 				project={project}
 				slug={slug}
@@ -46,6 +50,7 @@ const carouselItemsWithCaptions = project.long.carouselItems.map((item, i) => ({
 			/>
 		</main>
 		<Footer />
+		<GlobalSearch lang={lang} client:load />
 		<ShareButton pathname={`/no/projects/${slug}`} lang={lang} />
 		<LanguageButton />
 		<GitHubButton lang={lang} />
@@ -54,9 +59,13 @@ const carouselItemsWithCaptions = project.long.carouselItems.map((item, i) => ({
 </html>
 
 <style>
-	.back-link {
-		display: inline-block;
+	.back-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
 		margin-bottom: 1.5em;
+	}
+	.back-link {
 		text-decoration: none;
 		color: var(--primary);
 	}

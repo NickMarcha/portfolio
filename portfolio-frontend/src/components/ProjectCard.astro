@@ -1,4 +1,7 @@
 ---
+import { TagList } from './TagList';
+import type { Locale } from '../i18n';
+
 interface Props {
 	title: string;
 	description: string;
@@ -6,9 +9,11 @@ interface Props {
 	href: string;
 	slug?: string;
 	pixelArt?: boolean;
+	tags?: string[];
+	lang?: Locale;
 }
 
-const { title, description, image, href, slug, pixelArt = false } = Astro.props;
+const { title, description, image, href, slug, pixelArt = false, tags = [], lang = 'en' } = Astro.props;
 ---
 
 <a href={href} class="project-card" data-project-slug={slug}>
@@ -16,6 +21,7 @@ const { title, description, image, href, slug, pixelArt = false } = Astro.props;
 	<div class="card-content">
 		<h3>{title}</h3>
 		<p>{description}</p>
+		{tags.length > 0 && <TagList tags={tags} lang={lang} client:load />}
 	</div>
 </a>
 
@@ -53,5 +59,63 @@ const { title, description, image, href, slug, pixelArt = false } = Astro.props;
 		margin: 0;
 		font-size: 0.9em;
 		color: var(--text-muted);
+	}
+	/* NOT expanded: single line; expanded: wrap to multiple lines */
+	.project-card :global(.tag-list-wrapper) {
+		display: flex;
+		align-items: center;
+		gap: 0.35em;
+		margin: 0.5em 0 0 0;
+		min-width: 0;
+	}
+	.project-card :global(.tag-list-wrapper:not([data-expanded="true"])) {
+		flex-wrap: nowrap;
+		overflow-x: auto;
+		overflow-y: hidden;
+		scrollbar-width: none;
+		-webkit-overflow-scrolling: touch;
+	}
+	.project-card :global(.tag-list-wrapper:not([data-expanded="true"])::-webkit-scrollbar) {
+		display: none;
+	}
+	.project-card :global(.tag-list-wrapper[data-expanded="true"]) {
+		flex-wrap: wrap;
+	}
+	.project-card :global(.tag-list) {
+		display: flex;
+		gap: 0.35em;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.project-card :global(.tag-list-wrapper:not([data-expanded="true"]) .tag-list) {
+		flex-wrap: nowrap;
+		flex: 1 1 0;
+		min-width: 0;
+	}
+	.project-card :global(.tag-list-wrapper[data-expanded="true"] .tag-list) {
+		flex-wrap: wrap;
+	}
+	.project-card :global(.tag-list li) {
+		flex-shrink: 0;
+	}
+	.project-card :global(.tag) {
+		font-size: 0.75em;
+		padding: 0.2em 0.5em;
+		border-radius: 4px;
+		border: 1px solid var(--border);
+		background: var(--muted);
+		color: var(--primary);
+		cursor: pointer;
+		transition: box-shadow 0.15s, color 0.15s;
+	}
+	.project-card :global(.tag:hover) {
+		color: var(--primary-dark);
+		box-shadow: var(--shadow);
+	}
+	.project-card :global(.tag-more) {
+		flex-shrink: 0;
+		color: var(--text-muted);
+		font-style: italic;
 	}
 </style>

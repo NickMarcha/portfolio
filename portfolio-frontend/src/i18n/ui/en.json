@@ -8,6 +8,7 @@
   "themeDark": "Dark",
   "themeSystem": "System",
   "blog": "Blog",
+  "search": "Search",
   "searchPlaceholder": "Search projects...",
   "noResults": "No results found.",
   "settings": "Settings",
@@ -17,6 +18,7 @@
   "showQR": "Show QR code",
   "openLive": "Open live",
   "openArchived": "Open archived",
+	"tagsMore": "{count} more",
 	"archived": "(archived)",
 	"repoForSite": "repository for this site",
 	"reportIssue": "Report an issue with this site"

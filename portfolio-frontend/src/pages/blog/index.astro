@@ -8,6 +8,7 @@ import GitHubButton from '../../components/GitHubButton.astro';
 import ThemeToggle from '../../components/ThemeToggle.astro';
 import LanguageButton from '../../components/LanguageButton.astro';
 import ShareButton from '../../components/ShareButton.astro';
+import { GlobalSearch, SearchCommandTrigger } from '../../components/SearchCommand';
 import { getLangFromUrl, t } from '../../i18n';
 
 const lang = getLangFromUrl(Astro.url);
@@ -115,7 +116,9 @@ const posts = (await getCollection('blog')).sort(
 			</section>
 		</main>
 		<Footer />
+		<GlobalSearch lang={lang} client:load />
 		<ShareButton pathname="/blog" lang={lang} />
+		<SearchCommandTrigger lang={lang} client:load />
 		<LanguageButton />
 		<GitHubButton lang={lang} />
 		<ThemeToggle lang={lang} />

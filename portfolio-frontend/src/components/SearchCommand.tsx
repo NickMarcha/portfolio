@@ -1,8 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useCallback, useMemo, useState } from "react";
-import { SearchIcon } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
 	CommandDialog,
 	CommandEmpty,
@@ -12,53 +11,28 @@ import {
 	CommandList,
 	CommandSeparator,
 } from "@/components/ui/command";
+import { TerminalIcon } from "@/components/TerminalIcon";
 import { t } from "@/i18n";
 import type { Locale } from "@/i18n";
-import { supportedLocales } from "@/i18n";
+import { getProjectContent, supportedLocales, withLang, getPathWithoutLocale } from "@/i18n";
+import { projectData } from "@/data/projectData";
+
+const STORAGE_KEY = "portfolio-theme";
 
 interface SearchProject {
 	slug: string;
 	shortTitle: string;
 	shortDescription: string;
-	searchKeywords: string[];
+	tags: string[];
 }
 
 interface SearchCommandProps {
 	projects: SearchProject[];
 	lang: Locale;
-	open?: boolean;
-	onOpenChange?: (open: boolean) => void;
+	open: boolean;
+	onOpenChange: (open: boolean) => void;
+	initialSearch?: string;
 }
-
-export function SearchCommandButton({
-	projects,
-	lang,
-}: {
-	projects: SearchProject[];
-	lang: Locale;
-}) {
-	const [open, setOpen] = useState(false);
-	return (
-		<>
-			<button
-				type="button"
-				onClick={() => setOpen(true)}
-				className="inline-flex items-center justify-center p-2 rounded-md border border-[var(--border)] bg-[var(--surface)] hover:shadow-[var(--shadow-hover)] transition-shadow"
-				aria-label={t("searchPlaceholder", lang)}
-			>
-				<SearchIcon className="size-4" />
-			</button>
-			<SearchCommand
-				projects={projects}
-				lang={lang}
-				open={open}
-				onOpenChange={setOpen}
-			/>
-		</>
-	);
-}
-
-const STORAGE_KEY = "portfolio-theme";
 
 function setTheme(theme: "light" | "dark" | "system") {
 	document.documentElement.setAttribute("data-theme", theme);
@@ -67,32 +41,81 @@ function setTheme(theme: "light" | "dark" | "system") {
 	} catch {}
 }
 
-function matchProject(project: SearchProject, query: string): boolean {
+function getCurrentTheme(): "light" | "dark" | "system" {
+	try {
+		const stored = localStorage.getItem(STORAGE_KEY);
+		if (stored === "light" || stored === "dark" || stored === "system") return stored;
+	} catch {}
+	return "system";
+}
+
+/** Score for prioritization: exact tag > exact title word > exact desc word > partial tag > partial title > partial desc */
+function scoreProject(project: SearchProject, query: string): number {
 	const q = query.toLowerCase().trim();
-	if (!q) return true;
+	if (!q) return 0;
+
 	const title = project.shortTitle.toLowerCase();
 	const desc = project.shortDescription.toLowerCase();
-	const keywords = project.searchKeywords.join(" ").toLowerCase();
-	return title.includes(q) || desc.includes(q) || keywords.includes(q);
+	const titleWords = title.split(/\s+/);
+	const descWords = desc.split(/\s+/);
+
+	// Exact tag match (highest priority)
+	if (project.tags.some((tag) => tag.toLowerCase() === q)) return 100;
+	// Exact title word match
+	if (titleWords.some((w) => w === q)) return 80;
+	// Exact description word match
+	if (descWords.some((w) => w === q)) return 60;
+	// Partial tag match
+	if (project.tags.some((tag) => tag.toLowerCase().includes(q))) return 40;
+	// Partial title match
+	if (title.includes(q)) return 30;
+	// Partial description match
+	if (desc.includes(q)) return 20;
+
+	return 0;
 }
+
+function matchProject(project: SearchProject, query: string): boolean {
+	return scoreProject(project, query) > 0;
+}
+
+const localeLabels: Record<Locale, string> = {
+	en: "English",
+	no: "Norsk",
+	es: "Español",
+};
 
 function SearchCommand({
 	projects,
 	lang,
-	open = false,
-	onOpenChange = () => {},
+	open,
+	onOpenChange,
+	initialSearch = "",
 }: SearchCommandProps) {
-	const [search, setSearch] = useState("");
+	const [search, setSearch] = useState(initialSearch);
 
-	const filtered = useMemo(
-		() => projects.filter((p) => matchProject(p, search)),
-		[projects, search],
+	useEffect(() => {
+		if (open) setSearch(initialSearch);
+	}, [open, initialSearch]);
+
+	const filtered = useMemo(() => {
+		if (!search.trim()) return [];
+		return projects
+			.filter((p) => matchProject(p, search))
+			.sort((a, b) => scoreProject(b, search) - scoreProject(a, search));
+	}, [projects, search]);
+
+	const otherLocales = useMemo(() => supportedLocales.filter((l) => l !== lang), [lang]);
+	const currentTheme = getCurrentTheme();
+	const otherThemes = useMemo(
+		() => (["light", "dark", "system"] as const).filter((t) => t !== currentTheme),
+		[currentTheme],
 	);
 
 	const handleSelectProject = useCallback(
 		(slug: string) => {
 			onOpenChange(false);
-			window.location.href = `/projects/${slug}?lan=${lang}`;
+			window.location.href = withLang(`/projects/${slug}`, lang);
 		},
 		[lang, onOpenChange],
 	);
@@ -100,8 +123,8 @@ function SearchCommand({
 	const handleSelectLang = useCallback(
 		(newLang: Locale) => {
 			onOpenChange(false);
-			const path = window.location.pathname;
-			window.location.href = `${path}?lan=${newLang}`;
+			const path = getPathWithoutLocale(new URL(window.location.href));
+			window.location.href = withLang(path || "/", newLang);
 		},
 		[onOpenChange],
 	);
@@ -120,6 +143,7 @@ function SearchCommand({
 			onOpenChange={onOpenChange}
 			title={t("searchPlaceholder", lang)}
 			description={t("searchPlaceholder", lang)}
+			shouldFilter={false}
 		>
 			<CommandInput
 				placeholder={t("searchPlaceholder", lang)}
@@ -128,48 +152,130 @@ function SearchCommand({
 			/>
 			<CommandList>
 				<CommandEmpty>{t("noResults", lang)}</CommandEmpty>
-				<CommandGroup heading={t("projects", lang)}>
-					{filtered.map((project) => (
-						<CommandItem
-							key={project.slug}
-							value={project.slug}
-							onSelect={() => handleSelectProject(project.slug)}
-						>
-							<span className="font-medium">{project.shortTitle}</span>
-							<span className="text-muted-foreground truncate ml-2">
-								{project.shortDescription}
-							</span>
-						</CommandItem>
-					))}
-				</CommandGroup>
-				<CommandSeparator />
-				<CommandGroup heading={t("settings", lang)}>
-					<CommandItem>
-						<span>{t("language", lang)}</span>
-					</CommandItem>
-					{supportedLocales.map((l) => (
-						<CommandItem
-							key={l}
-							onSelect={() => handleSelectLang(l)}
-							className={lang === l ? "bg-accent" : ""}
-						>
-							{l === "en" ? "English" : l === "no" ? "Norsk" : "Español"}
-						</CommandItem>
-					))}
-					<CommandItem>
-						<span>{t("theme", lang)}</span>
-					</CommandItem>
-					<CommandItem onSelect={() => handleSelectTheme("light")}>
-						{t("themeLight", lang)}
-					</CommandItem>
-					<CommandItem onSelect={() => handleSelectTheme("dark")}>
-						{t("themeDark", lang)}
-					</CommandItem>
-					<CommandItem onSelect={() => handleSelectTheme("system")}>
-						{t("themeSystem", lang)}
-					</CommandItem>
-				</CommandGroup>
+				{/* When there are project matches, show projects first; otherwise settings first */}
+				{filtered.length > 0 ? (
+					<>
+						<CommandGroup heading={t("projects", lang)}>
+							{filtered.map((project) => (
+								<CommandItem
+									key={project.slug}
+									value={project.slug}
+									onSelect={() => handleSelectProject(project.slug)}
+								>
+									<span className="font-medium">{project.shortTitle}</span>
+									<span className="text-muted-foreground truncate ml-2">
+										{project.shortDescription}
+									</span>
+								</CommandItem>
+							))}
+						</CommandGroup>
+						<CommandSeparator />
+						<CommandGroup heading={t("language", lang)}>
+							{otherLocales.map((l) => (
+								<CommandItem key={l} onSelect={() => handleSelectLang(l)}>
+									{localeLabels[l]}
+								</CommandItem>
+							))}
+						</CommandGroup>
+						<CommandGroup heading={t("theme", lang)}>
+							{otherThemes.map((theme) => (
+								<CommandItem
+									key={theme}
+									onSelect={() => handleSelectTheme(theme)}
+								>
+									{theme === "light"
+										? t("themeLight", lang)
+										: theme === "dark"
+											? t("themeDark", lang)
+											: t("themeSystem", lang)}
+								</CommandItem>
+							))}
+						</CommandGroup>
+					</>
+				) : (
+					<>
+						<CommandGroup heading={t("language", lang)}>
+							{otherLocales.map((l) => (
+								<CommandItem key={l} onSelect={() => handleSelectLang(l)}>
+									{localeLabels[l]}
+								</CommandItem>
+							))}
+						</CommandGroup>
+						<CommandGroup heading={t("theme", lang)}>
+							{otherThemes.map((theme) => (
+								<CommandItem
+									key={theme}
+									onSelect={() => handleSelectTheme(theme)}
+								>
+									{theme === "light"
+										? t("themeLight", lang)
+										: theme === "dark"
+											? t("themeDark", lang)
+											: t("themeSystem", lang)}
+								</CommandItem>
+							))}
+						</CommandGroup>
+					</>
+				)}
 			</CommandList>
 		</CommandDialog>
+	);
+}
+
+function buildSearchProjects(lang: Locale): SearchProject[] {
+	return projectData.map((p) => {
+		const c = getProjectContent(p.slug, lang);
+		return {
+			slug: p.slug,
+			shortTitle: c?.shortTitle ?? p.slug,
+			shortDescription: c?.shortDescription ?? "",
+			tags: p.tags,
+		};
+	});
+}
+
+export function GlobalSearch({ lang }: { lang: Locale }) {
+	const [open, setOpen] = useState(false);
+	const [initialSearch, setInitialSearch] = useState("");
+
+	const projects = useMemo(() => buildSearchProjects(lang), [lang]);
+
+	useEffect(() => {
+		const handler = (e: CustomEvent<{ search?: string }>) => {
+			setOpen(true);
+			setInitialSearch(e.detail?.search ?? "");
+		};
+		window.addEventListener("open-search", handler as EventListener);
+		return () => window.removeEventListener("open-search", handler as EventListener);
+	}, []);
+
+	return (
+		<SearchCommand
+			projects={projects}
+			lang={lang}
+			open={open}
+			onOpenChange={setOpen}
+			initialSearch={initialSearch}
+		/>
+	);
+}
+
+export function SearchCommandTrigger({
+	lang,
+	showLabel = false,
+}: {
+	lang: Locale;
+	showLabel?: boolean;
+}) {
+	return (
+		<button
+			type="button"
+			onClick={() => window.dispatchEvent(new CustomEvent("open-search", { detail: {} }))}
+			className="inline-flex items-center justify-center gap-1.5 p-2 rounded-md border border-[var(--border)] bg-[var(--surface)] hover:shadow-[var(--shadow-hover)] transition-shadow"
+			aria-label={t("searchPlaceholder", lang)}
+		>
+			<TerminalIcon className="size-4" />
+			{showLabel && <span className="text-muted-foreground">{t("search", lang)}</span>}
+		</button>
 	);
 }

@@ -1,5 +1,6 @@
 ---
 import type { IProjectData } from '../../data/projectData';
+import { TagList } from './TagList';
 import type { Locale } from '../../i18n';
 import Bio from './projects/Bio.astro';
 import InkyPen from './projects/InkyPen.astro';
@@ -66,6 +67,7 @@ const DescriptionComponent = components[project.long.descriptionComponent];
 			DescriptionComponent && <DescriptionComponent lang={lang} />
 		)}
 	</div>
+	{project.tags.length > 0 && <TagList tags={project.tags} lang={lang} maxVisible={999} client:load />}
 </article>
 
 <style>
@@ -90,6 +92,35 @@ const DescriptionComponent = components[project.long.descriptionComponent];
 	}
 	.project-description {
 		margin-top: 1.5em;
+	}
+	/* Scoped to project-detail so ProjectCard's nowrap doesn't override */
+	.project-detail :global(.tag-list-wrapper) {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.35em;
+		margin: 1em 0 0 0;
+	}
+	.project-detail :global(.tag-list) {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.35em;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.project-detail :global(.tag) {
+		font-size: 0.8em;
+		padding: 0.25em 0.5em;
+		border-radius: 4px;
+		border: 1px solid var(--border);
+		background: var(--muted);
+		color: var(--primary);
+		cursor: pointer;
+		transition: box-shadow 0.15s, color 0.15s;
+	}
+	.project-detail :global(.tag:hover) {
+		color: var(--primary-dark);
+		box-shadow: var(--shadow);
 	}
 	/* Styles for body-rendered content (e.g. InkyPen bankruptcy notice) */
 	.project-description :global(.bankruptcy-notice) {
