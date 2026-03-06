@@ -31,6 +31,19 @@ Monorepo: Astro frontend (static, GitHub Pages) + Node/Express backend (Docker, 
 - **Visit tracking**: Frontend sends `POST /api/visits` with path on each page load (BaseHead). Backend stores in SQLite (`./data/visits.db`), enriches via ip-api.com. Docker volume `visit-data` persists data. ntfy push notifications require `NTFY_TOKEN`, `NTFY_BASE_URL`, `NTFY_TOPIC`; skips if any are missing.
 - **Cloudflare**: Public hostname URL is `backend:3000` (no protocol). Tunnel and backend share `tunnel-net`.
 
+## Design Guidelines (Uncodixfy)
+
+**Canonical reference:** [docs/Uncodixfy.md](docs/Uncodixfy.md)
+
+When styling the frontend (Astro + Tailwind), follow the Uncodexy-UI standard. Avoid Codex UI patterns: soft gradients, floating panels, eyebrow labels, oversized radii, transform animations, dramatic shadows.
+
+**Quick reference:**
+- **Measurements:** Sidebar 240–260px; radius 8–12px max; shadows ≤8px blur; transitions 100–200ms
+- **Typography:** System or simple sans-serif; 14–16px body; no serif+sans combo; no Inter/Roboto/Arial unless already used
+- **Colors:** Use existing project colors first; else pick from predefined palettes in Uncodixfy.md; avoid blue-leaning; prefer dark muted tones
+- **Banned:** Eyebrow labels (`<small>`), pill shapes, glassmorphism, hero sections in dashboards, gradient backgrounds, decorative copy
+- **Inspiration:** Linear, Raycast, Stripe, GitHub—functional, not decorative
+
 ## Common Tasks
 
 - **Install**: Run `npm install` (or `npm run install:all`) from repo root: installs both frontend and backend via workspaces.

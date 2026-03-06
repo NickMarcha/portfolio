@@ -27,10 +27,9 @@ const { title, description, image, slug, pixelArt = false } = Astro.props;
 		border-radius: 8px;
 		overflow: hidden;
 		box-shadow: var(--shadow);
-		transition: transform 0.2s, box-shadow 0.2s;
+		transition: box-shadow 0.2s;
 	}
 	.project-card:hover {
-		transform: translateY(-2px);
 		box-shadow: var(--shadow-hover);
 	}
 	.project-card img {
