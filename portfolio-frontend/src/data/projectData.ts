@@ -38,7 +38,12 @@ export const projectData: IProjectData[] = [
 	{
 		slug: "kriskogram",
 		short: { image: "/Kriskogram.png" },
-		long: { descriptionComponent: "Kriskogram", carouselItems: [] },
+		long: {
+			descriptionComponent: "Kriskogram",
+			carouselItems: [
+				{ type: "video", src: "/video/kriskogram-demo.mp4" },
+			],
+		},
 		tags: [2, 13, 14, 15, 17, 18, 43],
 	},
 	{

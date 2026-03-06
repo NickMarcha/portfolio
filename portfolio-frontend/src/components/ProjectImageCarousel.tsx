@@ -35,6 +35,9 @@ function CarouselMedia({ item }: { item: CarouselItemType }) {
 					src={item.src}
 					controls
 					playsInline
+					autoPlay
+					loop
+					muted
 					className="w-full h-full object-contain"
 				/>
 			</div>
