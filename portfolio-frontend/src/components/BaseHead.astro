@@ -70,6 +70,56 @@ const { title, description, image = FallbackImage, lang = 'en' } = Astro.props;
 <meta property="twitter:image" content={new URL(image.src, Astro.url)} />
 
 <script>
+	(function initSideButtonsIdle() {
+		const IDLE_MS = 3000;
+		const MOBILE = '(max-width: 720px)';
+		let timer: number | null = null;
+
+		const IGNORE_FIRST_MS = 150;
+
+		function show() {
+			const wasHidden = document.body.hasAttribute('data-side-buttons-hidden');
+			document.body.removeAttribute('data-side-buttons-hidden');
+			if (wasHidden) {
+				document.body.setAttribute('data-side-buttons-ignore-first', '');
+				setTimeout(() => document.body.removeAttribute('data-side-buttons-ignore-first'), IGNORE_FIRST_MS);
+			}
+			if (timer) clearTimeout(timer);
+			if (!window.matchMedia(MOBILE).matches) return;
+			timer = setTimeout(hide, IDLE_MS);
+		}
+
+		function hide() {
+			if (!window.matchMedia(MOBILE).matches) return;
+			const menuOpen = document.querySelector('[aria-expanded="true"]');
+			if (menuOpen) return;
+			document.body.setAttribute('data-side-buttons-hidden', '');
+			timer = null;
+		}
+
+		function setup() {
+			if (!window.matchMedia(MOBILE).matches) return;
+			timer = setTimeout(hide, IDLE_MS);
+			window.addEventListener('scroll', show, { passive: true });
+			window.addEventListener('touchstart', show, { passive: true });
+			window.addEventListener('wheel', show, { passive: true });
+			window.addEventListener('resize', () => {
+				if (!window.matchMedia(MOBILE).matches) {
+					document.body.removeAttribute('data-side-buttons-hidden');
+					if (timer) clearTimeout(timer);
+					timer = null;
+				}
+			});
+		}
+
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', setup);
+		} else {
+			setup();
+		}
+	})();
+</script>
+<script>
 	(async () => {
 		const isLocal =
 			typeof window !== 'undefined' &&

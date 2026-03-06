@@ -263,13 +263,7 @@ export function GlobalSearch({ lang }: { lang: Locale }) {
 	);
 }
 
-export function SearchCommandTrigger({
-	lang,
-	showLabel = false,
-}: {
-	lang: Locale;
-	showLabel?: boolean;
-}) {
+export function SearchCommandTrigger({ lang }: { lang: Locale }) {
 	return (
 		<button
 			type="button"
@@ -278,7 +272,7 @@ export function SearchCommandTrigger({
 			aria-label={t("searchPlaceholder", lang)}
 		>
 			<TerminalIcon className="size-4" />
-			{showLabel && <span className="text-muted-foreground">{t("search", lang)}</span>}
+			<span className="text-muted-foreground">{t("search", lang)}</span>
 		</button>
 	);
 }

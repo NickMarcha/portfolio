@@ -60,7 +60,7 @@ export function ProjectImageCarousel({ items, projectSlug }: ProjectImageCarouse
 	return (
 		<Carousel
 			opts={{ loop: showControls, align: "start" }}
-			className="w-full px-14"
+			className="w-full px-14 max-md:px-0 flex max-md:flex-col max-md:gap-2"
 		>
 			<CarouselContent className="-ml-0">
 				{items.map((item, index) => (
@@ -81,10 +81,10 @@ export function ProjectImageCarousel({ items, projectSlug }: ProjectImageCarouse
 				))}
 			</CarouselContent>
 			{showControls && (
-				<>
-					<CarouselPrevious className="left-0 -translate-y-1/2" />
-					<CarouselNext className="right-0 -translate-y-1/2" />
-				</>
+				<div className="flex justify-center gap-2 max-md:flex md:contents">
+					<CarouselPrevious className="left-0 -translate-y-1/2 max-md:static max-md:translate-y-0 max-md:left-auto max-md:right-auto max-md:top-auto" />
+					<CarouselNext className="right-0 -translate-y-1/2 max-md:static max-md:translate-y-0 max-md:left-auto max-md:right-auto max-md:top-auto" />
+				</div>
 			)}
 		</Carousel>
 	)

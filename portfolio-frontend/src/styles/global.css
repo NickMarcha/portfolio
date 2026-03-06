@@ -161,6 +161,30 @@ hr {
 	main { padding: 1em; }
 }
 
+/* Side buttons (language, theme, GitHub, share): hide on mobile after 3s idle */
+@media (max-width: 720px) {
+	.share-button,
+	.language-toggle,
+	.github-button,
+	.theme-toggle {
+		transition: opacity 0.2s;
+	}
+	body[data-side-buttons-hidden] .share-button,
+	body[data-side-buttons-hidden] .language-toggle,
+	body[data-side-buttons-hidden] .github-button,
+	body[data-side-buttons-hidden] .theme-toggle {
+		opacity: 0;
+		pointer-events: none;
+	}
+	/* First tap after unhide passes through to content underneath */
+	body[data-side-buttons-ignore-first] .share-button,
+	body[data-side-buttons-ignore-first] .language-toggle,
+	body[data-side-buttons-ignore-first] .github-button,
+	body[data-side-buttons-ignore-first] .theme-toggle {
+		pointer-events: none;
+	}
+}
+
 .sr-only {
 	border: 0;
 	padding: 0;
