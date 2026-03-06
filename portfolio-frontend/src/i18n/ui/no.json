@@ -19,6 +19,7 @@
   "openLive": "Åpne live",
   "openArchived": "Åpne arkivert",
 	"tagsMore": "{count} til",
+	"tagsSearchableAs": "Også søkbar som: {aliases}",
 	"archived": "(arkivert)",
 	"repoForSite": "repositorium for denne siden",
 	"reportIssue": "Rapporter et problem med denne siden"

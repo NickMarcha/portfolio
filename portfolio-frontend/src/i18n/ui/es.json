@@ -19,6 +19,7 @@
   "openLive": "Abrir en vivo",
   "openArchived": "Abrir archivado",
 	"tagsMore": "{count} más",
+	"tagsSearchableAs": "También buscable como: {aliases}",
 	"archived": "(archivado)",
 	"repoForSite": "repositorio de este sitio",
 	"reportIssue": "Reportar un problema con este sitio"

@@ -16,6 +16,8 @@ import { t } from "@/i18n";
 import type { Locale } from "@/i18n";
 import { getProjectContent, supportedLocales, withLang, getPathWithoutLocale } from "@/i18n";
 import { projectData } from "@/data/projectData";
+import { getSearchTerms } from "@/data/tags";
+import type { TagId } from "@/data/tags";
 
 const STORAGE_KEY = "portfolio-theme";
 
@@ -23,7 +25,7 @@ interface SearchProject {
 	slug: string;
 	shortTitle: string;
 	shortDescription: string;
-	tags: string[];
+	tags: TagId[];
 }
 
 interface SearchCommandProps {
@@ -59,14 +61,15 @@ function scoreProject(project: SearchProject, query: string): number {
 	const titleWords = title.split(/\s+/);
 	const descWords = desc.split(/\s+/);
 
-	// Exact tag match (highest priority)
-	if (project.tags.some((tag) => tag.toLowerCase() === q)) return 100;
+	// Exact tag match (label or alias)
+	const tagTerms = project.tags.flatMap((id) => getSearchTerms(id).map((t) => t.toLowerCase()));
+	if (tagTerms.some((term) => term === q)) return 100;
 	// Exact title word match
 	if (titleWords.some((w) => w === q)) return 80;
 	// Exact description word match
 	if (descWords.some((w) => w === q)) return 60;
 	// Partial tag match
-	if (project.tags.some((tag) => tag.toLowerCase().includes(q))) return 40;
+	if (tagTerms.some((term) => term.includes(q))) return 40;
 	// Partial title match
 	if (title.includes(q)) return 30;
 	// Partial description match

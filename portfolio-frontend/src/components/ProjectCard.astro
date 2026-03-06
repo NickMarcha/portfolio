@@ -105,12 +105,17 @@ const { title, description, image, href, slug, pixelArt = false, tags = [], lang
 		border-radius: 4px;
 		border: 1px solid var(--border);
 		background: var(--muted);
-		color: var(--primary);
+		color: var(--text-muted);
 		cursor: pointer;
 		transition: box-shadow 0.15s, color 0.15s;
 	}
-	.project-card :global(.tag:hover) {
+	.project-card :global(.tag .tag-label) {
+		color: var(--primary);
+	}
+	.project-card :global(.tag:hover .tag-label) {
 		color: var(--primary-dark);
+	}
+	.project-card :global(.tag:hover) {
 		box-shadow: var(--shadow);
 	}
 	.project-card :global(.tag-more) {

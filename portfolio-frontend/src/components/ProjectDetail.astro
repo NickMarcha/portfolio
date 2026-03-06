@@ -114,12 +114,17 @@ const DescriptionComponent = components[project.long.descriptionComponent];
 		border-radius: 4px;
 		border: 1px solid var(--border);
 		background: var(--muted);
-		color: var(--primary);
+		color: var(--text-muted);
 		cursor: pointer;
 		transition: box-shadow 0.15s, color 0.15s;
 	}
-	.project-detail :global(.tag:hover) {
+	.project-detail :global(.tag .tag-label) {
+		color: var(--primary);
+	}
+	.project-detail :global(.tag:hover .tag-label) {
 		color: var(--primary-dark);
+	}
+	.project-detail :global(.tag:hover) {
 		box-shadow: var(--shadow);
 	}
 	/* Styles for body-rendered content (e.g. InkyPen bankruptcy notice) */

@@ -1,3 +1,5 @@
+import type { TagId } from "./tags";
+
 export type CarouselItem =
 	| { type: "image"; src: string }
 	| { type: "youtube"; videoId: string }
@@ -7,7 +9,7 @@ export interface IProjectData {
 	slug: string;
 	short: { image: string };
 	long: { descriptionComponent: string; carouselItems: CarouselItem[] };
-	tags: string[];
+	tags: TagId[];
 }
 
 export const projectData: IProjectData[] = [
@@ -15,7 +17,7 @@ export const projectData: IProjectData[] = [
 		slug: "bio",
 		short: { image: "/icon-me.png" },
 		long: { descriptionComponent: "Bio", carouselItems: [] },
-		tags: ["React", ".NET", "C#", "AWS", "Unity", "Java", "Python", "Haskell", "UiB", "HVL", "Docker", "homeserver", "Cloudflare Tunnel"],
+		tags: [2, 1, 0, 5, 6, 7, 8, 9, 39, 40, 10, 41, 42],
 	},
 	{
 		slug: "inkypen",
@@ -31,13 +33,13 @@ export const projectData: IProjectData[] = [
 				{ type: "image", src: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/681220/00fa5e93039377669cb22c7b4b22bf59f06b2273/ss_00fa5e93039377669cb22c7b4b22bf59f06b2273.600x338.jpg?t=1740484986" },
 			],
 		},
-		tags: [".NET", "C#", "React", "TypeScript", "AWS", "Unity", "Electron", "Steam", "Auth0"],
+		tags: [1, 0, 2, 3, 5, 6, 33, 34, 35, 16, 44, 45, 46, 43, 47, 48, 49],
 	},
 	{
 		slug: "kriskogram",
 		short: { image: "/Kriskogram.png" },
 		long: { descriptionComponent: "Kriskogram", carouselItems: [] },
-		tags: ["React", "D3.js", "Vite", "TanStack Router", "visualization", "census"],
+		tags: [2, 13, 14, 15, 17, 18, 43],
 	},
 	{
 		slug: "bachelors-project",
@@ -49,7 +51,7 @@ export const projectData: IProjectData[] = [
 				{ type: "image", src: "/images/xvYLPXT.png" },
 			],
 		},
-		tags: ["VizRT", "NDI", "SRT", "video", "streaming"],
+		tags: [19, 20, 21, 22, 23],
 	},
 	{
 		slug: "raffle-dashboard",
@@ -64,13 +66,13 @@ export const projectData: IProjectData[] = [
 				{ type: "image", src: "https://github.com/NickMarcha/RaffleDashboard/blob/main/documentation/images/RafflePageB.PNG?raw=true" },
 			],
 		},
-		tags: ["Express", "Node.js", "Cheerio", "Axios", "JWT", "Google Spreadsheet"],
+		tags: [11, 12, 24, 25, 26, 27],
 	},
 	{
 		slug: "games",
 		short: { image: "/images/UgyJk8U.png" },
 		long: { descriptionComponent: "GameJams", carouselItems: [] },
-		tags: ["Unity", "Unreal", "Game Jam", "Ludum Dare", "Itch.io"],
+		tags: [6, 29, 30, 31, 32],
 	},
 	{
 		slug: "badlands",
@@ -83,12 +85,12 @@ export const projectData: IProjectData[] = [
 				{ type: "image", src: "https://github.com/NickMarcha/BL-SmallProjects/raw/main/Media/blauction.png" },
 			],
 		},
-		tags: ["Google Spreadsheet API", "GTA V", "Autocode"],
+		tags: [28, 36, 37],
 	},
 	{
 		slug: "school-assignments",
 		short: { image: "/images/9gFfLAO.png" },
 		long: { descriptionComponent: "SchoolAssignments", carouselItems: [] },
-		tags: ["Java", "TypeScript", "JavaScript", "WebGL", "Haskell"],
+		tags: [7, 3, 4, 38, 9],
 	},
 ];
