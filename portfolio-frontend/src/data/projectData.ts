@@ -69,7 +69,7 @@ export const projectData: IProjectData[] = [
 		short: {
 			title: "Bachelor's Project",
 			description: "Ingest video service to work with VizRT application line-up",
-			image: "https://i.imgur.com/xvYLPXT.png",
+			image: "/images/xvYLPXT.png",
 		},
 		long: {
 			title: "Live Video Bachelor's Project",
@@ -80,7 +80,7 @@ export const projectData: IProjectData[] = [
 					videoId: "kBrzMsZ9Ka8",
 					caption: 'Demo video demonstrating streaming from a 5G device across the city to the Transmit server using SRT (<a href="https://en.wikipedia.org/wiki/Secure_Reliable_Transport" target="_blank" rel="noopener noreferrer">Secure Reliable Transport</a>), which is then forwarded on our transmit server locally through NDI (<a href="https://en.wikipedia.org/wiki/Network_Device_Interface" target="_blank" rel="noopener noreferrer">Network Device Interface</a>). The connection is set up through a simple QR code scan which opens the Larix App with appropriate settings for instant setup.',
 				},
-				{ type: "image", src: "https://i.imgur.com/xvYLPXT.png" },
+				{ type: "image", src: "/images/xvYLPXT.png" },
 			],
 		},
 	},
@@ -108,7 +108,7 @@ export const projectData: IProjectData[] = [
 		short: {
 			title: "Games",
 			description: "Global Game Jams, Ludum Dare and other games I have made",
-			image: "https://i.imgur.com/UgyJk8U.png",
+			image: "/images/UgyJk8U.png",
 		},
 		long: {
 			title: "Games, dares, jams",
@@ -121,7 +121,7 @@ export const projectData: IProjectData[] = [
 		short: {
 			title: "BL-SmallProjects",
 			description: "Some small projects I did for a GTA V game server called Badlands",
-			image: "https://i.imgur.com/Wxuam7W.png",
+			image: "/images/Wxuam7W.png",
 		},
 		long: {
 			title: "Badlands Projects",
@@ -138,7 +138,7 @@ export const projectData: IProjectData[] = [
 		short: {
 			title: "School Assignments",
 			description: "Random assortment of school assignments",
-			image: "https://i.imgur.com/9gFfLAO.png",
+			image: "/images/9gFfLAO.png",
 		},
 		long: {
 			title: "School Assignments",

@@ -5,6 +5,7 @@ import {
 	CarouselNext,
 	CarouselPrevious,
 } from "@/components/ui/carousel"
+import { ImageZoom } from "@/components/ui/image-zoom"
 import type { CarouselItem as CarouselItemType } from "@/data/projectData"
 
 interface ProjectImageCarouselProps {
@@ -15,12 +16,14 @@ function CarouselMedia({ item }: { item: CarouselItemType }) {
 	if (item.type === "image") {
 		return (
 			<div className="overflow-hidden rounded-lg">
-				<img
-					src={item.src}
-					alt=""
-					loading="lazy"
-					className="w-full h-auto object-contain"
-				/>
+				<ImageZoom>
+					<img
+						src={item.src}
+						alt=""
+						loading="lazy"
+						className="w-full h-auto object-contain"
+					/>
+				</ImageZoom>
 			</div>
 		)
 	}

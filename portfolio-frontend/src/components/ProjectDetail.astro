@@ -10,6 +10,7 @@ import BadlandsRP from './projects/BadlandsRP.astro';
 import SchoolAssignments from './projects/SchoolAssignments.astro';
 import Kriskogram from './projects/Kriskogram.astro';
 import { ProjectImageCarousel } from './ProjectImageCarousel';
+import { ZoomableImage } from './ZoomableImage';
 
 interface Props {
 	project: IProjectData;
@@ -32,9 +33,13 @@ const DescriptionComponent = components[project.long.descriptionComponent];
 
 <article class="project-detail">
 	{project.slug === 'kriskogram' && (
-		<div class="project-header-image">
-			<img src={KriskogramImage.src} alt="" />
-		</div>
+		<ZoomableImage
+			src={KriskogramImage.src}
+			alt=""
+			className="project-header-image"
+			imgClassName="w-full h-full object-cover block"
+			client:load
+		/>
 	)}
 	<h1>{project.long.title}</h1>
 	{project.long.carouselItems.length > 0 && (

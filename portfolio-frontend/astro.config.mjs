@@ -14,7 +14,7 @@ export default defineConfig({
 	vite: {
 		plugins: [tailwindcss()],
 		optimizeDeps: {
-			include: ['embla-carousel-react', '@tanstack/react-table'],
+			include: ['embla-carousel-react', '@tanstack/react-table', 'react-medium-image-zoom'],
 		},
 	},
 	image: {
