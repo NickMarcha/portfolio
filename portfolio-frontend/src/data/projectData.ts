@@ -71,8 +71,15 @@ export const projectData: IProjectData[] = [
 	{
 		slug: "games",
 		short: { image: "/images/UgyJk8U.png" },
-		long: { descriptionComponent: "GameJams", carouselItems: [] },
-		tags: [6, 29, 30, 31, 32],
+		long: {
+			descriptionComponent: "GameJams",
+			carouselItems: [
+				{ type: "youtube", videoId: "RrQcQ7Dxrbo" },
+				{ type: "youtube", videoId: "jvdWtKLPFmc" },
+				{ type: "image", src: "/images/dovre-kamikaze.png" },
+			],
+		},
+		tags: [6, 29, 30, 31, 32, 50],
 	},
 	{
 		slug: "badlands",

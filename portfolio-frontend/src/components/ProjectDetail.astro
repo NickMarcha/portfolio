@@ -67,6 +67,28 @@ const DescriptionComponent = components[project.long.descriptionComponent];
 			DescriptionComponent && <DescriptionComponent lang={lang} />
 		)}
 	</div>
+	{slug === 'raffle-dashboard' && (
+		<script>
+			(async () => {
+				const el = document.getElementById('raffle-total');
+				if (!el) return;
+				const isLocal =
+					typeof window !== 'undefined' &&
+					(window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+				const apiUrl = isLocal ? 'http://localhost:3000' : 'https://api-portfolio.nickmarcha.com';
+				try {
+					const res = await fetch(`${apiUrl}/api/raffledashboardlatest`);
+					if (res.ok) {
+						const data = (await res.json()) as { donationTotal?: number };
+						el.textContent = Math.round(data.donationTotal ?? 0).toLocaleString('en-US');
+						el.title = '';
+					}
+				} catch {
+					// API not available, keep placeholder
+				}
+			})();
+		</script>
+	)}
 	{project.tags.length > 0 && <TagList tags={project.tags} lang={lang} maxVisible={999} client:load />}
 </article>
 

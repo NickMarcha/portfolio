@@ -56,6 +56,7 @@ export const TAG_DEFS: TagDef[] = [
 	{ label: "CloudFront", aliases: [] },
 	{ label: "Lambda", aliases: ["aws-lambda"] },
 	{ label: "RDS", aliases: ["aws-rds"] },
+	{ label: "VR", aliases: ["virtual-reality"] },
 ];
 
 export type TagId = number;
