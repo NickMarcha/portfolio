@@ -15,7 +15,7 @@ export const projectData: IProjectData[] = [
 		slug: "bio",
 		short: { image: "/icon-me.png" },
 		long: { descriptionComponent: "Bio", carouselItems: [] },
-		searchKeywords: ["React", ".NET", "C#", "AWS", "Unity", "Java", "Python", "Haskell", "UiB", "HVL"],
+		searchKeywords: ["React", ".NET", "C#", "AWS", "Unity", "Java", "Python", "Haskell", "UiB", "HVL", "Docker", "homeserver", "Cloudflare Tunnel"],
 	},
 	{
 		slug: "inkypen",

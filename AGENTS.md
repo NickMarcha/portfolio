@@ -69,6 +69,14 @@ Monorepo: Astro frontend (static, GitHub Pages) + Node/Express backend (Docker, 
 - **Blog**: Deprecated for now; i18n basics in place (lang from path, `t()` for UI). Blog post content (markdown) stays English-only.
 - **Admin**: Stays English; no i18n.
 
+## AI Writing Avoidance
+
+**Canonical reference:** [docs/Signs_of_AI_writing.md](docs/Signs_of_AI_writing.md)
+
+When writing **significant text** (anything beyond a couple words—e.g. button labels, short UI strings), read the reference file first. It lists patterns of AI writing to avoid. Apply these as rules. Do NOT start writing yet—ask clarifying questions first.
+
+Skip this step for trivial copy: a few words for buttons, links, headings, or similar.
+
 ## Design Guidelines (Uncodixfy)
 
 **Canonical reference:** [docs/Uncodixfy.md](docs/Uncodixfy.md)
