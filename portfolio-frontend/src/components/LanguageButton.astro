@@ -1,0 +1,111 @@
+---
+import type { Locale } from '../i18n';
+import { supportedLocales, getLangFromUrl, getPathWithoutLocale, useTranslatedPath } from '../i18n';
+
+const url = Astro.url;
+const currentLang = getLangFromUrl(url);
+const localeLabels: Record<Locale, string> = { en: 'English', no: 'Norsk', es: 'Español' };
+const otherLangs = supportedLocales.filter((l) => l !== currentLang);
+const translatePath = useTranslatedPath(currentLang);
+const basePath = getPathWithoutLocale(url);
+---
+<div id="language-toggle" class="language-toggle">
+	<button type="button" class="language-toggle-btn" aria-haspopup="listbox" aria-expanded="false" aria-label="Language">
+		<span class="language-label">{localeLabels[currentLang]}</span>
+	</button>
+	<ul class="language-menu" role="listbox" aria-label="Language selection">
+		{otherLangs.map((lang) => (
+			<li role="option">
+				<a href={translatePath(basePath, lang)} class="language-option">
+					{localeLabels[lang]}
+				</a>
+			</li>
+		))}
+	</ul>
+</div>
+
+<script>
+	function init() {
+		const container = document.getElementById('language-toggle');
+		const btn = container?.querySelector('.language-toggle-btn');
+		const menu = container?.querySelector('.language-menu');
+		if (!container || !btn || !menu) return;
+
+		btn.addEventListener('click', (e) => {
+			e.stopPropagation();
+			const open = menu.classList.toggle('open');
+			btn.setAttribute('aria-expanded', String(open));
+		});
+
+		document.addEventListener('click', (e) => {
+			if (!container.contains(e.target)) {
+				menu.classList.remove('open');
+				btn.setAttribute('aria-expanded', 'false');
+			}
+		});
+	}
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', init);
+	} else {
+		init();
+	}
+</script>
+
+<style>
+	.language-toggle {
+		position: fixed;
+		top: 1.5rem;
+		left: 1.5rem;
+		z-index: 100;
+	}
+	.language-toggle-btn {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.5rem 1rem;
+		background: var(--surface);
+		color: var(--text);
+		border: 1px solid var(--border);
+		border-radius: 8px;
+		box-shadow: var(--shadow);
+		cursor: pointer;
+		font-family: inherit;
+		font-size: 0.9rem;
+	}
+	.language-toggle-btn:hover {
+		box-shadow: var(--shadow-hover);
+	}
+	.language-menu {
+		position: absolute;
+		top: 100%;
+		left: 0;
+		margin-top: 0.5rem;
+		min-width: 120px;
+		padding: 0.25rem;
+		background: var(--surface);
+		border: 1px solid var(--border);
+		border-radius: 8px;
+		box-shadow: var(--shadow-hover);
+		list-style: none;
+		margin: 0;
+		opacity: 0;
+		visibility: hidden;
+		transition: opacity 0.2s, visibility 0.2s;
+	}
+	.language-menu.open {
+		opacity: 1;
+		visibility: visible;
+	}
+	.language-option {
+		display: block;
+		padding: 0.5rem 0.75rem;
+		border-radius: 6px;
+		color: var(--text);
+		text-decoration: none;
+		font-size: 0.9rem;
+	}
+	.language-option:hover {
+		background: var(--primary-soft);
+		color: var(--primary);
+	}
+</style>

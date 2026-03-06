@@ -6,17 +6,22 @@ import Footer from '../../components/Footer.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 import GitHubButton from '../../components/GitHubButton.astro';
 import ThemeToggle from '../../components/ThemeToggle.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
+import LanguageButton from '../../components/LanguageButton.astro';
+import ShareButton from '../../components/ShareButton.astro';
+import { getLangFromUrl, t } from '../../i18n';
 
+const lang = getLangFromUrl(Astro.url);
+const siteTitle = t('siteTitle', lang);
+const siteDescription = t('siteDescription', lang);
 const posts = (await getCollection('blog')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
 	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<BaseHead title={siteTitle} description={siteDescription} lang={lang} />
 		<style>
 			main {
 				width: 960px;
@@ -110,7 +115,9 @@ const posts = (await getCollection('blog')).sort(
 			</section>
 		</main>
 		<Footer />
-		<GitHubButton />
-		<ThemeToggle />
+		<ShareButton pathname="/blog" lang={lang} />
+		<LanguageButton />
+		<GitHubButton lang={lang} />
+		<ThemeToggle lang={lang} />
 	</body>
 </html>

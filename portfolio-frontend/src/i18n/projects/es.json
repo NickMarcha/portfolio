@@ -1,0 +1,50 @@
+{
+  "bio": {
+    "shortTitle": "Bio",
+    "shortDescription": "¿Quién soy?",
+    "longTitle": "Nick",
+    "body": "<div class=\"bio\"><p>Soy Nick, ingeniero de software de Bergen, Noruega. Me gradué con una licenciatura en Informática (Desarrollo de Software) de la <a href=\"https://www.hvl.no/en/\" target=\"_blank\" rel=\"noopener noreferrer\">Universidad de Ciencias Aplicadas del Oeste de Noruega (HVL)</a> en 2021, y actualmente estoy en mi segundo semestre de un <a href=\"https://www4.uib.no/en/studies/programmes/informatics-masters/plan-7\" target=\"_blank\" rel=\"noopener noreferrer\">Máster en Informática (Visualización)</a> en la Universidad de Bergen (UiB).</p><p>Trabajé como Ingeniero Full Stack en <a href=\"https://www.proff.no/selskap/inkypen-as/bergen/internettdesign-og-programmering/IF7G5KD0C2C\" target=\"_blank\" rel=\"noopener noreferrer\">InkyPen AS</a> de sep. 2023 a ago. 2025 (despidos por condiciones económicas), donde contribuí a plataformas de distribución digital B2B y B2C de cómics y manga. Tengo experiencia con AWS, .NET, React/TypeScript, Unity, C#, Java, Python, Haskell y más. También fui líder de grupo para INF214 (Programación concurrente) en UiB y asistente estudiantil en HVL.</p><p>Me interesan las nuevas tecnologías y soluciones, disfruto trabajar en equipos diversos y no tengo miedo de hacer preguntas. He participado en Bergen Game Jam tres veces (voluntario dos veces), tres Ludum Dare jams, y anteriormente fui Coordinador de Voluntarios y Asistente Webmaster de Konsoll (Conferencia de Desarrollo de Juegos). Algunos de mis proyectos de game jam están en <a href=\"https://nickmarcha.itch.io/\" target=\"_blank\" rel=\"noopener noreferrer\">nickmarcha.itch.io</a>.</p><p><strong>Contacto:</strong> <a href=\"mailto:nicolasmmjoes@outlook.com\">nicolasmmjoes@outlook.com</a> · Bergen, Noruega</p><p><strong>Idiomas:</strong> Noruego (nativo), español (fluido), inglés (fluido), alemán (nivel bueno)</p></div>"
+  },
+  "inkypen": {
+    "shortTitle": "InkyPen",
+    "shortDescription": "Ingeniero Full Stack en InkyPen AS (sep. 2023 – ago. 2025)",
+    "longTitle": "InkyPen AS",
+    "carouselCaptions": {}
+  },
+  "kriskogram": {
+    "shortTitle": "Kriskogramas interactivos",
+    "shortDescription": "Visualización interactiva de migración con Ego Focus y Temporal Overlay. React, D3.js, datos del censo de EE.UU.",
+    "longTitle": "Kriskogramas interactivos"
+  },
+  "bachelors-project": {
+    "shortTitle": "Proyecto de Bachelor",
+    "shortDescription": "Servicio de ingestión de video para la línea de aplicaciones VizRT",
+    "longTitle": "Proyecto de Bachelor en video en vivo",
+    "body": "<div class=\"bachelors-project\"><p>Este proyecto se realizó en colaboración con <a href=\"https://www.vizrt.com/\" target=\"_blank\" rel=\"noopener noreferrer\">Vizrt Bergen</a>. El objetivo era crear un servicio que de la forma más amigable posible pudiera actuar como servidor de ingestión y retransmitir video en un formato (<a href=\"https://ndi.video/tech/\" target=\"_blank\" rel=\"noopener noreferrer\">NDI</a>) compatible con la línea de aplicaciones Vizrt. Los periodistas podrían mediante sus teléfonos/acceso remoto iniciar una transmisión en los sistemas cerrados de Vizrt y luego usar cualquier dispositivo compatible con SRT, p. ej. smartphone con <a href=\"https://softvelum.com/larix/\" target=\"_blank\" rel=\"noopener noreferrer\">Larix Broadcaster</a>, para transmitir video de baja latencia. La transmisión de video estaría disponible en segundos en el sistema Vizrt y lista para usar en sus pipelines de producción en vivo o pregrabados.</p><p>El repositorio de GitHub es privado pero tengo una copia del readme <a href=\"https://github.com/NickMarcha/NickMarchaPortfolio/blob/main/client/public/docs/bachelor.md\" target=\"_blank\" rel=\"noopener noreferrer\">aquí</a>. La documentación de la API backend de Postman está disponible <a href=\"https://documenter.getpostman.com/view/10136250/TzRNDV4f\" target=\"_blank\" rel=\"noopener noreferrer\">aquí</a>.</p><p><a href=\"https://github.com/NickMarcha/NickMarchaPortfolio/blob/main/client/public/docs/Bachelorpresentasjon.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">Diapositivas noruegas de Bachelor</a></p></div>",
+    "carouselCaptions": {
+      "0": "Video demo que muestra streaming desde un dispositivo 5G a través de la ciudad al servidor Transmit usando SRT (<a href=\"https://en.wikipedia.org/wiki/Secure_Reliable_Transport\" target=\"_blank\" rel=\"noopener noreferrer\">Secure Reliable Transport</a>), que luego se reenvía en nuestro servidor transmit localmente a través de NDI (<a href=\"https://en.wikipedia.org/wiki/Network_Device_Interface\" target=\"_blank\" rel=\"noopener noreferrer\">Network Device Interface</a>). La conexión se configura mediante un simple escaneo de código QR que abre la app Larix con la configuración adecuada para una configuración instantánea."
+    }
+  },
+  "raffle-dashboard": {
+    "shortTitle": "Raffle Dashboard",
+    "shortDescription": "Una aplicación web para rifas benéficas",
+    "longTitle": "Charity Raffle Dashboard",
+    "carouselCaptions": {}
+  },
+  "games": {
+    "shortTitle": "Juegos",
+    "shortDescription": "Global Game Jams, Ludum Dare y otros juegos que he hecho",
+    "longTitle": "Juegos, dares, jams"
+  },
+  "badlands": {
+    "shortTitle": "BL-SmallProjects",
+    "shortDescription": "Algunos proyectos pequeños que hice para un servidor de GTA V llamado Badlands",
+    "longTitle": "Proyectos Badlands",
+    "carouselCaptions": {}
+  },
+  "school-assignments": {
+    "shortTitle": "Tareas escolares",
+    "shortDescription": "Surrido aleatorio de tareas escolares",
+    "longTitle": "Tareas escolares"
+  }
+}

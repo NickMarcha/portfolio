@@ -1,4 +1,10 @@
 ---
+import { ExternalLink } from '../ExternalLink';
+
+interface Props {
+	lang?: import('../../i18n').Locale;
+}
+const { lang = 'en' } = Astro.props;
 ---
 <div class="inky-pen">
 	<aside class="bankruptcy-notice">
@@ -8,7 +14,7 @@
 		<strong>InkyPen AS</strong>: Delivering digital U.S. comic books, manga and European comics internationally.<br />
 		Sep. 2023 – Aug. 2025 (Company-wide layoffs due to economic conditions)<br />
 		Full Stack Engineer, Bergen<br />
-		<a href="https://web.archive.org/web/20251121112954/https://inky-pen.com/" target="_blank" rel="noopener noreferrer">Home Page (archived)</a>, <a href="https://steamcommunity.com/app/681220" target="_blank" rel="noopener noreferrer">Steam Community</a> <a href="https://web.archive.org/web/20260301171529/https://store.steampowered.com/app/681220/InkyPen/" target="_blank" rel="noopener noreferrer">(archived)</a>, <a href="https://www.nintendo.com/us/store/products/inkypen-switch/" target="_blank" rel="noopener noreferrer">Nintendo eShop</a>, <a href="https://kodansha.us/" target="_blank" rel="noopener noreferrer">B2B Customer Kodansha</a>
+		<ExternalLink archivedHref="https://web.archive.org/web/20251121112954/https://inky-pen.com/" label="Home Page" lang={lang} client:load />, <ExternalLink liveHref="https://steamcommunity.com/app/681220" archivedHref="https://web.archive.org/web/20260301171529/https://store.steampowered.com/app/681220/InkyPen/" label="Steam Community" lang={lang} client:load />, <a href="https://www.nintendo.com/us/store/products/inkypen-switch/" target="_blank" rel="noopener noreferrer">Nintendo eShop</a>, <a href="https://kodansha.us/" target="_blank" rel="noopener noreferrer">B2B Customer Kodansha</a>
 	</p>
 	<p>
 		Key contributor in a small, international team, responsible for developing and maintaining full-stack B2B and B2C digital distribution platforms. Collaborated closely with the Head Designer and Project Managers (B2B & B2C) to take features from concept to implementation in a fast-paced, agile environment. Experience with AWS cloud infrastructure, .NET backend, React/TypeScript frontend, and integration with external APIs.

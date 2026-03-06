@@ -13,6 +13,7 @@
 		"dev:backend": "npm run dev --workspace=portfolio-backend",
 		"build": "npm run build --workspaces",
 		"build:frontend": "npm run build --workspace=portfolio-frontend",
+		"generate-qr": "npm run generate-qr --workspace=portfolio-frontend",
 		"build:backend": "npm run build --workspace=portfolio-backend",
 		"test": "npm run test --workspaces --if-present",
 		"test:frontend": "npm run test --workspace=portfolio-frontend --if-present",

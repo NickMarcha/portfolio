@@ -10,11 +10,16 @@ import { defineConfig, passthroughImageService } from 'astro/config';
 export default defineConfig({
 	site: 'https://portfolio.nickmarcha.com',
 	base: '/',
+	i18n: {
+		defaultLocale: 'en',
+		locales: ['en', 'no', 'es'],
+		routing: { prefixDefaultLocale: false },
+	},
 	integrations: [mdx(), react(), sitemap()],
 	vite: {
 		plugins: [tailwindcss()],
 		optimizeDeps: {
-			include: ['embla-carousel-react', '@tanstack/react-table', 'react-medium-image-zoom'],
+			include: ['embla-carousel-react', '@tanstack/react-table', 'react-medium-image-zoom', 'cmdk'],
 		},
 	},
 	image: {

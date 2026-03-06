@@ -1,4 +1,10 @@
 ---
+import { t } from '../i18n';
+
+interface Props {
+	lang?: string;
+}
+const { lang = 'en' } = Astro.props;
 ---
 <div class="github-button">
 	<a href="https://github.com/NickMarcha" target="_blank" rel="noopener noreferrer" class="github-btn">
@@ -9,7 +15,8 @@
 	</a>
 	<div class="github-dropdown-menu">
 		<a href="https://github.com/NickMarcha" target="_blank" rel="noopener noreferrer">github.com/NickMarcha</a>
-		<a href="https://github.com/NickMarcha/portfolio" target="_blank" rel="noopener noreferrer">repository for this site</a>
+		<a href="https://github.com/NickMarcha/portfolio" target="_blank" rel="noopener noreferrer">{t('repoForSite', lang)}</a>
+		<a href="https://github.com/NickMarcha/portfolio/issues/new" target="_blank" rel="noopener noreferrer">{t('reportIssue', lang)}</a>
 	</div>
 </div>
 

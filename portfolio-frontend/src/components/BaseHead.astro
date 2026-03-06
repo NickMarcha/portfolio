@@ -10,11 +10,13 @@ interface Props {
 	title: string;
 	description: string;
 	image?: ImageMetadata;
+	lang?: string;
 }
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const url = Astro.url;
+const canonicalURL = new URL(url.pathname + (url.search || ''), Astro.site);
 
-const { title, description, image = FallbackImage } = Astro.props;
+const { title, description, image = FallbackImage, lang = 'en' } = Astro.props;
 ---
 
 <!-- Theme: apply stored preference before paint to avoid flash -->

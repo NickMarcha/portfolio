@@ -6,13 +6,17 @@ import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import GitHubButton from '../components/GitHubButton.astro';
 import ThemeToggle from '../components/ThemeToggle.astro';
+import LanguageButton from '../components/LanguageButton.astro';
+import ShareButton from '../components/ShareButton.astro';
+import { getLangFromUrl } from '../i18n';
 
 type Props = CollectionEntry<'blog'>['data'];
 
 const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const lang = getLangFromUrl(Astro.url);
 ---
 
-<html lang="en">
+<html lang={lang}>
 	<head>
 		<BaseHead title={title} description={description} />
 		<style>
@@ -82,7 +86,9 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 			</article>
 		</main>
 		<Footer />
-		<GitHubButton />
-		<ThemeToggle />
+		<ShareButton pathname={Astro.url.pathname} lang={lang} />
+		<LanguageButton />
+		<GitHubButton lang={lang} />
+		<ThemeToggle lang={lang} />
 	</body>
 </html>

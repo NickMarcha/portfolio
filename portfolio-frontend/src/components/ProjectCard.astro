@@ -3,14 +3,15 @@ interface Props {
 	title: string;
 	description: string;
 	image: string;
-	slug: string;
+	href: string;
+	slug?: string;
 	pixelArt?: boolean;
 }
 
-const { title, description, image, slug, pixelArt = false } = Astro.props;
+const { title, description, image, href, slug, pixelArt = false } = Astro.props;
 ---
 
-<a href={`/projects/${slug}`} class="project-card">
+<a href={href} class="project-card" data-project-slug={slug}>
 	<img src={image} alt={title} loading="lazy" class:list={[{ 'pixel-art': pixelArt }]} />
 	<div class="card-content">
 		<h3>{title}</h3>

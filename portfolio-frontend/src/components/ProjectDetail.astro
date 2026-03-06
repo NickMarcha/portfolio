@@ -1,5 +1,6 @@
 ---
 import type { IProjectData } from '../../data/projectData';
+import type { Locale } from '../../i18n';
 import Bio from './projects/Bio.astro';
 import InkyPen from './projects/InkyPen.astro';
 import KriskogramImage from '../assets/Kriskogram.png';
@@ -12,12 +13,23 @@ import Kriskogram from './projects/Kriskogram.astro';
 import { ProjectImageCarousel } from './ProjectImageCarousel';
 import { ZoomableImage } from './ZoomableImage';
 
+interface CarouselItemWithCaption {
+	type: 'image' | 'youtube' | 'video';
+	src?: string;
+	videoId?: string;
+	caption?: string;
+}
+
 interface Props {
 	project: IProjectData;
 	slug: string;
+	lang: Locale;
+	longTitle: string;
+	carouselItems: CarouselItemWithCaption[];
+	body?: string;
 }
 
-const { project, slug } = Astro.props;
+const { project, slug, lang, longTitle, carouselItems, body } = Astro.props;
 const components: Record<string, typeof Bio> = {
 	Bio,
 	InkyPen,
@@ -41,14 +53,18 @@ const DescriptionComponent = components[project.long.descriptionComponent];
 			client:load
 		/>
 	)}
-	<h1>{project.long.title}</h1>
-	{project.long.carouselItems.length > 0 && (
+	<h1 data-i18n-long-title={slug}>{longTitle}</h1>
+	{carouselItems.length > 0 && (
 		<div class="project-images">
-			<ProjectImageCarousel items={project.long.carouselItems} client:load />
+			<ProjectImageCarousel items={carouselItems} projectSlug={slug} client:load />
 		</div>
 	)}
-	<div class="project-description">
-		{DescriptionComponent && <DescriptionComponent />}
+	<div class="project-description" data-i18n-body={slug}>
+		{body ? (
+			<div set:html={body} />
+		) : (
+			DescriptionComponent && <DescriptionComponent lang={lang} />
+		)}
 	</div>
 </article>
 
@@ -74,5 +90,17 @@ const DescriptionComponent = components[project.long.descriptionComponent];
 	}
 	.project-description {
 		margin-top: 1.5em;
+	}
+	/* Styles for body-rendered content (e.g. InkyPen bankruptcy notice) */
+	.project-description :global(.bankruptcy-notice) {
+		padding: 1rem 1.25rem;
+		margin-bottom: 1.5rem;
+		background: rgba(234, 179, 8, 0.12);
+		border-left: 4px solid rgb(202, 138, 4);
+		border-radius: 0 6px 6px 0;
+		font-size: 0.95em;
+	}
+	.project-description :global(.bankruptcy-notice a) {
+		color: var(--primary);
 	}
 </style>

@@ -1,0 +1,23 @@
+{
+  "siteTitle": "Nick Marcha",
+  "siteDescription": "Portafolio de Nick: desarrollador, entusiasta de game jams, ingeniero fullstack y estudiante de máster en Visualización en UiB.",
+  "projects": "Proyectos",
+  "backToProjects": "← Volver a proyectos",
+  "theme": "Tema",
+  "themeLight": "Claro",
+  "themeDark": "Oscuro",
+  "themeSystem": "Sistema",
+  "blog": "Blog",
+  "searchPlaceholder": "Buscar proyectos...",
+  "noResults": "No se encontraron resultados.",
+  "settings": "Ajustes",
+  "language": "Idioma",
+  "share": "Compartir",
+  "copyLink": "Copiar enlace",
+  "showQR": "Mostrar código QR",
+  "openLive": "Abrir en vivo",
+  "openArchived": "Abrir archivado",
+	"archived": "(archivado)",
+	"repoForSite": "repositorio de este sitio",
+	"reportIssue": "Reportar un problema con este sitio"
+}

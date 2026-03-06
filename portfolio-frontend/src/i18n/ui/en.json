@@ -1,0 +1,23 @@
+{
+  "siteTitle": "Nick Marcha",
+  "siteDescription": "Portfolio of Nick: developer, game jam enthusiast, fullstack engineer, and Visualization Master's student at UiB.",
+  "projects": "Projects",
+  "backToProjects": "← Back to projects",
+  "theme": "Theme",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "themeSystem": "System",
+  "blog": "Blog",
+  "searchPlaceholder": "Search projects...",
+  "noResults": "No results found.",
+  "settings": "Settings",
+  "language": "Language",
+  "share": "Share",
+  "copyLink": "Copy link",
+  "showQR": "Show QR code",
+  "openLive": "Open live",
+  "openArchived": "Open archived",
+	"archived": "(archived)",
+	"repoForSite": "repository for this site",
+	"reportIssue": "Report an issue with this site"
+}

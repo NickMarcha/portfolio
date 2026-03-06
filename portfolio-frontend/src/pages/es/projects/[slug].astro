@@ -1,13 +1,13 @@
 ---
-import BaseHead from '../../components/BaseHead.astro';
-import Footer from '../../components/Footer.astro';
-import GitHubButton from '../../components/GitHubButton.astro';
-import ThemeToggle from '../../components/ThemeToggle.astro';
-import LanguageButton from '../../components/LanguageButton.astro';
-import ShareButton from '../../components/ShareButton.astro';
-import ProjectDetail from '../../components/ProjectDetail.astro';
-import { projectData } from '../../data/projectData';
-import { getLangFromUrl, getProjectContent, t, withLang } from '../../i18n';
+import BaseHead from '../../../components/BaseHead.astro';
+import Footer from '../../../components/Footer.astro';
+import GitHubButton from '../../../components/GitHubButton.astro';
+import ThemeToggle from '../../../components/ThemeToggle.astro';
+import LanguageButton from '../../../components/LanguageButton.astro';
+import ShareButton from '../../../components/ShareButton.astro';
+import ProjectDetail from '../../../components/ProjectDetail.astro';
+import { projectData } from '../../../data/projectData';
+import { getProjectContent, t, withLang } from '../../../i18n';
 
 export function getStaticPaths() {
 	return projectData.map((project) => ({
@@ -17,7 +17,7 @@ export function getStaticPaths() {
 }
 
 const { project, slug } = Astro.props;
-const lang = getLangFromUrl(Astro.url);
+const lang = 'es';
 const content = getProjectContent(slug, lang);
 const siteTitle = t('siteTitle', lang);
 const pageTitle = `${content?.longTitle ?? slug} | ${siteTitle}`;
@@ -35,7 +35,7 @@ const carouselItemsWithCaptions = project.long.carouselItems.map((item, i) => ({
 	</head>
 	<body>
 		<main>
-			<a href={withLang('/', lang)} class="back-link" data-i18n-key="backToProjects">{t('backToProjects', lang)}</a>
+			<a href={withLang('/', lang)} class="back-link">{t('backToProjects', lang)}</a>
 			<ProjectDetail
 				project={project}
 				slug={slug}
@@ -46,7 +46,7 @@ const carouselItemsWithCaptions = project.long.carouselItems.map((item, i) => ({
 			/>
 		</main>
 		<Footer />
-		<ShareButton pathname={`/projects/${slug}`} lang={lang} />
+		<ShareButton pathname={`/es/projects/${slug}`} lang={lang} />
 		<LanguageButton />
 		<GitHubButton lang={lang} />
 		<ThemeToggle lang={lang} />

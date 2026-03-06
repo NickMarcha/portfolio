@@ -9,7 +9,8 @@ import { ImageZoom } from "@/components/ui/image-zoom"
 import type { CarouselItem as CarouselItemType } from "@/data/projectData"
 
 interface ProjectImageCarouselProps {
-	items: CarouselItemType[]
+	items: (CarouselItemType & { caption?: string })[]
+	projectSlug?: string
 }
 
 function CarouselMedia({ item }: { item: CarouselItemType }) {
@@ -53,7 +54,7 @@ function CarouselMedia({ item }: { item: CarouselItemType }) {
 	)
 }
 
-export function ProjectImageCarousel({ items }: ProjectImageCarouselProps) {
+export function ProjectImageCarousel({ items, projectSlug }: ProjectImageCarouselProps) {
 	const showControls = items.length > 1
 
 	return (
@@ -70,6 +71,9 @@ export function ProjectImageCarousel({ items }: ProjectImageCarouselProps) {
 								<p
 									className="text-sm text-muted-foreground [&_a]:text-primary [&_a]:underline [&_a]:underline-offset-2 hover:[&_a]:opacity-80"
 									dangerouslySetInnerHTML={{ __html: item.caption }}
+									data-carousel-caption={projectSlug ? '' : undefined}
+									data-project-slug={projectSlug}
+									data-caption-index={projectSlug ? String(index) : undefined}
 								/>
 							)}
 						</div>
