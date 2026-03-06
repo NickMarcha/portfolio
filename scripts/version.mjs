@@ -61,6 +61,13 @@ function prompt(question, choices = null) {
 }
 
 async function main() {
+	// 1. Abort if there are uncommitted changes
+	const status = execSync("git status --porcelain", { cwd: ROOT, encoding: "utf-8" });
+	if (status.trim()) {
+		console.error("Aborting: you have uncommitted changes. Commit or stash them first.");
+		process.exit(1);
+	}
+
 	let target = process.argv[2]?.toLowerCase();
 	let bumpType = process.argv[3]?.toLowerCase();
 
@@ -79,7 +86,7 @@ async function main() {
 
 	console.log(`\n${target}: ${current} → ${next}\n`);
 
-	// Update package.json
+	// 2. Bump package.json
 	pkg.version = next;
 	writeFileSync(pkgPath, JSON.stringify(pkg, null, "\t") + "\n");
 
@@ -93,15 +100,27 @@ async function main() {
 		writeFileSync(BACKEND_COMPOSE, compose);
 	}
 
-	// Create git tag
+	// 3. Commit
+	const filesToAdd = isFrontend
+		? "portfolio-frontend/package.json"
+		: "portfolio-backend/package.json portfolio-backend/docker-compose.yml";
+	execSync(`git add ${filesToAdd}`, { cwd: ROOT });
+	execSync(`git commit -m "chore: bump ${target} to ${next}"`, { cwd: ROOT });
+
+	// 4. Create git tag
 	const tag = `${target}-v${next}`;
 	execSync(`git tag ${tag}`, { cwd: ROOT });
 
-	console.log(`Created tag: ${tag}`);
-	console.log(`\nNext steps:`);
-	console.log(`  git add ${isFrontend ? "portfolio-frontend/package.json" : "portfolio-backend/package.json portfolio-backend/docker-compose.yml"}`);
-	console.log(`  git commit -m "chore: bump ${target} to ${next}"`);
-	console.log(`  git push origin ${tag}`);
+	console.log(`Committed and created tag: ${tag}`);
+
+	// 5. Prompt before pushing
+	const push = await prompt(`Push ${tag} to origin? (y/n): `, ["y", "n"]);
+	if (push === "y") {
+		execSync(`git push origin ${tag}`, { cwd: ROOT, stdio: "inherit" });
+		console.log(`Pushed ${tag}`);
+	} else {
+		console.log(`Skipped push. Run: git push origin ${tag}`);
+	}
 }
 
 main().catch((err) => {
