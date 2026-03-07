@@ -9,6 +9,7 @@ import ProjectDetail from '../../../components/ProjectDetail.astro';
 import { GlobalSearch, SearchCommandTrigger } from '../../../components/SearchCommand';
 import { projectData } from '../../../data/projectData';
 import { getProjectContent, t, withLang } from '../../../i18n';
+import WatermarkBackground from '../../../components/WatermarkBackground.astro';
 
 export function getStaticPaths() {
 	return projectData.map((project) => ({
@@ -35,11 +36,15 @@ const carouselItemsWithCaptions = project.long.carouselItems.map((item, i) => ({
 		<BaseHead title={pageTitle} description={pageDescription} lang={lang} />
 	</head>
 	<body>
+		<WatermarkBackground />
 		<main>
-			<div class="back-row">
-				<a href={withLang('/', lang)} class="back-link">{t('backToProjects', lang)}</a>
+			<div class="project-header-row">
+				<div class="home-block">
+					<a href={withLang('/', lang)} class="back-link">{t('backToProjects', lang)}</a>
+				</div>
 				<SearchCommandTrigger lang={lang} client:load />
 			</div>
+			<div class="project-content-block">
 			<ProjectDetail
 				project={project}
 				slug={slug}
@@ -48,6 +53,7 @@ const carouselItemsWithCaptions = project.long.carouselItems.map((item, i) => ({
 				carouselItems={carouselItemsWithCaptions}
 				body={content?.body}
 			/>
+			</div>
 		</main>
 		<Footer />
 		<GlobalSearch lang={lang} client:load />
@@ -59,11 +65,12 @@ const carouselItemsWithCaptions = project.long.carouselItems.map((item, i) => ({
 </html>
 
 <style>
-	.back-row {
+	.project-header-row {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		margin-bottom: 1.5em;
+		gap: 0.75rem;
+		margin-bottom: 1em;
 	}
 	.back-link {
 		text-decoration: none;

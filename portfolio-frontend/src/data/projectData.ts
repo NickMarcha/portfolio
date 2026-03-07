@@ -44,7 +44,7 @@ export const projectData: IProjectData[] = [
 				{ type: "video", src: "/video/kriskogram-demo.mp4" },
 			],
 		},
-		tags: [2, 13, 14, 15, 17, 18, 43],
+		tags: [2, 13, 14, 15, 17, 18, 43, 51],
 	},
 	{
 		slug: "bachelors-project",

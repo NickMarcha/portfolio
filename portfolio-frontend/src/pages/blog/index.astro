@@ -10,6 +10,7 @@ import LanguageButton from '../../components/LanguageButton.astro';
 import ShareButton from '../../components/ShareButton.astro';
 import { GlobalSearch, SearchCommandTrigger } from '../../components/SearchCommand';
 import { getLangFromUrl, t } from '../../i18n';
+import WatermarkBackground from '../../components/WatermarkBackground.astro';
 
 const lang = getLangFromUrl(Astro.url);
 const siteTitle = t('siteTitle', lang);
@@ -94,6 +95,7 @@ const posts = (await getCollection('blog')).sort(
 		</style>
 	</head>
 	<body>
+		<WatermarkBackground />
 		<main>
 			<section>
 				<ul>

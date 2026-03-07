@@ -1,6 +1,7 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
 import AdminVisitsTable from '../components/AdminVisitsTable';
+import WatermarkBackground from '../components/WatermarkBackground.astro';
 ---
 
 <!doctype html>
@@ -10,6 +11,7 @@ import AdminVisitsTable from '../components/AdminVisitsTable';
 		<meta name="robots" content="noindex" />
 	</head>
 	<body>
+		<WatermarkBackground />
 		<main class="admin-page">
 			<h1>Visit Analytics</h1>
 			<AdminVisitsTable client:load />

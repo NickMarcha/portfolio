@@ -1,0 +1,68 @@
+---
+import {
+	buildWatermarkLines,
+	getLineAnimationDuration,
+	getAllTagLabels,
+} from "../utils/watermark";
+
+const tagText = getAllTagLabels();
+const watermarkLines = buildWatermarkLines(tagText, "upper");
+const speedMin = 392;
+const speedMax = 784;
+---
+
+<div class="watermark-layer">
+	<div class="watermark-inner">
+		{watermarkLines.map((line, i) => {
+			const duration = getLineAnimationDuration(i, speedMin, speedMax);
+			return (
+				<div class="watermark-line" style="overflow: hidden; width: 100%">
+					<span
+						class="watermark-span"
+						style={`animation: watermark-scroll ${duration}s linear infinite`}
+					>
+						{line}
+						{line}
+					</span>
+				</div>
+			);
+		})}
+	</div>
+</div>
+
+<style>
+	.watermark-layer {
+		position: fixed;
+		inset: 0;
+		overflow: hidden;
+		pointer-events: none;
+		z-index: -1;
+	}
+
+	.watermark-inner {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		margin-left: -100vmax;
+		margin-top: -100vmax;
+		width: 200vmax;
+		line-height: 2.5;
+		font-size: 1.125rem;
+		opacity: 0.15;
+		transform: rotate(-15deg);
+		transform-origin: center center;
+		color: var(--text);
+		white-space: pre;
+		font-weight: 500;
+		user-select: none;
+	}
+
+	.watermark-line {
+		overflow: hidden;
+		width: 100%;
+	}
+
+	.watermark-span {
+		display: inline-block;
+	}
+</style>

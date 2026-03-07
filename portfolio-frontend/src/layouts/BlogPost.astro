@@ -10,6 +10,7 @@ import LanguageButton from '../components/LanguageButton.astro';
 import ShareButton from '../components/ShareButton.astro';
 import { GlobalSearch, SearchCommandTrigger } from '../components/SearchCommand';
 import { getLangFromUrl } from '../i18n';
+import WatermarkBackground from '../components/WatermarkBackground.astro';
 
 type Props = CollectionEntry<'blog'>['data'];
 
@@ -62,6 +63,7 @@ const lang = getLangFromUrl(Astro.url);
 	</head>
 
 	<body>
+		<WatermarkBackground />
 		<main>
 			<article>
 				<div class="hero-image">

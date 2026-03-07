@@ -80,6 +80,15 @@
 	font-display: swap;
 }
 
+@keyframes watermark-scroll {
+	from {
+		transform: translateX(0);
+	}
+	to {
+		transform: translateX(-50%);
+	}
+}
+
 body {
 	font-family: "Atkinson", sans-serif;
 	margin: 0;
@@ -98,6 +107,20 @@ main {
 	max-width: calc(100% - 2em);
 	margin: auto;
 	padding: 3em 1em;
+}
+
+.project-content-block {
+	background: var(--surface);
+	border-radius: 8px;
+	padding: 2.5em 1.5em;
+	margin: 2em 0;
+}
+
+.home-block {
+	background: var(--surface);
+	border-radius: 8px;
+	padding: 1em 1.25em;
+	margin-bottom: 1em;
 }
 
 h1, h2, h3, h4, h5, h6 {
