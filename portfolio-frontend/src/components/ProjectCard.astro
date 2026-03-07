@@ -1,6 +1,7 @@
 ---
 import { TagList } from './TagList';
 import type { Locale } from '../i18n';
+import AcademicCapIcon from '../assets/academic-cap.svg?raw';
 
 interface Props {
 	title: string;
@@ -9,15 +10,20 @@ interface Props {
 	href: string;
 	slug?: string;
 	pixelArt?: boolean;
+	useIcon?: boolean;
 	tags?: string[];
 	lang?: Locale;
 }
 
-const { title, description, image, href, slug, pixelArt = false, tags = [], lang = 'en' } = Astro.props;
+const { title, description, image, href, slug, pixelArt = false, useIcon = false, tags = [], lang = 'en' } = Astro.props;
 ---
 
 <a href={href} class="project-card" data-project-slug={slug}>
-	<img src={image} alt={title} loading="lazy" class:list={[{ 'pixel-art': pixelArt }]} />
+	{useIcon ? (
+		<div class="card-icon" aria-hidden="true" set:html={AcademicCapIcon} />
+	) : (
+		<img src={image} alt={title} loading="lazy" class:list={[{ 'pixel-art': pixelArt }]} />
+	)}
 	<div class="card-content">
 		<h3>{title}</h3>
 		<p>{description}</p>
@@ -27,7 +33,8 @@ const { title, description, image, href, slug, pixelArt = false, tags = [], lang
 
 <style>
 	.project-card {
-		display: block;
+		display: flex;
+		flex-direction: column;
 		text-decoration: none;
 		color: inherit;
 		background: var(--surface);
@@ -48,7 +55,23 @@ const { title, description, image, href, slug, pixelArt = false, tags = [], lang
 	.project-card img.pixel-art {
 		image-rendering: pixelated;
 	}
+	.card-icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		height: 180px;
+		background: var(--muted);
+		color: var(--primary);
+	}
+	.card-icon :global(svg) {
+		width: min(90%, 162px);
+		height: min(90%, 162px);
+	}
 	.card-content {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
 		padding: 1em 1.25em;
 	}
 	.card-content h3 {
@@ -65,7 +88,8 @@ const { title, description, image, href, slug, pixelArt = false, tags = [], lang
 		display: flex;
 		align-items: center;
 		gap: 0.35em;
-		margin: 0.5em 0 0 0;
+		margin-top: auto;
+		padding-top: 0.5em;
 		min-width: 0;
 	}
 	.project-card :global(.tag-list-wrapper:not([data-expanded="true"])) {
