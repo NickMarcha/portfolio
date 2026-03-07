@@ -25,7 +25,7 @@ export function buildWatermarkLines(text: string, textCase: TextCase): string[] 
 			: textCase === "lower"
 				? (s: string) => s.toLowerCase()
 				: (s: string) => s;
-	return Array.from({ length: 50 }, (_, i) => {
+	return Array.from({ length: 65 }, (_, i) => {
 		const shuffled = shuffleWords(words, i + 1);
 		const line = shuffled.join(" ");
 		return (transform(line) + " ").repeat(5);
