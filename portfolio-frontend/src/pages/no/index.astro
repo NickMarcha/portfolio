@@ -9,7 +9,7 @@ import { GlobalSearch, SearchCommandTrigger } from '../../components/SearchComma
 import ProjectCard from '../../components/ProjectCard.astro';
 import { projectData } from '../../data/projectData';
 import { getProjectContent, t, withLang } from '../../i18n';
-import KriskogramImage from '../../assets/Kriskogram.png';
+import { getProjectCardImage } from '../../data/projectImages';
 import WatermarkBackground from '../../components/WatermarkBackground.astro';
 
 const lang = 'no';
@@ -41,7 +41,7 @@ const siteDescription = t('siteDescription', lang);
 						<ProjectCard
 							title={content?.shortTitle ?? project.slug}
 							description={content?.shortDescription ?? ''}
-							image={project.slug === 'kriskogram' ? KriskogramImage.src : project.short.image}
+							image={getProjectCardImage(project)}
 							href={withLang(`/projects/${project.slug}`, lang)}
 							slug={project.slug}
 							pixelArt={project.slug === 'bio'}

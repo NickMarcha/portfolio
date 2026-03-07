@@ -4,7 +4,7 @@ import { TagList } from './TagList';
 import type { Locale } from '../../i18n';
 import Bio from './projects/Bio.astro';
 import InkyPen from './projects/InkyPen.astro';
-import KriskogramImage from '../assets/Kriskogram.png';
+import { getProjectCardImage } from '../data/projectImages';
 import RaffleDashboard from './projects/RaffleDashboard.astro';
 import BachelorsProject from './projects/BachelorsProject.astro';
 import GameJams from './projects/GameJams.astro';
@@ -47,7 +47,7 @@ const DescriptionComponent = components[project.long.descriptionComponent];
 <article class="project-detail">
 	{project.slug === 'kriskogram' && (
 		<ZoomableImage
-			src={KriskogramImage.src}
+			src={getProjectCardImage(project)}
 			alt=""
 			className="project-header-image"
 			imgClassName="w-full h-full object-cover block"

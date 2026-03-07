@@ -8,6 +8,7 @@ import ShareButton from '../../components/ShareButton.astro';
 import ProjectDetail from '../../components/ProjectDetail.astro';
 import { GlobalSearch, SearchCommandTrigger } from '../../components/SearchCommand';
 import { projectData } from '../../data/projectData';
+import { getProjectCardImage, resolveCarouselItems } from '../../data/projectImages';
 import { getLangFromUrl, getProjectContent, t, withLang } from '../../i18n';
 import WatermarkBackground from '../../components/WatermarkBackground.astro';
 
@@ -24,16 +25,18 @@ const content = getProjectContent(slug, lang);
 const siteTitle = t('siteTitle', lang);
 const pageTitle = `${content?.longTitle ?? slug} | ${siteTitle}`;
 const pageDescription = content?.shortDescription ?? '';
-const carouselItemsWithCaptions = project.long.carouselItems.map((item, i) => ({
-	...item,
-	caption: content?.carouselCaptions?.[String(i)],
-}));
+const carouselItemsWithCaptions = resolveCarouselItems(
+	project.long.carouselItems.map((item, i) => ({
+		...item,
+		caption: content?.carouselCaptions?.[String(i)],
+	}))
+);
 ---
 
 <!doctype html>
 <html lang={lang}>
 	<head>
-		<BaseHead title={pageTitle} description={pageDescription} image={{ src: project.short.image }} lang={lang} />
+		<BaseHead title={pageTitle} description={pageDescription} image={{ src: getProjectCardImage(project) }} lang={lang} />
 	</head>
 	<body>
 		<WatermarkBackground />

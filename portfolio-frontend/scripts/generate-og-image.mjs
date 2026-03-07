@@ -12,9 +12,9 @@ import { fileURLToPath } from "url";
 import sharp from "sharp";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const publicDir = path.join(__dirname, "..", "public");
-const inputPath = path.join(publicDir, "icon-me.png");
-const outputPath = path.join(publicDir, "og-image.png");
+const projectRoot = path.join(__dirname, "..");
+const inputPath = path.join(projectRoot, "src", "assets", "images", "icon-me.png");
+const outputPath = path.join(projectRoot, "public", "og-image.png");
 
 const OG_WIDTH = 1200;
 const OG_HEIGHT = 630;
@@ -22,7 +22,7 @@ const BG_COLOR = { r: 26, g: 27, b: 38, alpha: 1 }; // dark theme background
 
 async function main() {
 	if (!fs.existsSync(inputPath)) {
-		console.warn("icon-me.png not found, skipping og-image generation.");
+		console.warn("icon-me.png not found in src/assets/images/, skipping og-image generation.");
 		return;
 	}
 
