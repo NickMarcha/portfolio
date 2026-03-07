@@ -103,6 +103,6 @@ export const projectData: IProjectData[] = [
 		slug: "school-assignments",
 		short: { image: "/images/9gFfLAO.png" },
 		long: { descriptionComponent: "SchoolAssignments", carouselItems: [] },
-		tags: [7, 3, 4, 38, 9],
+		tags: [7, 3, 4, 38, 9, 13, 14, 15, 17],
 	},
 ];
