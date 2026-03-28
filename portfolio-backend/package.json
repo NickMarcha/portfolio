@@ -1,6 +1,6 @@
 {
 	"name": "portfolio-backend",
-	"version": "0.0.13",
+	"version": "0.0.14",
 	"type": "module",
 	"scripts": {
 		"dev": "cross-env ADMIN_PASSWORD=123 tsx watch src/index.ts",
