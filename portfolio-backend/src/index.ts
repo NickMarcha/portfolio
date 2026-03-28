@@ -158,6 +158,70 @@ const selectVisitById = db.prepare(`
 	FROM visits WHERE id = ?
 `);
 
+const selectIdsNeedingEnrichment = db.prepare(`
+	SELECT id FROM visits
+	WHERE ip IS NOT NULL
+	AND ((city IS NULL AND isp IS NULL) OR lat IS NULL OR lon IS NULL)
+	ORDER BY timestamp DESC
+	LIMIT ?
+`);
+
+type ApplyEnrichResult =
+	| { kind: 'ok'; visit: ReturnType<typeof rowToVisitJson> }
+	| { kind: '429'; retryAfter: number }
+	| { kind: '502' }
+	| { kind: 'not_found' }
+	| { kind: 'no_ip' };
+
+async function applyIpApiToVisit(id: number): Promise<ApplyEnrichResult> {
+	const row = selectVisitById.get(id) as VisitRow | undefined;
+	if (!row) return { kind: 'not_found' };
+	const ip = row.ip;
+	if (!ip) return { kind: 'no_ip' };
+
+	const fetchRes = await fetch(
+		`http://ip-api.com/json/${encodeURIComponent(ip)}?fields=${IP_API_FIELDS}`
+	);
+
+	if (fetchRes.status === 429) {
+		const retryAfter = parseInt(fetchRes.headers.get('x-ttl') ?? '60', 10);
+		return { kind: '429', retryAfter };
+	}
+
+	if (!fetchRes.ok) {
+		return { kind: '502' };
+	}
+
+	const data = (await fetchRes.json()) as IpApiResponse;
+	if (data.status !== 'success') {
+		return { kind: '502' };
+	}
+
+	const lat =
+		typeof data.lat === 'number' && Number.isFinite(data.lat) ? data.lat : null;
+	const lon =
+		typeof data.lon === 'number' && Number.isFinite(data.lon) ? data.lon : null;
+
+	updateVisitEnrichment.run(
+		data.city ?? null,
+		data.region ?? null,
+		data.regionName ?? null,
+		data.timezone ?? null,
+		data.isp ?? null,
+		data.org ?? null,
+		lat,
+		lon,
+		id
+	);
+
+	const updated = selectVisitById.get(id) as VisitRow;
+	return { kind: 'ok', visit: rowToVisitJson(updated) };
+}
+
+function sleep(ms: number): Promise<void> {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 type VisitRow = {
 	id: number;
 	path: string;
@@ -308,63 +372,74 @@ app.post('/api/admin/visits/:id/enrich', requireAdmin, async (req, res) => {
 		return;
 	}
 
-	const row = selectVisitById.get(id) as VisitRow | undefined;
-
-	if (!row) {
-		res.status(404).json({ error: 'Visit not found' });
-		return;
-	}
-
-	const ip = row.ip;
-	if (!ip) {
-		res.status(400).json({ error: 'No IP to enrich' });
-		return;
-	}
-
 	try {
-		const fetchRes = await fetch(
-			`http://ip-api.com/json/${encodeURIComponent(ip)}?fields=${IP_API_FIELDS}`
-		);
-
-		if (fetchRes.status === 429) {
-			const retryAfter = parseInt(fetchRes.headers.get('x-ttl') ?? '60', 10);
-			res.status(429).json({ error: 'Rate limited', retryAfter });
+		const result = await applyIpApiToVisit(id);
+		if (result.kind === 'not_found') {
+			res.status(404).json({ error: 'Visit not found' });
 			return;
 		}
-
-		if (!fetchRes.ok) {
+		if (result.kind === 'no_ip') {
+			res.status(400).json({ error: 'No IP to enrich' });
+			return;
+		}
+		if (result.kind === '429') {
+			res.status(429).json({ error: 'Rate limited', retryAfter: result.retryAfter });
+			return;
+		}
+		if (result.kind === '502') {
 			res.status(502).json({ error: 'Enrichment failed' });
 			return;
 		}
-
-		const data = (await fetchRes.json()) as IpApiResponse;
-		if (data.status !== 'success') {
-			res.status(502).json({ error: 'Enrichment failed' });
-			return;
-		}
-
-		const lat =
-			typeof data.lat === 'number' && Number.isFinite(data.lat) ? data.lat : null;
-		const lon =
-			typeof data.lon === 'number' && Number.isFinite(data.lon) ? data.lon : null;
-
-		updateVisitEnrichment.run(
-			data.city ?? null,
-			data.region ?? null,
-			data.regionName ?? null,
-			data.timezone ?? null,
-			data.isp ?? null,
-			data.org ?? null,
-			lat,
-			lon,
-			id
-		);
-
-		const updated = selectVisitById.get(id) as VisitRow;
-		res.json({ visit: rowToVisitJson(updated) });
+		res.json({ visit: result.visit });
 	} catch (err) {
 		console.error('[enrich]', err);
 		res.status(500).json({ error: 'Enrichment failed' });
+	}
+});
+
+app.post('/api/admin/visits/enrich-batch', requireAdmin, async (req, res) => {
+	const raw = req.body?.limit;
+	const limit = Math.min(
+		100,
+		Math.max(1, typeof raw === 'number' ? raw : parseInt(String(raw ?? '25'), 10))
+	);
+
+	const rows = selectIdsNeedingEnrichment.all(limit) as { id: number }[];
+	const visits: ReturnType<typeof rowToVisitJson>[] = [];
+	let failed = 0;
+	const delayMs = 1400;
+
+	try {
+		for (let i = 0; i < rows.length; i++) {
+			if (i > 0) await sleep(delayMs);
+			const result = await applyIpApiToVisit(rows[i]!.id);
+			if (result.kind === '429') {
+				res.status(429).json({
+					error: 'Rate limited',
+					retryAfter: result.retryAfter,
+					processed: visits.length,
+					failed,
+					attempted: i + 1,
+					visits,
+				});
+				return;
+			}
+			if (result.kind === 'ok') {
+				visits.push(result.visit);
+			} else {
+				failed++;
+			}
+		}
+
+		res.json({
+			processed: visits.length,
+			failed,
+			attempted: rows.length,
+			visits,
+		});
+	} catch (err) {
+		console.error('[enrich-batch]', err);
+		res.status(500).json({ error: 'Batch enrichment failed' });
 	}
 });
 
