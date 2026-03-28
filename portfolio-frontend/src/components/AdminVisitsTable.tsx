@@ -19,96 +19,30 @@ import {
 } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { type Visit, getAdminAuthHeader } from '@/lib/adminVisit';
 
-export interface Visit {
-	id: number;
-	path: string;
-	timestamp: string;
-	ip: string | null;
-	country: string | null;
-	city: string | null;
-	region: string | null;
-	regionName: string | null;
-	timezone: string | null;
-	isp: string | null;
-	org: string | null;
+interface AdminVisitsTableProps {
+	visits: Visit[];
+	setVisits: React.Dispatch<React.SetStateAction<Visit[]>>;
+	authPassword: string;
+	apiUrl: string;
+	loading: boolean;
+	fetchError: string | null;
+	onFetchVisits: () => void;
 }
 
-function getApiUrl(): string {
-	if (typeof window === 'undefined') return '';
-	const isLocal =
-		window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-	return isLocal ? 'http://localhost:3000' : 'https://api-portfolio.nickmarcha.com';
-}
-
-function getAuthHeader(password: string): string {
-	return 'Basic ' + btoa('admin:' + password);
-}
-
-export default function AdminVisitsTable() {
-	const [password, setPassword] = React.useState('');
-	const [authPassword, setAuthPassword] = React.useState<string | null>(null);
-	const [visits, setVisits] = React.useState<Visit[]>([]);
-	const [loading, setLoading] = React.useState(false);
-	const [error, setError] = React.useState<string | null>(null);
+export default function AdminVisitsTable({
+	visits,
+	setVisits,
+	authPassword,
+	apiUrl,
+	loading,
+	fetchError,
+	onFetchVisits,
+}: AdminVisitsTableProps) {
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
 	const [enrichingId, setEnrichingId] = React.useState<number | null>(null);
 	const [rateLimitedUntil, setRateLimitedUntil] = React.useState<number>(0);
-
-	const apiUrl = getApiUrl();
-
-	const fetchVisits = React.useCallback(async () => {
-		if (!authPassword) return;
-		setLoading(true);
-		setError(null);
-		try {
-			const res = await fetch(`${apiUrl}/api/admin/visits`, {
-				headers: { Authorization: getAuthHeader(authPassword) },
-			});
-			if (!res.ok) {
-				if (res.status === 401) {
-					setAuthPassword(null);
-					setError('Invalid password');
-				} else {
-					setError('Failed to fetch visits');
-				}
-				return;
-			}
-			const data = (await res.json()) as { visits: Visit[] };
-			setVisits(data.visits);
-		} catch {
-			setError('Failed to fetch visits');
-		} finally {
-			setLoading(false);
-		}
-	}, [apiUrl, authPassword]);
-
-	const handleLogin = async (e: React.FormEvent) => {
-		e.preventDefault();
-		if (!password.trim()) return;
-		setLoading(true);
-		setError(null);
-		try {
-			const res = await fetch(`${apiUrl}/api/admin/visits`, {
-				headers: { Authorization: getAuthHeader(password) },
-			});
-			if (!res.ok) {
-				if (res.status === 401) {
-					setError('Invalid password');
-				} else {
-					setError('Failed to connect');
-				}
-				return;
-			}
-			setAuthPassword(password);
-			const data = (await res.json()) as { visits: Visit[] };
-			setVisits(data.visits);
-		} catch {
-			setError('Failed to connect');
-		} finally {
-			setLoading(false);
-		}
-	};
 
 	const handleEnrich = async (id: number) => {
 		if (!authPassword) return;
@@ -117,7 +51,7 @@ export default function AdminVisitsTable() {
 		try {
 			const res = await fetch(`${apiUrl}/api/admin/visits/${id}/enrich`, {
 				method: 'POST',
-				headers: { Authorization: getAuthHeader(authPassword) },
+				headers: { Authorization: getAdminAuthHeader(authPassword) },
 			});
 			const data = await res.json();
 			if (res.status === 429) {
@@ -125,9 +59,7 @@ export default function AdminVisitsTable() {
 				setRateLimitedUntil(Date.now() + retryAfter * 1000);
 			} else if (res.ok) {
 				const updated = (data as { visit: Visit }).visit;
-				setVisits((prev) =>
-					prev.map((v) => (v.id === id ? updated : v))
-				);
+				setVisits((prev) => prev.map((v) => (v.id === id ? updated : v)));
 			}
 		} catch {
 			// ignore
@@ -143,6 +75,8 @@ export default function AdminVisitsTable() {
 		{ accessorKey: 'country', header: 'Country' },
 		{ accessorKey: 'city', header: 'City' },
 		{ accessorKey: 'regionName', header: 'Region' },
+		{ accessorKey: 'lat', header: 'Lat' },
+		{ accessorKey: 'lon', header: 'Lon' },
 		{ accessorKey: 'timezone', header: 'Timezone' },
 		{ accessorKey: 'isp', header: 'ISP' },
 		{ accessorKey: 'org', header: 'Org' },
@@ -151,7 +85,9 @@ export default function AdminVisitsTable() {
 			header: '',
 			cell: ({ row }) => {
 				const v = row.original;
-				const needsEnrich = !v.city && !v.isp && v.ip;
+				const needsEnrich =
+					Boolean(v.ip) &&
+					((!v.city && !v.isp) || v.lat == null || v.lon == null);
 				const isRateLimited = Date.now() < rateLimitedUntil;
 				return (
 					<Button
@@ -177,32 +113,12 @@ export default function AdminVisitsTable() {
 		state: { columnFilters },
 	});
 
-	if (!authPassword) {
-		return (
-			<div className="space-y-4 max-w-md">
-				<h2 className="text-lg font-medium">Admin Login</h2>
-				<form onSubmit={handleLogin} className="space-y-3">
-					<Input
-						type="password"
-						placeholder="Password"
-						value={password}
-						onChange={(e) => setPassword(e.target.value)}
-						disabled={loading}
-						autoComplete="current-password"
-					/>
-					<Button type="submit" disabled={loading}>
-						{loading ? '…' : 'Login'}
-					</Button>
-				</form>
-				{error && <p className="text-destructive text-sm">{error}</p>}
-			</div>
-		);
-	}
-
 	const rateLimitedSeconds = Math.ceil((rateLimitedUntil - Date.now()) / 1000);
 
 	return (
 		<div className="space-y-4">
+			<h2 className="text-base font-medium">Raw visits</h2>
+			{fetchError && <p className="text-destructive text-sm">{fetchError}</p>}
 			<div className="flex items-center gap-4 flex-wrap">
 				<Input
 					placeholder="Filter path..."
@@ -249,7 +165,7 @@ export default function AdminVisitsTable() {
 						Rate limited—retry in {rateLimitedSeconds}s
 					</span>
 				)}
-				<Button variant="outline" size="sm" onClick={fetchVisits} disabled={loading}>
+				<Button variant="outline" size="sm" onClick={onFetchVisits} disabled={loading}>
 					Refresh
 				</Button>
 			</div>

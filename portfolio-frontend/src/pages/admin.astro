@@ -1,6 +1,6 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
-import AdminVisitsTable from '../components/AdminVisitsTable';
+import AdminDashboard from '../components/AdminDashboard';
 import WatermarkBackground from '../components/WatermarkBackground.astro';
 ---
 
@@ -14,7 +14,7 @@ import WatermarkBackground from '../components/WatermarkBackground.astro';
 		<WatermarkBackground />
 		<main class="admin-page">
 			<h1>Visit Analytics</h1>
-			<AdminVisitsTable client:load />
+			<AdminDashboard client:load />
 		</main>
 	</body>
 </html>

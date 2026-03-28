@@ -12,7 +12,8 @@ const require = createRequire(import.meta.url);
 const AGAINST_MALARIA_URL =
 	'https://www.againstmalaria.com/Fundraiser.aspx?FundraiserID=8960';
 
-const IP_API_FIELDS = 'status,country,countryCode,region,regionName,city,timezone,isp,org';
+const IP_API_FIELDS =
+	'status,country,countryCode,region,regionName,city,timezone,isp,org,lat,lon';
 
 interface IpApiResponse {
 	status: string;
@@ -24,6 +25,8 @@ interface IpApiResponse {
 	timezone?: string;
 	isp?: string;
 	org?: string;
+	lat?: number;
+	lon?: number;
 }
 
 async function enrichIp(ip: string): Promise<IpApiResponse | null> {
@@ -120,29 +123,74 @@ db.exec(`
 		regionName TEXT,
 		timezone TEXT,
 		isp TEXT,
-		org TEXT
+		org TEXT,
+		lat REAL,
+		lon REAL
 	)
 `);
 
+const visitColumns = db.prepare('PRAGMA table_info(visits)').all() as { name: string }[];
+const visitColumnNames = new Set(visitColumns.map((c) => c.name));
+if (!visitColumnNames.has('lat')) {
+	db.exec('ALTER TABLE visits ADD COLUMN lat REAL');
+}
+if (!visitColumnNames.has('lon')) {
+	db.exec('ALTER TABLE visits ADD COLUMN lon REAL');
+}
+
 const insertVisit = db.prepare(`
-	INSERT INTO visits (path, timestamp, ip, country, city, region, regionName, timezone, isp, org)
-	VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+	INSERT INTO visits (path, timestamp, ip, country, city, region, regionName, timezone, isp, org, lat, lon)
+	VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 `);
 
 const updateVisitEnrichment = db.prepare(`
-	UPDATE visits SET city = ?, region = ?, regionName = ?, timezone = ?, isp = ?, org = ?
+	UPDATE visits SET city = ?, region = ?, regionName = ?, timezone = ?, isp = ?, org = ?, lat = ?, lon = ?
 	WHERE id = ?
 `);
 
 const selectAllVisits = db.prepare(`
-	SELECT id, path, timestamp, ip, country, city, region, regionName, timezone, isp, org
+	SELECT id, path, timestamp, ip, country, city, region, regionName, timezone, isp, org, lat, lon
 	FROM visits ORDER BY timestamp DESC
 `);
 
 const selectVisitById = db.prepare(`
-	SELECT id, path, timestamp, ip, country, city, region, regionName, timezone, isp, org
+	SELECT id, path, timestamp, ip, country, city, region, regionName, timezone, isp, org, lat, lon
 	FROM visits WHERE id = ?
 `);
+
+type VisitRow = {
+	id: number;
+	path: string;
+	timestamp: string;
+	ip: string | null;
+	country: string | null;
+	city: string | null;
+	region: string | null;
+	regionName: string | null;
+	timezone: string | null;
+	isp: string | null;
+	org: string | null;
+	lat: number | null;
+	lon: number | null;
+};
+
+function rowToVisitJson(r: VisitRow) {
+	return {
+		id: r.id,
+		path: r.path,
+		timestamp: r.timestamp,
+		ip: r.ip,
+		country: r.country,
+		city: r.city,
+		region: r.region,
+		regionName: r.regionName,
+		timezone: r.timezone,
+		isp: r.isp,
+		org: r.org,
+		lat: r.lat,
+		lon: r.lon,
+	};
+}
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
@@ -218,6 +266,8 @@ app.post('/api/visits', async (req, res) => {
 	let timezone: string | null = null;
 	let isp: string | null = null;
 	let org: string | null = null;
+	let lat: number | null = null;
+	let lon: number | null = null;
 
 	if (ip) {
 		const enriched = await enrichIp(ip);
@@ -228,10 +278,16 @@ app.post('/api/visits', async (req, res) => {
 			timezone = enriched.timezone ?? null;
 			isp = enriched.isp ?? null;
 			org = enriched.org ?? null;
+			if (typeof enriched.lat === 'number' && Number.isFinite(enriched.lat)) {
+				lat = enriched.lat;
+			}
+			if (typeof enriched.lon === 'number' && Number.isFinite(enriched.lon)) {
+				lon = enriched.lon;
+			}
 		}
 	}
 
-	insertVisit.run(path, timestamp, ip, country, city, region, regionName, timezone, isp, org);
+	insertVisit.run(path, timestamp, ip, country, city, region, regionName, timezone, isp, org, lat, lon);
 
 	const enriched = !!(city || isp);
 	notifyVisit({ path, ip, country, city, regionName, isp, enriched }).catch(() => {});
@@ -240,20 +296,8 @@ app.post('/api/visits', async (req, res) => {
 });
 
 app.get('/api/admin/visits', requireAdmin, (_req, res) => {
-	const rows = selectAllVisits.all();
-	const visits = rows.map((r) => ({
-		id: (r as { id: number }).id,
-		path: (r as { path: string }).path,
-		timestamp: (r as { timestamp: string }).timestamp,
-		ip: (r as { ip: string | null }).ip,
-		country: (r as { country: string | null }).country,
-		city: (r as { city: string | null }).city,
-		region: (r as { region: string | null }).region,
-		regionName: (r as { regionName: string | null }).regionName,
-		timezone: (r as { timezone: string | null }).timezone,
-		isp: (r as { isp: string | null }).isp,
-		org: (r as { org: string | null }).org,
-	}));
+	const rows = selectAllVisits.all() as VisitRow[];
+	const visits = rows.map(rowToVisitJson);
 	res.json({ visits });
 });
 
@@ -264,19 +308,7 @@ app.post('/api/admin/visits/:id/enrich', requireAdmin, async (req, res) => {
 		return;
 	}
 
-	const row = selectVisitById.get(id) as {
-		id: number;
-		path: string;
-		timestamp: string;
-		ip: string | null;
-		country: string | null;
-		city: string | null;
-		region: string | null;
-		regionName: string | null;
-		timezone: string | null;
-		isp: string | null;
-		org: string | null;
-	} | undefined;
+	const row = selectVisitById.get(id) as VisitRow | undefined;
 
 	if (!row) {
 		res.status(404).json({ error: 'Visit not found' });
@@ -311,6 +343,11 @@ app.post('/api/admin/visits/:id/enrich', requireAdmin, async (req, res) => {
 			return;
 		}
 
+		const lat =
+			typeof data.lat === 'number' && Number.isFinite(data.lat) ? data.lat : null;
+		const lon =
+			typeof data.lon === 'number' && Number.isFinite(data.lon) ? data.lon : null;
+
 		updateVisitEnrichment.run(
 			data.city ?? null,
 			data.region ?? null,
@@ -318,25 +355,13 @@ app.post('/api/admin/visits/:id/enrich', requireAdmin, async (req, res) => {
 			data.timezone ?? null,
 			data.isp ?? null,
 			data.org ?? null,
+			lat,
+			lon,
 			id
 		);
 
-		const updated = selectVisitById.get(id) as typeof row;
-		res.json({
-			visit: {
-				id: updated.id,
-				path: updated.path,
-				timestamp: updated.timestamp,
-				ip: updated.ip,
-				country: updated.country,
-				city: updated.city,
-				region: updated.region,
-				regionName: updated.regionName,
-				timezone: updated.timezone,
-				isp: updated.isp,
-				org: updated.org,
-			},
-		});
+		const updated = selectVisitById.get(id) as VisitRow;
+		res.json({ visit: rowToVisitJson(updated) });
 	} catch (err) {
 		console.error('[enrich]', err);
 		res.status(500).json({ error: 'Enrichment failed' });
