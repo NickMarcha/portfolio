@@ -47,6 +47,17 @@ export const projectData: IProjectData[] = [
 		tags: [2, 13, 14, 15, 17, 18, 43, 51],
 	},
 	{
+		slug: "oslo-on-two-wheels",
+		short: { image: "/OsloOnTwoWheels.png" },
+		long: {
+			descriptionComponent: "Kriskogram",
+			carouselItems: [
+				{ type: "video", src: "/video/oslo-on-two-wheels.mp4" },
+			],
+		},
+		tags: [3, 4, 8, 12, 13, 14, 15, 17],
+	},
+	{
 		slug: "bachelors-project",
 		short: { image: "/images/xvYLPXT.png" },
 		long: {

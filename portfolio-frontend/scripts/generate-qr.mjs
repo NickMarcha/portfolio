@@ -18,6 +18,7 @@ const projectSlugs = [
 	"bio",
 	"inkypen",
 	"kriskogram",
+	"oslo-on-two-wheels",
 	"bachelors-project",
 	"raffle-dashboard",
 	"games",

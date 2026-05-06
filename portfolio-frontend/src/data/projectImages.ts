@@ -4,6 +4,7 @@ import type { CarouselItem, IProjectData } from "./projectData";
 import iconMe from "../assets/images/icon-me.png";
 import inkypen from "../assets/images/inkypen.jpg";
 import Kriskogram from "../assets/images/Kriskogram.png";
+import OsloOnTwoWheels from "../assets/images/OsloOnTwoWheels.png";
 import xvYLPXT from "../assets/images/xvYLPXT.png";
 import UgyJk8U from "../assets/images/UgyJk8U.png";
 import Wxuam7W from "../assets/images/Wxuam7W.png";
@@ -14,6 +15,7 @@ const projectCardAssets: Record<string, ImageMetadata> = {
 	bio: iconMe,
 	inkypen,
 	kriskogram: Kriskogram,
+	"oslo-on-two-wheels": OsloOnTwoWheels,
 	"bachelors-project": xvYLPXT,
 	games: UgyJk8U,
 	badlands: Wxuam7W,
@@ -24,6 +26,7 @@ const pathToResolvedSrc: Record<string, string> = {
 	"/icon-me.png": iconMe.src,
 	"/inkypen.jpg": inkypen.src,
 	"/Kriskogram.png": Kriskogram.src,
+	"/OsloOnTwoWheels.png": OsloOnTwoWheels.src,
 	"/images/xvYLPXT.png": xvYLPXT.src,
 	"/images/UgyJk8U.png": UgyJk8U.src,
 	"/images/Wxuam7W.png": Wxuam7W.src,
