@@ -82,8 +82,8 @@ const figure: Figure = {
 
 		// Color key for the slice and the rendering.
 		// On phones the key is drawn at the real width rather than in a scroll box.
-		const KW = isNarrow(el) ? Math.max(300, Math.round(el.clientWidth)) : 640;
-		const key = svg(el, KW, 66, 'Color key: density 0 to 100 in viridis, dark purple low to yellow high.');
+		const KW = isNarrow(el) ? el.clientWidth : 640;
+		const key = svg(el, KW, KW < 300 ? 96 : 66, 'Color key: density 0 to 100 in viridis, dark purple low to yellow high.');
 		key.style('margin-top', '10px');
 		const kx = d3.scaleLinear().domain([0, 100]).range([20, KW - 20]);
 		const grad = key.append('defs').append('linearGradient').attr('id', 'f13-1-grad');
@@ -104,6 +104,11 @@ const figure: Figure = {
 		);
 		// Density under each name keeps the labels narrow enough not to collide on phones.
 		ax.selectAll<SVGTextElement, number>('.tick text').append('tspan').attr('x', 0).attr('dy', '1.2em').text((d) => d);
+		// Very narrow phones: every other name drops two lines so neighbours don't overlap.
+		if (KW < 300) {
+			ax.selectAll<SVGTextElement, number>('.tick text').attr('dy', (_, i) => (i % 2 ? '3.11em' : null));
+			ax.selectAll<SVGLineElement, number>('.tick line').attr('y2', (_, i) => (i % 2 ? 30 : 6));
+		}
 		const isoMark = key.append('path').style('fill', v('highlight'));
 
 		const out = readout(el);

@@ -46,7 +46,7 @@ const figure: Figure = {
 		'Text: Lewis Carroll, Alice’s Adventures in Wonderland, Project Gutenberg eBook #11, public domain. Technique after Wattenberg and Viégas 2008.',
 	mount(el) {
 		// Drawn at the real width on phones: scaling a 680-wide tree down makes 12px text unreadable.
-		const W = isNarrow(el) ? Math.max(300, Math.round(el.clientWidth)) : 680;
+		const W = isNarrow(el) ? el.clientWidth : 680;
 		const BIG = W < 500 ? 22 : 30; // size of the root word
 		const RH = 22;
 		const GAP = 16;

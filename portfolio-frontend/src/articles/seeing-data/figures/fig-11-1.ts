@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { controls, dataTable, gridY, readout, rng, slider, styleAxis, svg, v, viridis, type Figure } from './lib';
+import { controls, dataTable, gridY, isNarrow, readout, rng, slider, styleAxis, svg, v, viridis, type Figure } from './lib';
 
 // A synthetic 2D stand-in for the engine cooling jacket: coolant flows left to right
 // through a slab with four cylinder bores in it. Not simulation output; the numbers
@@ -9,6 +9,7 @@ import { controls, dataTable, gridY, readout, rng, slider, styleAxis, svg, v, vi
 export const NX = 64;
 export const NY = 26;
 export const CELL = 10;
+const CELL_DEFAULT = CELL;
 export const BORES = [12.5, 25.5, 38.5, 51.5].map((cx) => ({ cx, cy: NY / 2, r: 4.3 }));
 
 export interface Cell {
@@ -63,19 +64,27 @@ export function coolingField(): Cell[] {
 	return cells;
 }
 
-/** Draws the jacket: cells, bores and the flow labels. Returns a function that recolors cells. */
-export function fieldView(root: d3.Selection<SVGSVGElement, unknown, null, undefined>, cells: Cell[], ox: number, oy: number) {
+/** Draws the jacket: cells, bores and the flow labels. Returns a function that recolors cells. cs is the cell size (smaller on phones). */
+export function fieldView(
+	root: d3.Selection<SVGSVGElement, unknown, null, undefined>,
+	cells: Cell[],
+	ox: number,
+	oy: number,
+	cs = CELL_DEFAULT,
+) {
+	const CELL = cs;
 	const g = root.append('g').attr('transform', `translate(${ox},${oy})`);
 	const rects = g
 		.append('g')
-		.attr('shape-rendering', 'crispEdges')
+		// Phone cells can be fractional; a hair of overlap then hides the seams crispEdges would leave.
+		.attr('shape-rendering', cs === CELL_DEFAULT ? 'crispEdges' : null)
 		.selectAll('rect')
 		.data(cells)
 		.join('rect')
 		.attr('x', (c) => c.gx * CELL)
 		.attr('y', (c) => c.gy * CELL)
-		.attr('width', CELL)
-		.attr('height', CELL);
+		.attr('width', cs === CELL_DEFAULT ? CELL : CELL + 0.5)
+		.attr('height', cs === CELL_DEFAULT ? CELL : CELL + 0.5);
 	g.append('rect')
 		.attr('width', NX * CELL)
 		.attr('height', NY * CELL)
@@ -87,7 +96,7 @@ export function fieldView(root: d3.Selection<SVGSVGElement, unknown, null, undef
 		.join('circle')
 		.attr('cx', (b) => b.cx * CELL)
 		.attr('cy', (b) => b.cy * CELL)
-		.attr('r', (b) => b.r * CELL + 3)
+		.attr('r', (b) => b.r * CELL + (cs < CELL_DEFAULT ? 1 : 3))
 		.style('fill', v('surface'))
 		.style('stroke', v('muted'));
 	g.append('g')
@@ -100,7 +109,8 @@ export function fieldView(root: d3.Selection<SVGSVGElement, unknown, null, undef
 		.attr('text-anchor', 'middle')
 		.style('fill', v('muted'))
 		.style('font-size', '12px')
-		.text((_, i) => `bore ${i + 1}`);
+		// Phones: the bores are too small for "bore 1", so just the number.
+		.text((_, i) => (cs < CELL_DEFAULT ? `${i + 1}` : `bore ${i + 1}`));
 	const flow = g.append('g').style('fill', v('ink')).style('font-size', '12px');
 	flow.append('text').attr('x', 0).attr('y', -6).text('coolant in →');
 	flow
@@ -249,6 +259,15 @@ export function brushHistogram(opts: {
 	};
 }
 
+/** Phones: lets a controls row's sliders shrink so label, slider and value fit the width. */
+export function fitSliders(row: HTMLElement) {
+	for (const l of row.querySelectorAll<HTMLLabelElement>('label')) l.style.maxWidth = '100%';
+	for (const i of row.querySelectorAll<HTMLInputElement>('input[type=range]')) {
+		i.style.minWidth = '0';
+		i.style.flex = '1 1 60px';
+	}
+}
+
 const figure: Figure = {
 	title: 'Show and brush',
 	caption:
@@ -256,11 +275,13 @@ const figure: Figure = {
 	credit:
 		'Synthetic data: a made-up 2D stand-in for the engine cooling jacket used in the course, not simulation output. Levels after Muigg et al. 2008.',
 	mount(el) {
-		const W = 680;
+		const narrow = isNarrow(el);
+		const W = narrow ? el.clientWidth : 680;
+		const cs = narrow ? (W - 2) / NX : CELL;
 		const cells = coolingField();
 		const temps = cells.map((c) => c.temp);
-		const ox = (W - NX * CELL) / 2;
-		const FH = NY * CELL + 26;
+		const ox = (W - NX * cs) / 2;
+		const FH = NY * cs + 26;
 		const HH = 130;
 		const H = FH + HH + 70;
 
@@ -271,7 +292,7 @@ const figure: Figure = {
 			H,
 			'A 2D cooling jacket with four cylinder bores, drawn as a grid of cells, above a histogram of cell temperatures. Cells whose temperature falls in the brushed range are highlighted.',
 		);
-		const paint = fieldView(root, cells, ox, 22);
+		const paint = fieldView(root, cells, ox, 22, cs);
 		const out = readout(el);
 
 		let hist: ReturnType<typeof brushHistogram>;
@@ -300,7 +321,7 @@ const figure: Figure = {
 			row,
 			x: 48,
 			y: FH + 34,
-			w: W - 48 - 20,
+			w: W - 48 - (narrow ? 12 : 20),
 			h: HH,
 			label: 'Temperature',
 			unit: '°C',
@@ -310,6 +331,7 @@ const figure: Figure = {
 			initial: [116, Math.ceil(d3.max(temps)! / 2) * 2],
 			onChange: update,
 		});
+		if (narrow) fitSliders(row);
 		update([116, hist.full[1]]);
 	},
 };

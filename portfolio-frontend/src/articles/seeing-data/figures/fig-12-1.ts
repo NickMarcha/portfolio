@@ -1,4 +1,4 @@
-import { dataTable, svg, v, type Figure } from './lib';
+import { dataTable, isNarrow, svg, v, type Figure } from './lib';
 
 const ITEMS = [
 	{ name: 'dog', sets: 'Mammals' },
@@ -32,25 +32,33 @@ const figure: Figure = {
 		'The same three sets. The Venn diagram draws all seven regions inside the circles, and four of them are empty. The Euler diagram draws only what exists.',
 	credit: 'Example from the course. Made-up members.',
 	mount(el) {
-		const W = 680;
-		const H = 360;
+		const narrow = isNarrow(el);
+		// Phones: the two panels stack, and the geometry (not the text) shrinks to fit the width.
+		const W = narrow ? el.clientWidth : 680;
+		const k = narrow ? Math.min(1, (W - 4) / 335) : 1;
+		// Shrunk geometry would run into the subtitle, so it starts lower.
+		const gy = narrow ? 16 : 0;
+		const PH = Math.round(360 * k) + gy;
+		const H = narrow ? 2 * PH + 16 : 360;
+		const px = narrow ? (W - 335 * k) / 2 : 0;
 		const root = svg(
 			el,
 			W,
 			H,
-			'Left, a Venn diagram of mammals, birds and cats with all seven regions and four of them empty. Right, an Euler diagram with cats inside mammals and birds separate.',
+			narrow ? 'Top, a Venn diagram of mammals, birds and cats with all seven regions and four of them empty. Below, an Euler diagram with cats inside mammals and birds separate.' : 'Left, a Venn diagram of mammals, birds and cats with all seven regions and four of them empty. Right, an Euler diagram with cats inside mammals and birds separate.',
 		);
 
 		const panel = (
 			x: number,
+			y: number,
 			title: string,
 			sub: string,
 			circles: Circle[],
 			notes: Note[],
 		) => {
-			const g = root.append('g').attr('transform', `translate(${x},0)`);
+			const g = root.append('g').attr('transform', `translate(${x},${y})`);
 			g.append('text')
-				.attr('x', 165)
+				.attr('x', 165 * k)
 				.attr('y', 20)
 				.attr('text-anchor', 'middle')
 				.style('fill', v('ink'))
@@ -58,7 +66,7 @@ const figure: Figure = {
 				.style('font-weight', '700')
 				.text(title);
 			g.append('text')
-				.attr('x', 165)
+				.attr('x', 165 * k)
 				.attr('y', 38)
 				.attr('text-anchor', 'middle')
 				.style('fill', v('muted'))
@@ -68,9 +76,9 @@ const figure: Figure = {
 				.selectAll('circle')
 				.data(circles)
 				.join('circle')
-				.attr('cx', (c) => c.cx)
-				.attr('cy', (c) => c.cy)
-				.attr('r', (c) => c.r)
+				.attr('cx', (c) => c.cx * k)
+				.attr('cy', (c) => c.cy * k + gy)
+				.attr('r', (c) => c.r * k)
 				.style('fill', (c) => c.color)
 				.style('fill-opacity', 0.14)
 				.style('stroke', (c) => c.color)
@@ -79,8 +87,8 @@ const figure: Figure = {
 				.selectAll('text')
 				.data(circles)
 				.join('text')
-				.attr('x', (c) => c.lx)
-				.attr('y', (c) => c.ly)
+				.attr('x', (c) => c.lx * k)
+				.attr('y', (c) => c.ly * k + gy)
 				.attr('text-anchor', (c) => c.anchor)
 				.style('fill', v('ink'))
 				.style('font-size', '14px')
@@ -91,15 +99,15 @@ const figure: Figure = {
 				.selectAll('text')
 				.data(notes)
 				.join('text')
-				.attr('x', (d) => d.x)
-				.attr('y', (d) => d.y - ((d.lines.length - 1) * 15) / 2)
+				.attr('x', (d) => d.x * k)
+				.attr('y', (d) => d.y * k + gy - ((d.lines.length - 1) * 15) / 2)
 				.attr('text-anchor', 'middle')
 				.attr('dy', '0.35em')
 				.style('fill', (d) => (d.empty ? v('muted') : v('ink')))
 				.style('font-size', (d) => (d.empty ? '12px' : '13px'))
 				.style('font-style', (d) => (d.empty ? 'italic' : 'normal'));
 			n.selectAll('tspan')
-				.data((d) => d.lines.map((s) => ({ s, x: d.x })))
+				.data((d) => d.lines.map((s) => ({ s, x: d.x * k })))
 				.join('tspan')
 				.attr('x', (t) => t.x)
 				.attr('dy', (_, i) => (i === 0 ? '0.35em' : '15px'))
@@ -111,6 +119,7 @@ const figure: Figure = {
 		const C = v('series-3');
 
 		panel(
+			px,
 			0,
 			'Venn',
 			'every possible overlap is drawn',
@@ -130,7 +139,8 @@ const figure: Figure = {
 			],
 		);
 		panel(
-			350,
+			narrow ? px : 350,
+			narrow ? PH + 16 : 0,
 			'Euler',
 			'only the overlaps that exist',
 			[

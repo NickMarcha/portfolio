@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { controls, dataTable, fmt, readout, select, svg, tooltip, v, viridis, type Figure } from './lib';
+import { controls, dataTable, fmt, isNarrow, readout, select, svg, tooltip, v, viridis, type Figure } from './lib';
 import topo from './data/10-2-us-states.json';
 import people from './data/10-2-us-65plus.json';
 
@@ -62,8 +62,12 @@ const figure: Figure = {
 	credit:
 		'Data: US Census Bureau, Vintage 2024 population estimates (civilian population, 1 July 2024). Boundaries: Census cartographic boundary files via us-atlas. Both public domain.',
 	mount(el) {
-		const W = 680;
-		const MH = 425;
+		const narrow = isNarrow(el);
+		const W = narrow ? el.clientWidth : 680;
+		const MH = narrow ? Math.round((W * 425) / 680) : 425;
+		// Phones: legend above the map, as wide as fits.
+		const LW = narrow ? Math.min(300, W - 8) : 300;
+		const MY = narrow ? 44 : 0;
 		const H = MH + 50;
 		const feats = states(topo as unknown as Topo);
 		const byId = new Map(people.map((d) => [d.id, d]));
@@ -79,9 +83,9 @@ const figure: Figure = {
 
 		const row = controls(el);
 		const root = svg(el, W, H, 'Choropleth map of US states colored by people aged 65 and over, as a raw count or a share of population.');
-		const mapG = root.append('g');
-		const labelG = root.append('g').style('pointer-events', 'none');
-		const legend = root.append('g').attr('transform', `translate(${W / 2 - 150},${MH + 14})`);
+		const mapG = root.append('g').attr('transform', `translate(0,${MY})`);
+		const labelG = root.append('g').attr('transform', `translate(0,${MY})`).style('pointer-events', 'none');
+		const legend = root.append('g').attr('transform', `translate(${W / 2 - LW / 2},${narrow ? 4 : MH + 14})`);
 		const grad = root
 			.append('defs')
 			.append('linearGradient')
@@ -92,11 +96,11 @@ const figure: Figure = {
 				.attr('offset', `${t * 100}%`)
 				.attr('stop-color', viridis(t)),
 		);
-		legend.append('rect').attr('width', 300).attr('height', 12).attr('rx', 2).style('fill', `url(#${grad.attr('id')})`);
+		legend.append('rect').attr('width', LW).attr('height', 12).attr('rx', 2).style('fill', `url(#${grad.attr('id')})`);
 		const legLo = legend.append('text').attr('y', 28).style('fill', v('muted')).style('font-size', '12px');
 		const legHi = legend
 			.append('text')
-			.attr('x', 300)
+			.attr('x', LW)
 			.attr('y', 28)
 			.attr('text-anchor', 'end')
 			.style('fill', v('muted'))
@@ -133,12 +137,19 @@ const figure: Figure = {
 			const top = [...people].sort((a, b) => m.value(b) - m.value(a)).slice(0, 3);
 			const topIds = new Set(top.map((d) => d.id));
 			const tops = feats.filter((f) => topIds.has(String(f.id)));
+			// Phones: push labels apart vertically when centroids are close (Maine and Vermont).
+			const ys = new Map(tops.map((f) => [f, path.centroid(f)[1]]));
+			if (narrow) {
+				const byY = [...tops].sort((a, b) => ys.get(a)! - ys.get(b)!);
+				for (let i = 1; i < byY.length; i++)
+					ys.set(byY[i], Math.max(ys.get(byY[i])!, ys.get(byY[i - 1])! + 16));
+			}
 			labelG
 				.selectAll('text')
 				.data(tops, (d) => String((d as GeoJSON.Feature).id))
 				.join('text')
-				.attr('x', (d) => Math.min(path.centroid(d)[0], W - 40))
-				.attr('y', (d) => path.centroid(d)[1])
+				.attr('x', (d) => Math.max(narrow ? 34 : 0, Math.min(path.centroid(d)[0], W - (narrow ? 34 : 40))))
+				.attr('y', (d) => ys.get(d)!)
 				.attr('text-anchor', 'middle')
 				.attr('dy', '0.35em')
 				.style('fill', v('ink'))
@@ -147,7 +158,11 @@ const figure: Figure = {
 				.style('paint-order', 'stroke')
 				.style('stroke', v('surface'))
 				.style('stroke-width', 3)
-				.text((d) => `${ABBR[String(d.id)]} ${m.fmt(m.value(byId.get(String(d.id))!))}`);
+				.text((d) => {
+					const n = m.value(byId.get(String(d.id))!);
+					// Phones: "6.5M" so the three labels fit on a narrow map.
+					return `${ABBR[String(d.id)]} ${narrow && mode === 'count' ? `${(n / 1e6).toFixed(1)}M` : m.fmt(n)}`;
+				});
 
 			out.textContent =
 				mode === 'count'
@@ -157,13 +172,14 @@ const figure: Figure = {
 						)}, below the national ${MODES.share.fmt(d3.sum(people, (d) => d.pop65) / d3.sum(people, (d) => d.pop))}.`;
 		}
 
-		select(
+		const sel = select(
 			row,
 			'Color by',
 			(Object.keys(MODES) as Mode[]).map((k) => ({ value: k, label: MODES[k].label })),
 			draw,
 			'count',
 		);
+		if (narrow) sel.style.maxWidth = `${W - 80}px`;
 		draw('count');
 		dataTable(
 			el,

@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { controls, dataTable, fmt, readout, select, svg, tooltip, v, viridis, type Figure } from './lib';
+import { controls, dataTable, fmt, isNarrow, readout, select, svg, tooltip, v, viridis, type Figure } from './lib';
 import topo from './data/10-2-us-states.json';
 import people from './data/10-2-us-65plus.json';
 
@@ -66,9 +66,13 @@ const figure: Figure = {
 	credit:
 		'Data: US Census Bureau, Vintage 2024 population estimates. Boundaries: Census cartographic boundary files via us-atlas. Both public domain.',
 	mount(el) {
-		const W = 680;
-		const MH = 425;
-		const H = MH + 80;
+		const narrow = isNarrow(el);
+		const W = narrow ? el.clientWidth : 680;
+		// Phones: tiles shrink to fit 11 columns, so they carry the state code only (share in tooltip and table).
+		const gap = narrow ? 2 : 4;
+		const T = narrow ? Math.floor((W - 10 * gap) / 11) : 50;
+		const MH = narrow ? Math.max(Math.round((W * 425) / 680), 8 * (T + gap)) : 425;
+		const H = MH + (narrow ? 60 : 80);
 		const feats = states(topo as unknown as Topo);
 		const byId = new Map(people.map((d) => [d.id, d]));
 		const path = d3.geoPath(
@@ -83,7 +87,7 @@ const figure: Figure = {
 		const r = d3
 			.scaleSqrt()
 			.domain([0, d3.max(people, (d) => d.pop65)!])
-			.range([0, 34]);
+			.range([0, narrow ? Math.max(14, (34 * W) / 680) : 34]);
 		const lo = d3.min(people, share)!;
 		const hi = d3.max(people, share)!;
 		const color = (n: number) => viridis((n - lo) / (hi - lo));
@@ -142,8 +146,6 @@ const figure: Figure = {
 			.style('pointer-events', 'none')
 			.text((s) => `${(s.d.pop65 / 1e6).toFixed(1)}M`);
 
-		const T = 50;
-		const gap = 4;
 		const ox = (W - 11 * T - 10 * gap) / 2;
 		const oy = (MH - 8 * T - 7 * gap) / 2;
 		const tiles = tileG
@@ -167,25 +169,27 @@ const figure: Figure = {
 		tiles
 			.append('text')
 			.attr('x', T / 2)
-			.attr('y', 21)
+			.attr('y', narrow ? T / 2 : 21)
+			.attr('dy', narrow ? '0.35em' : null)
 			.attr('text-anchor', 'middle')
-			.style('font-size', '14px')
+			.style('font-size', narrow ? '12px' : '14px')
 			.style('font-weight', '600')
 			.style('fill', ink)
 			.text((d) => TILES[d.id][0]);
-		tiles
-			.append('text')
-			.attr('x', T / 2)
-			.attr('y', 38)
-			.attr('text-anchor', 'middle')
-			.style('font-size', '12px')
-			.style('fill', ink)
-			.text((d) => pct(share(d)));
+		if (!narrow)
+			tiles
+				.append('text')
+				.attr('x', T / 2)
+				.attr('y', 38)
+				.attr('text-anchor', 'middle')
+				.style('font-size', '12px')
+				.style('fill', ink)
+				.text((d) => pct(share(d)));
 
 		function drawLegend(mode: Mode) {
 			legend.selectAll('*').remove();
 			if (mode === 'symbol') {
-				const g = legend.append('g').attr('transform', `translate(${W / 2 - 150},0)`);
+				const g = legend.append('g').attr('transform', `translate(${narrow ? 4 : W / 2 - 150},0)`);
 				let x = 0;
 				for (const n of [1e6, 3e6, 6e6]) {
 					const rr = r(n);
@@ -201,8 +205,8 @@ const figure: Figure = {
 						.attr('dy', '0.35em')
 						.style('fill', v('muted'))
 						.style('font-size', '12px')
-						.text(`${n / 1e6} million`);
-					x += 2 * rr + 80;
+						.text(narrow ? `${n / 1e6}M` : `${n / 1e6} million`);
+					x += 2 * rr + (narrow ? 44 : 80);
 				}
 			} else {
 				const id = `grad-10-4-${Math.random().toString(36).slice(2)}`;
@@ -213,11 +217,12 @@ const figure: Figure = {
 						.attr('offset', `${t * 100}%`)
 						.attr('stop-color', viridis(t)),
 				);
-				const g = legend.append('g').attr('transform', `translate(${W / 2 - 150},20)`);
-				g.append('rect').attr('width', 300).attr('height', 12).attr('rx', 2).style('fill', `url(#${id})`);
+				const LW = narrow ? W - 8 : 300;
+				const g = legend.append('g').attr('transform', `translate(${W / 2 - LW / 2},20)`);
+				g.append('rect').attr('width', LW).attr('height', 12).attr('rx', 2).style('fill', `url(#${id})`);
 				g.append('text').attr('y', 28).style('fill', v('muted')).style('font-size', '12px').text(pct(lo));
 				g.append('text')
-					.attr('x', 300)
+					.attr('x', LW)
 					.attr('y', 28)
 					.attr('text-anchor', 'end')
 					.style('fill', v('muted'))
@@ -246,7 +251,7 @@ const figure: Figure = {
 				: `Tile grid. Every state gets the same square, so Rhode Island’s ${pct(share(byId.get('44')!))} counts as much as Montana’s ${pct(share(byId.get('30')!))}. You lose the familiar shapes and have to read the labels to find a state.`;
 		}
 
-		select(
+		const sel = select(
 			row,
 			'Show',
 			[
@@ -256,6 +261,7 @@ const figure: Figure = {
 			draw,
 			'symbol',
 		);
+		if (narrow) sel.style.maxWidth = `${W - 56}px`;
 		draw('symbol');
 		dataTable(
 			el,

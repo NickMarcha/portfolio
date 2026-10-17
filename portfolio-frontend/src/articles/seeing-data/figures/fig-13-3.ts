@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { controls, dataTable, readout, select, slider, styleAxis, svg, v, type Figure } from './lib';
+import { controls, dataTable, isNarrow, readout, select, slider, styleAxis, svg, v, type Figure } from './lib';
 
 // Part B: one ray's samples. Opacity per density follows a simple transfer function.
 const OPACITY: Record<number, number> = { 0: 0, 20: 0.15, 40: 0.03, 65: 0.4, 90: 0.8 };
@@ -45,6 +45,15 @@ function composite(order: 'ftb' | 'btf', upTo: number) {
 	return { color: c.formatHex(), A };
 }
 
+/** Phones: lets a controls row's sliders shrink so label, slider and value fit the width. */
+function fitSliders(row: HTMLElement) {
+	for (const l of row.querySelectorAll<HTMLLabelElement>('label')) l.style.maxWidth = '100%';
+	for (const i of row.querySelectorAll<HTMLInputElement>('input[type=range]')) {
+		i.style.minWidth = '0';
+		i.style.flex = '1 1 60px';
+	}
+}
+
 const figure: Figure = {
 	title: 'Classify after interpolating, composite front to back',
 	caption:
@@ -53,13 +62,15 @@ const figure: Figure = {
 	mount(el) {
 		// ---------- Part A: pre- vs post-interpolative classification ----------
 		const rowA = controls(el);
-		const W = 680;
-		const HA = 250;
-		const L = 200;
-		const R = W - 30;
+		// Phones: the row titles move above the plot and strips, so these get the full width.
+		const narrow = isNarrow(el);
+		const W = narrow ? el.clientWidth : 680;
+		const HA = narrow ? 264 : 250;
+		const L = narrow ? 40 : 200;
+		const R = narrow ? W - 8 : W - 30;
 		const rootA = svg(el, W, HA, 'Pre- and post-interpolative classification between two voxels with densities 0 and 100.');
 		const x = d3.scaleLinear().domain([0, 1]).range([L, R]);
-		const yD = d3.scaleLinear().domain([0, 100]).range([92, 26]);
+		const yD = d3.scaleLinear().domain([0, 100]).range(narrow ? [100, 40] : [92, 26]);
 		let glow = 50;
 		const WIDTH = 4;
 		const tf = (d: number) => Math.max(0, 1 - Math.abs(d - glow) / WIDTH);
@@ -75,8 +86,11 @@ const figure: Figure = {
 				.style('font-weight', o.bold ? 700 : 400)
 				.text(t);
 
-		text(rootA, 0, 50, 'Density along');
-		text(rootA, 0, 68, 'the ray');
+		if (narrow) text(rootA, 0, 14, 'Density along the ray');
+		else {
+			text(rootA, 0, 50, 'Density along');
+			text(rootA, 0, 68, 'the ray');
+		}
 		styleAxis(rootA.append('g').attr('transform', `translate(${L - 8},0)`).call(d3.axisLeft(yD).tickValues([0, 50, 100])));
 		const glowLine = rootA.append('line').attr('x1', L).attr('x2', R).style('stroke', v('highlight')).style('stroke-dasharray', '4 4');
 		rootA.append('line')
@@ -96,13 +110,16 @@ const figure: Figure = {
 		}
 
 		const strips = [
-			{ y: 126, title: 'Classify, then', title2: 'interpolate (pre)', alpha: (t: number) => (1 - t) * tf(0) + t * tf(100) },
-			{ y: 186, title: 'Interpolate, then', title2: 'classify (post)', alpha: (t: number) => tf(100 * t) },
+			{ y: narrow ? 148 : 126, title: 'Classify, then', title2: 'interpolate (pre)', alpha: (t: number) => (1 - t) * tf(0) + t * tf(100) },
+			{ y: narrow ? 218 : 186, title: 'Interpolate, then', title2: 'classify (post)', alpha: (t: number) => tf(100 * t) },
 		];
 		const N = 200;
 		const stripG = strips.map((s) => {
-			text(rootA, 0, s.y + 16, s.title);
-			text(rootA, 0, s.y + 34, s.title2);
+			if (narrow) text(rootA, 0, s.y - 8, `${s.title} ${s.title2}`);
+			else {
+				text(rootA, 0, s.y + 16, s.title);
+				text(rootA, 0, s.y + 34, s.title2);
+			}
 			rootA.append('rect')
 				.attr('x', L)
 				.attr('y', s.y)
@@ -137,6 +154,7 @@ const figure: Figure = {
 			glow = n;
 			drawA();
 		});
+		if (narrow) fitSliders(rowA);
 		drawA();
 
 		// ---------- Part B: front-to-back compositing and early ray termination ----------
@@ -144,16 +162,19 @@ const figure: Figure = {
 		sep.style.cssText = 'border:none;border-top:1px solid var(--border);margin:18px 0 12px;';
 		el.append(sep);
 		const rowB = controls(el);
-		const HB = 270;
+		// Phones: the samples span the full width and the pixel moves under the chart.
+		const HB = narrow ? 284 : 270;
+		const BL = narrow ? 46 : 60;
+		const BR = narrow ? W - 4 : W - 90;
 		const rootB = svg(el, W, HB, 'Twenty samples along one ray, with the accumulated opacity of the pixel after each sample.');
 		const bx = d3
 			.scaleBand<number>()
 			.domain(RAY.map((s) => s.i))
-			.range([60, W - 90])
+			.range([BL, BR])
 			.paddingInner(0.12);
-		const by = d3.scaleLinear().domain([0, 1]).range([230, 110]);
+		const by = d3.scaleLinear().domain([0, 1]).range(narrow ? [214, 100] : [230, 110]);
 		text(rootB, 0, 20, 'Eye', { bold: true });
-		text(rootB, W - 90, 20, 'Far side', { anchor: 'end', bold: true });
+		text(rootB, BR, 20, 'Far side', { anchor: 'end', bold: true });
 		const cells = rootB
 			.append('g')
 			.selectAll('g')
@@ -185,18 +206,23 @@ const figure: Figure = {
 			.attr('text-anchor', 'middle')
 			.style('fill', v('muted'))
 			.style('font-size', '12px')
-			.text((s) => s.i);
+			// Phones: cells are too narrow for every number.
+			.text((s) => (!narrow || s.i === 1 || s.i % 5 === 0 ? s.i : ''));
 
-		styleAxis(rootB.append('g').attr('transform', `translate(54,0)`).call(d3.axisLeft(by).ticks(4).tickFormat(d3.format('.0%'))));
-		rootB.append('line').attr('x1', 60).attr('x2', W - 90).attr('y1', by(STOP)).attr('y2', by(STOP)).style('stroke', v('muted')).style('stroke-dasharray', '4 4');
-		text(rootB, W - 86, by(STOP) + 5, `${STOP * 100}%`, { muted: true });
-		text(rootB, 60, 104, 'Opacity of the pixel so far', { muted: true });
+		styleAxis(rootB.append('g').attr('transform', `translate(${BL - 6},0)`).call(d3.axisLeft(by).ticks(4).tickFormat(d3.format('.0%'))));
+		rootB.append('line').attr('x1', BL).attr('x2', BR).attr('y1', by(STOP)).attr('y2', by(STOP)).style('stroke', v('muted')).style('stroke-dasharray', '4 4');
+		if (narrow) text(rootB, BR, by(STOP) + 18, `${STOP * 100}%`, { anchor: 'end', muted: true });
+		else text(rootB, W - 86, by(STOP) + 5, `${STOP * 100}%`, { muted: true });
+		text(rootB, BL, narrow ? 88 : 104, 'Opacity of the pixel so far', { muted: true });
 		const accLine = rootB.append('path').style('fill', 'none').style('stroke', v('series-1')).style('stroke-width', '2px');
 		const accDots = rootB.append('g');
 		// The pixel itself, on the right.
-		text(rootB, W - 40, 150, 'Pixel', { anchor: 'middle', bold: true });
-		rootB.append('rect').attr('x', W - 64).attr('y', 160).attr('width', 48).attr('height', 48).style('fill', 'none').style('stroke', v('axis'));
-		const pixel = rootB.append('rect').attr('x', W - 64).attr('y', 160).attr('width', 48).attr('height', 48);
+		const pxX = narrow ? W / 2 : W - 64;
+		const pxY = narrow ? 236 : 160;
+		if (narrow) text(rootB, pxX - 10, pxY + 29, 'Pixel', { anchor: 'end', bold: true });
+		else text(rootB, W - 40, 150, 'Pixel', { anchor: 'middle', bold: true });
+		rootB.append('rect').attr('x', pxX).attr('y', pxY).attr('width', 48).attr('height', 48).style('fill', 'none').style('stroke', v('axis'));
+		const pixel = rootB.append('rect').attr('x', pxX).attr('y', pxY).attr('width', 48).attr('height', 48);
 
 		let order: 'ftb' | 'btf' = 'ftb';
 		let upTo = RAY.length;
@@ -263,6 +289,7 @@ const figure: Figure = {
 			upTo = k;
 			drawB();
 		});
+		if (narrow) fitSliders(rowB);
 		drawB();
 
 		dataTable(

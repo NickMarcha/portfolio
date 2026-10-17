@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { controls, dataTable, fmt, readout, select, slider, styleAxis, svg, v, type Figure } from './lib';
+import { controls, dataTable, fmt, isNarrow, readout, select, slider, styleAxis, svg, v, type Figure } from './lib';
 import { blit, densityColor, histogram, MATERIALS, opacityTF, phantom, render, type MaterialKey, type Mode, type Opacities } from './vol-13';
 
 const PRESETS: Record<string, { label: string; op: Opacities }> = {
@@ -16,6 +16,15 @@ const MODES: { value: Mode; label: string }[] = [
 	{ value: 'average', label: 'Average (like an X-ray)' },
 ];
 
+/** Phones: lets a controls row's sliders shrink so label, slider and value fit the width. */
+function fitSliders(row: HTMLElement) {
+	for (const l of row.querySelectorAll<HTMLLabelElement>('label')) l.style.maxWidth = '100%';
+	for (const i of row.querySelectorAll<HTMLInputElement>('input[type=range]')) {
+		i.style.minWidth = '0';
+		i.style.flex = '1 1 60px';
+	}
+}
+
 const figure: Figure = {
 	title: 'Editing a transfer function',
 	caption:
@@ -27,6 +36,7 @@ const figure: Figure = {
 		let mode: Mode = 'composite';
 		let yaw = (35 * Math.PI) / 180;
 
+		const narrow = isNarrow(el);
 		const row = controls(el);
 		const presetSel = select(
 			row,
@@ -43,13 +53,14 @@ const figure: Figure = {
 			},
 			'layers',
 		);
-		select(row, 'Compositing', MODES, (m) => {
+		const modeSel = select(row, 'Compositing', MODES, (m) => {
 			mode = m;
 			update();
 		}, 'composite');
+		if (narrow) for (const s of [presetSel, modeSel]) s.style.maxWidth = `${el.clientWidth - 110}px`;
 
 		const grid = document.createElement('div');
-		grid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;align-items:center;';
+		grid.style.cssText = `display:grid;grid-template-columns:repeat(auto-fit,minmax(${narrow ? 'min(260px,100%)' : '260px'},1fr));gap:16px;align-items:center;`;
 		el.append(grid);
 
 		const canvas = document.createElement('canvas');
@@ -61,9 +72,11 @@ const figure: Figure = {
 		// Transfer function editor: histogram of the volume behind, opacity curve on top.
 		const right = document.createElement('div');
 		grid.append(right);
-		const W = 420;
-		const H = 260;
-		const m = { top: 22, right: 16, bottom: 70, left: 52 };
+		// Phones: drawn at the real width (the grid is one column there), with text at its true 13px.
+		const W = narrow ? el.clientWidth : 420;
+		const H = narrow ? 240 : 260;
+		const FS = narrow ? '13px' : '15px';
+		const m = narrow ? { top: 22, right: 12, bottom: 64, left: 46 } : { top: 22, right: 16, bottom: 70, left: 52 };
 		const iw = W - m.left - m.right;
 		const ih = H - m.top - m.bottom;
 		const root = svg(right, W, H, 'Transfer function editor: opacity against density, over a histogram of the volume.');
@@ -87,12 +100,12 @@ const figure: Figure = {
 			.style('fill', v('dim'));
 		const area = g.append('path').style('fill', v('highlight')).style('fill-opacity', 0.18);
 		const line = g.append('path').style('fill', 'none').style('stroke', v('ink')).style('stroke-width', '2px');
-		styleAxis(g.append('g').call(d3.axisLeft(y).ticks(4))).selectAll('.tick text').style('font-size', '15px');
+		styleAxis(g.append('g').call(d3.axisLeft(y).ticks(4))).selectAll('.tick text').style('font-size', FS);
 		g.append('text')
-			.attr('transform', `translate(-40,${ih / 2}) rotate(-90)`)
+			.attr('transform', `translate(${narrow ? -36 : -40},${ih / 2}) rotate(-90)`)
 			.attr('text-anchor', 'middle')
 			.style('fill', v('muted'))
-			.style('font-size', '15px')
+			.style('font-size', FS)
 			.text('Opacity');
 		// Color ramp under the axis: the color each density gets.
 		const grad = root.append('defs').append('linearGradient').attr('id', 'f13-4-grad');
@@ -100,14 +113,14 @@ const figure: Figure = {
 		g.append('rect').attr('y', ih + 2).attr('width', iw).attr('height', 8).attr('fill', 'url(#f13-4-grad)');
 		styleAxis(g.append('g').attr('transform', `translate(0,${ih + 10})`).call(d3.axisBottom(x).ticks(5)))
 			.selectAll('.tick text')
-			.style('font-size', '15px');
+			.style('font-size', FS);
 		g.append('text')
 			.attr('x', iw / 2)
-			.attr('y', ih + 52)
+			.attr('y', ih + (narrow ? 48 : 52))
 			.attr('text-anchor', 'middle')
 			.style('fill', v('muted'))
-			.style('font-size', '15px')
-			.text('Density (grey: how many voxels have it)');
+			.style('font-size', FS)
+			.text(narrow ? 'Density (grey: voxel count)' : 'Density (grey: how many voxels have it)');
 
 		const handles = g
 			.append('g')
@@ -135,7 +148,7 @@ const figure: Figure = {
 			.attr('dy', -12)
 			.attr('text-anchor', (d) => (d.key === 'spots' ? 'end' : 'middle'))
 			.style('fill', v('ink'))
-			.style('font-size', '15px')
+			.style('font-size', FS)
 			// A halo in the surface color keeps the label readable over the histogram bars.
 			.style('paint-order', 'stroke')
 			.style('stroke', v('surface'))
@@ -218,6 +231,10 @@ const figure: Figure = {
 						? `Visible: ${shown.length ? shown.join(', ') : 'nothing'}. ${fmt.int(samples)} samples taken for 160 × 160 rays; rays stop early once a pixel is 98% opaque.`
 						: `${mode === 'mip' ? 'Each pixel shows the densest sample on its ray, so the dense spots stand out through everything.' : 'Each pixel shows the mean density along its ray.'} The transfer function plays no part here.`;
 			}
+		}
+		if (narrow) {
+			fitSliders(row);
+			fitSliders(row2);
 		}
 		update();
 		dataTable(

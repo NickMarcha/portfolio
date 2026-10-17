@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 import world from 'world-atlas/countries-110m.json';
-import { controls, dataTable, readout, select, svg, v, type Figure } from './lib';
+import { controls, dataTable, isNarrow, readout, select, svg, v, type Figure } from './lib';
 
 type Key = 'mercator' | 'equalEarth' | 'albers' | 'azimuthal';
 
@@ -83,8 +83,11 @@ const figure: Figure = {
 		'The same countries and the same small circles, all 500 km across on the globe, under four projections. On Mercator, Greenland rivals Africa.',
 	credit: 'Map data: Natural Earth via world-atlas (public domain). Distortion circles: Tissot’s indicatrix. Projections: d3-geo.',
 	mount(el) {
-		const W = 680;
-		const H = 420;
+		const narrow = isNarrow(el);
+		// Phones: a 1:1 viewBox, zoomed onto the Atlantic so Greenland, Africa and the circles stay legible.
+		const W = narrow ? el.clientWidth : 680;
+		const H = narrow ? Math.round(W * 1.05) : 420;
+		const ZOOM = 1.8;
 		const countries = topoFeatures(
 			world as unknown as Topo,
 			world.objects.countries.geometries as TopoGeom[],
@@ -105,6 +108,19 @@ const figure: Figure = {
 			d3.sum(greenland, (f) => d3.geoArea(f)) / d3.sum(africa, (f) => d3.geoArea(f));
 
 		function make(key: Key): d3.GeoProjection {
+			if (!narrow) return makeAt(key, W, H);
+			const p = makeAt(key, W * ZOOM, Math.round((W * ZOOM * 420) / 680));
+			const c = p(key === 'azimuthal' ? [-10, 45] : [-15, key === 'equalEarth' ? 0 : 30])!;
+			const t = p.translate();
+			// Mercator keeps its top edge at 80° N, as on the desktop map.
+			const dy = key === 'mercator' ? -p([0, 80])![1] : H / 2 - c[1];
+			return p.translate([t[0] + W / 2 - c[0], t[1] + dy]).clipExtent([
+				[0, 0],
+				[W, H],
+			]);
+		}
+
+		function makeAt(key: Key, W: number, H: number): d3.GeoProjection {
 			if (key === 'mercator') {
 				// Mercator never reaches the poles: show the full width and cut it at 80° N.
 				const p = d3.geoMercator().scale(W / (2 * Math.PI)).translate([W / 2, 0]);
@@ -144,7 +160,8 @@ const figure: Figure = {
 
 		const ratios = {} as Record<Key, number>;
 		for (const k of Object.keys(INFO) as Key[]) {
-			const path = d3.geoPath(make(k));
+			// Measured on the whole-world projection, so the phone crop can't cut the shapes.
+			const path = d3.geoPath(makeAt(k, 680, 420));
 			ratios[k] = d3.sum(greenland, (f) => path.area(f)) / d3.sum(africa, (f) => path.area(f));
 		}
 
@@ -198,13 +215,14 @@ const figure: Figure = {
 			)}% the size of Africa; on the globe it is ${Math.round(trueRatio * 100)}%.`;
 		}
 
-		select(
+		const sel = select(
 			row,
 			'Projection',
 			(Object.keys(INFO) as Key[]).map((k) => ({ value: k, label: INFO[k].label })),
 			draw,
 			'mercator',
 		);
+		if (narrow) sel.style.maxWidth = `${W - 90}px`;
 		draw('mercator');
 		dataTable(
 			el,

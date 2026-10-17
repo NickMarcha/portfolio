@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { svg, v, type Figure } from './lib';
+import { isNarrow, svg, v, type Figure } from './lib';
 
 const STEPS = [
 	{ title: '1. Reconstruction', lines: ['Estimate the value at', 'each sample from the', 'voxels around it.'] },
@@ -14,8 +14,13 @@ const figure: Figure = {
 		'A ray leaves the eye, passes through one pixel of the screen and through the volume, taking samples at regular steps. Each sample goes through the same four steps, and the ray ends as one pixel color.',
 	credit: 'After Levoy 1988.',
 	mount(el) {
-		const W = 680;
-		const H = 430;
+		const narrow = isNarrow(el);
+		// Phones: the ray diagram is squeezed into the real width and the four steps stack, one per row.
+		const W = narrow ? el.clientWidth : 680;
+		const BOX = 160;
+		const BGAP = 24;
+		const top = narrow ? 290 : 264;
+		const H = narrow ? top + 4 * BOX + 3 * BGAP + 4 : 430;
 		const root = svg(
 			el,
 			W,
@@ -34,7 +39,7 @@ const figure: Figure = {
 				.text(t);
 
 		// --- Top: eye, screen, voxel grid, ray, samples ---
-		const eyeX = 34;
+		const eyeX = narrow ? 22 : 34;
 		const rayY = 112;
 		root.append('path')
 			.attr('d', `M${eyeX - 14},${rayY} Q${eyeX},${rayY - 14} ${eyeX + 14},${rayY} Q${eyeX},${rayY + 14} ${eyeX - 14},${rayY}Z`)
@@ -44,7 +49,7 @@ const figure: Figure = {
 		root.append('circle').attr('cx', eyeX + 2).attr('cy', rayY).attr('r', 4).style('fill', v('ink'));
 		label(eyeX, rayY + 34, 'Eye');
 
-		const scrX = 104;
+		const scrX = narrow ? 58 : 104;
 		root.append('line').attr('x1', scrX).attr('x2', scrX).attr('y1', 40).attr('y2', 196).style('stroke', v('muted')).style('stroke-width', '3px');
 		root.append('rect').attr('x', scrX - 5).attr('y', rayY - 9).attr('width', 10).attr('height', 18).style('fill', v('highlight'));
 		label(scrX, 30, 'Screen');
@@ -52,7 +57,7 @@ const figure: Figure = {
 		// A 2D cross-section of the voxel grid with a round blob of higher density.
 		const cols = 9;
 		const rows = 6;
-		const gx = d3.scaleLinear().domain([0, cols - 1]).range([170, 470]);
+		const gx = d3.scaleLinear().domain([0, cols - 1]).range(narrow ? [92, W - 16] : [170, 470]);
 		const gy = d3.scaleLinear().domain([0, rows - 1]).range([36, 200]);
 		const dens = (i: number, j: number) => 100 * Math.exp(-((i - 4.6) ** 2 + (j - 2.4) ** 2) / 5);
 		for (let i = 0; i < cols; i++) {
@@ -68,15 +73,15 @@ const figure: Figure = {
 			.join('circle')
 			.attr('cx', ([i]) => gx(i))
 			.attr('cy', ([, j]) => gy(j))
-			.attr('r', 6)
+			.attr('r', narrow ? 5 : 6)
 			.attr('fill', ([i, j]) => d3.interpolateViridis(dens(i, j) / 100))
 			// A muted ring keeps the darkest voxels visible on the dark theme.
 			.style('stroke', v('muted'))
 			.style('stroke-width', '1px');
-		label(320, 226, 'Voxels (dot color = density)');
+		label(narrow ? W / 2 : 320, 226, 'Voxels (dot color = density)');
 
 		// The ray, slightly tilted, runs between two rows of voxels so the samples fall between them.
-		const rayEnd = { x: 520, y: rayY + 10 };
+		const rayEnd = { x: narrow ? W - 4 : 520, y: rayY + 10 };
 		const rayAt = (t: number) => ({ x: eyeX + 16 + t * (rayEnd.x - eyeX - 16), y: rayY + t * (rayEnd.y - rayY) });
 		root.append('line')
 			.attr('x1', eyeX + 16)
@@ -86,35 +91,42 @@ const figure: Figure = {
 			.style('stroke', v('ink'))
 			.style('stroke-width', '2px');
 		root.append('path').attr('d', `M${rayEnd.x},${rayEnd.y} l-10,-6 l1,12z`).style('fill', v('ink'));
-		const samples = d3.range(0.31, 0.93, 0.048).map(rayAt);
+		const samples = d3.range(0.31, 0.93, narrow ? 0.068 : 0.048).map(rayAt);
 		root.append('g')
 			.selectAll('circle')
 			.data(samples)
 			.join('circle')
 			.attr('cx', (d) => d.x)
 			.attr('cy', (d) => d.y)
-			.attr('r', 4.5)
+			.attr('r', narrow ? 4 : 4.5)
 			.style('fill', v('highlight'))
 			.style('stroke', v('surface'))
 			.style('stroke-width', '1.5px');
-		label(560, 92, 'Samples at', 'start');
-		label(560, 110, 'regular steps', 'start');
-		root.append('circle').attr('cx', 550).attr('cy', 87).attr('r', 4.5).style('fill', v('highlight'));
+		if (narrow) {
+			// No room to the right of the grid, so the sample key goes under the voxel label.
+			label(W / 2 - 70, 250, 'Samples at regular steps', 'start');
+			root.append('circle').attr('cx', W / 2 - 80).attr('cy', 245).attr('r', 4.5).style('fill', v('highlight'));
+		} else {
+			label(560, 92, 'Samples at', 'start');
+			label(560, 110, 'regular steps', 'start');
+			root.append('circle').attr('cx', 550).attr('cy', 87).attr('r', 4.5).style('fill', v('highlight'));
+		}
 
 		// --- Bottom: the four steps ---
-		const top = 264;
-		const bw = 152;
-		const gap = (W - 4 * bw) / 3;
+		const PW = 152; // width the step pictures are drawn for
+		const bw = narrow ? W : PW;
+		const gap = narrow ? 0 : (W - 4 * bw) / 3;
 		const boxes = root.append('g');
 		STEPS.forEach((s, k) => {
-			const x0 = k * (bw + gap);
-			const g = boxes.append('g').attr('transform', `translate(${x0},${top})`);
-			g.append('rect').attr('width', bw).attr('height', 160).attr('rx', 6).style('fill', 'none').style('stroke', v('axis'));
+			const x0 = narrow ? 0 : k * (bw + gap);
+			const y0 = narrow ? top + k * (BOX + BGAP) : top;
+			const g = boxes.append('g').attr('transform', `translate(${x0},${y0})`);
+			g.append('rect').attr('width', bw).attr('height', BOX).attr('rx', 6).style('fill', 'none').style('stroke', v('axis'));
 			g.append('text').attr('x', 10).attr('y', 22).style('fill', v('ink')).style('font-size', '14px').style('font-weight', 700).text(s.title);
 			s.lines.forEach((t, i) =>
 				g.append('text').attr('x', 10).attr('y', 116 + i * 16).style('fill', v('ink')).style('font-size', '13px').text(t),
 			);
-			const pic = g.append('g').attr('transform', 'translate(0,34)');
+			const pic = g.append('g').attr('transform', `translate(${(bw - PW) / 2},34)`);
 			if (k === 0) {
 				// A cell: four voxels and a sample inside, weighted by distance.
 				const c = [
@@ -128,7 +140,7 @@ const figure: Figure = {
 				pic.append('circle').attr('cx', 86).attr('cy', 26).attr('r', 4.5).style('fill', v('highlight'));
 			} else if (k === 1) {
 				// Mini transfer function: opacity peak over a color ramp.
-				const tx = d3.scaleLinear().domain([0, 100]).range([18, bw - 18]);
+				const tx = d3.scaleLinear().domain([0, 100]).range([18, PW - 18]);
 				const ty = d3.scaleLinear().domain([0, 1]).range([56, 4]);
 				const tf = (d: number) => Math.max(0, 1 - Math.abs(d - 70) / 14) * 0.9 + Math.max(0, 1 - Math.abs(d - 25) / 10) * 0.25;
 				pic.append('path')
@@ -154,7 +166,12 @@ const figure: Figure = {
 				pic.append('text').attr('x', 100).attr('y', 42).style('fill', v('ink')).style('font-size', '18px').text('→');
 				pic.append('rect').attr('x', 128).attr('y', 26).attr('width', 16).attr('height', 16).style('fill', v('highlight'));
 			}
-			if (k < 3)
+			if (k < 3 && narrow)
+				root.append('path')
+					.attr('d', `M${W / 2},${y0 + BOX + 3} v${BGAP - 10} l-5,-1 l5,7 l5,-7 l-5,1`)
+					.style('fill', v('muted'))
+					.style('stroke', v('muted'));
+			else if (k < 3)
 				root.append('path')
 					.attr('d', `M${x0 + bw + 3},${top + 80} h${gap - 10} l-1,-5 l7,5 l-7,5 l1,-5`)
 					.style('fill', v('muted'))

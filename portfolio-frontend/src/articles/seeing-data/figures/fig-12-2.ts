@@ -31,8 +31,8 @@ const figure: Figure = {
 		// Phones get a compact layout at their real width (slanted genre names, narrower columns)
 		// instead of a scroll box that would hide the combination bars off to the side.
 		const narrow = isNarrow(el);
-		const W = narrow ? Math.max(300, Math.round(el.clientWidth)) : 580;
-		const CW = narrow ? 38 : 60; // one matrix column per genre
+		const W = narrow ? el.clientWidth : 580;
+		const CW = narrow ? Math.min(38, Math.floor((W - 100) / SETS.length)) : 60; // one matrix column per genre
 		const ML = narrow ? 16 : 12;
 		const MW = SETS.length * CW;
 		const BX = ML + MW + (narrow ? 12 : 20); // combination bars start here
@@ -68,8 +68,8 @@ const figure: Figure = {
 		head.selectAll('rect')
 			.data(SETS)
 			.join('rect')
-			.attr('x', (_, i) => colX(i) - (narrow ? 11 : 14))
-			.attr('width', narrow ? 22 : 28)
+			.attr('x', (_, i) => colX(i) - (narrow ? Math.min(11, CW / 2 - 3) : 14))
+			.attr('width', narrow ? Math.min(22, CW - 6) : 28)
 			.attr('y', (s) => top - sy(size.get(s)!))
 			.attr('height', (s) => sy(size.get(s)!))
 			.attr('rx', 2)
@@ -174,7 +174,7 @@ const figure: Figure = {
 			r.select('rect.stripe').style('fill', (_, i) => (i % 2 ? 'transparent' : v('grid')));
 		}
 
-		select(
+		const sel = select(
 			row,
 			'Sort combinations by',
 			[
@@ -184,6 +184,7 @@ const figure: Figure = {
 			draw,
 			'size',
 		);
+		if (narrow) sel.style.maxWidth = `${W - 110}px`;
 		draw('size');
 		dataTable(
 			el,

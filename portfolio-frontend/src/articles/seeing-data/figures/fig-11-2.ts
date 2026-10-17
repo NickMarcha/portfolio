@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
-import { controls, dataTable, readout, select, svg, type Figure } from './lib';
-import { brushHistogram, CELL, coolingField, fieldView, NX, NY, type Cell, type Range } from './fig-11-1';
+import { controls, dataTable, isNarrow, readout, select, svg, type Figure } from './lib';
+import { brushHistogram, CELL, coolingField, fieldView, fitSliders, NX, NY, type Cell, type Range } from './fig-11-1';
 
 type Op = 'and' | 'or' | 'not';
 type Attr = 'speed' | 'grad';
@@ -37,13 +37,18 @@ const figure: Figure = {
 	credit:
 		'Synthetic data: a made-up 2D stand-in for the engine cooling jacket, not simulation output. Levels after Muigg et al. 2008; brush logic after Doleisch, Gasser and Hauser 2003.',
 	mount(el) {
-		const W = 680;
+		const narrow = isNarrow(el);
+		const W = narrow ? el.clientWidth : 680;
+		const cs = narrow ? (W - 2) / NX : CELL;
 		const cells = coolingField();
-		const ox = (W - NX * CELL) / 2;
-		const FH = NY * CELL + 26;
+		const ox = (W - NX * cs) / 2;
+		const FH = NY * cs + 26;
 		const HH = 110;
-		const HW = 270;
-		const H = FH + HH + 76;
+		// Phones: histogram B goes under A, full width, instead of beside it.
+		const HW = narrow ? W - 44 - 12 : 270;
+		const BX = narrow ? 44 : 44 + HW + 56;
+		const BY = narrow ? FH + 34 + HH + 66 : FH + 34;
+		const H = BY + HH + 42;
 
 		const rowOps = controls(el);
 		const rowA = controls(el);
@@ -54,7 +59,7 @@ const figure: Figure = {
 			H,
 			'A 2D cooling jacket drawn as a grid of cells, with two histograms below: temperature (brush A) and a second attribute (brush B). Cells that match the combined brushes are highlighted.',
 		);
-		const paint = fieldView(root, cells, ox, 22);
+		const paint = fieldView(root, cells, ox, 22, cs);
 		const out = readout(el);
 
 		let op: Op = 'and';
@@ -84,6 +89,7 @@ const figure: Figure = {
 			},
 		});
 		ra = [112, ha.full[1]];
+		if (narrow) fitSliders(rowA);
 
 		let hb: ReturnType<typeof brushHistogram>;
 		function buildB() {
@@ -97,8 +103,8 @@ const figure: Figure = {
 			hb = brushHistogram({
 				root,
 				row: rowB,
-				x: 44 + HW + 56,
-				y: FH + 34,
+				x: BX,
+				y: BY,
 				w: HW,
 				h: HH,
 				label: `B: ${a.label}`,
@@ -112,6 +118,7 @@ const figure: Figure = {
 					update();
 				},
 			});
+			if (narrow) fitSliders(rowB);
 		}
 
 		function update() {
@@ -143,7 +150,7 @@ const figure: Figure = {
 			);
 		}
 
-		select(
+		const selOp = select(
 			rowOps,
 			'Combine',
 			(Object.keys(OPS) as Op[]).map((k) => ({ value: k, label: OPS[k].label })),
@@ -153,7 +160,7 @@ const figure: Figure = {
 			},
 			op,
 		);
-		select(
+		const selB = select(
 			rowOps,
 			'B is',
 			(Object.keys(ATTRS) as Attr[]).map((k) => ({ value: k, label: ATTRS[k].option })),
@@ -164,6 +171,7 @@ const figure: Figure = {
 			},
 			attr,
 		);
+		if (narrow) for (const s of [selOp, selB]) s.style.maxWidth = `${W - 70}px`;
 		buildB();
 		update();
 	},

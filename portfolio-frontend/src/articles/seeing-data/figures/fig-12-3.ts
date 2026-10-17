@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { controls, dataTable, readout, rng, svg, toggle, v, type Figure } from './lib';
+import { controls, dataTable, isNarrow, readout, rng, svg, toggle, v, type Figure } from './lib';
 import words from './data/12-3-alice-words.json';
 
 interface Placed {
@@ -13,12 +13,12 @@ interface Placed {
 }
 
 /** Spiral word-cloud layout with seeded start angles, so it looks the same on every load. */
-function layout(list: [string, number][], W: number, H: number, family: string): Placed[] {
+function layout(list: [string, number][], W: number, H: number, family: string, sizes = [14, 66], stretch = 1.6): Placed[] {
 	const ctx = document.createElement('canvas').getContext('2d')!;
 	const fs = d3
 		.scaleLinear()
 		.domain([list[list.length - 1][1], list[0][1]])
-		.range([14, 66]);
+		.range(sizes);
 	const rand = rng(12);
 	const placed: Placed[] = [];
 	const hits = (a: Placed) =>
@@ -38,7 +38,7 @@ function layout(list: [string, number][], W: number, H: number, family: string):
 				size,
 				w,
 				h,
-				x: W / 2 + 1.6 * r * Math.cos(t + t0) - w / 2,
+				x: W / 2 + stretch * r * Math.cos(t + t0) - w / 2,
 				y: H / 2 + r * Math.sin(t + t0) - h / 2,
 			};
 			if (p.x < 0 || p.y < 0 || p.x + w > W || p.y + h > H) {
@@ -60,17 +60,21 @@ const figure: Figure = {
 		'The 40 most frequent words in Alice’s Adventures in Wonderland, as a cloud and as a sorted bar chart of the top 20.',
 	credit: 'Text: Lewis Carroll, Alice’s Adventures in Wonderland (1865), Project Gutenberg eBook #11, public domain.',
 	mount(el) {
-		const W = 680;
-		const CW = 400;
-		const H = 410;
-		const BX = 486;
-		const BW = 150;
+		const narrow = isNarrow(el);
+		// Phones: the bar chart goes under the cloud, both full width.
+		const W = narrow ? el.clientWidth : 680;
+		const CW = narrow ? W : 400;
+		const CH = narrow ? Math.round(W * 0.9) : 380;
 		const RH = 19;
+		const BY = narrow ? 24 + CH + 26 : 0;
+		const H = narrow ? BY + 24 + 20 * RH + 4 : 410;
+		const BX = narrow ? 76 : 486;
+		const BW = narrow ? W - BX - 34 : 150;
 
 		const row = controls(el);
 		const root = svg(el, W, H, '');
 		const cloud = root.append('g');
-		const bars = root.append('g').attr('transform', 'translate(0,24)');
+		const bars = root.append('g').attr('transform', `translate(0,${BY + 24})`);
 		root.append('text')
 			.attr('x', CW / 2)
 			.attr('y', 14)
@@ -79,8 +83,8 @@ const figure: Figure = {
 			.style('font-size', '13px')
 			.text('Word cloud, top 40');
 		root.append('text')
-			.attr('x', BX)
-			.attr('y', 14)
+			.attr('x', narrow ? 0 : BX)
+			.attr('y', BY + 14)
 			.style('fill', v('muted'))
 			.style('font-size', '13px')
 			.text('Top 20, sorted');
@@ -89,7 +93,9 @@ const figure: Figure = {
 
 		function draw(removeStop: boolean) {
 			const list = (removeStop ? words.noStop : words.all) as [string, number][];
-			const placed = layout(list.slice(0, 40), CW, H - 30, family);
+			const placed = narrow
+				? layout(list.slice(0, 40), CW, CH, family, [12, 48], 1.1)
+				: layout(list.slice(0, 40), CW, H - 30, family);
 			cloud
 				.attr('transform', 'translate(0,24)')
 				.selectAll('text')
