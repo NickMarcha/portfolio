@@ -18,9 +18,12 @@
   "showQR": "Show QR code",
   "openLive": "Open live",
   "openArchived": "Open archived",
-	"tagsMore": "{count} more",
-	"tagsSearchableAs": "Also searchable as: {aliases}",
-	"archived": "(archived)",
-	"repoForSite": "repository for this site",
-	"reportIssue": "Report an issue with this site"
+  "tagsMore": "{count} more",
+  "tagsSearchableAs": "Also searchable as: {aliases}",
+  "archived": "(archived)",
+  "repoForSite": "repository for this site",
+  "reportIssue": "Report an issue with this site",
+  "articles": "Articles",
+  "articleSeeingDataDescription": "What visualization is and how it works, from bar charts and color scales to volume rendering and flow. Based on my course work at the University of Bergen.",
+  "inEnglish": "in English"
 }

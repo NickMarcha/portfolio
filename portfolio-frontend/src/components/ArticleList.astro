@@ -1,0 +1,59 @@
+---
+import { t, type Locale } from '../i18n';
+
+interface Props {
+	lang: Locale;
+}
+
+const { lang } = Astro.props;
+// Articles are English only, so other locales say so next to the link.
+const articles = [
+	{
+		href: '/articles/seeing-data/',
+		title: 'Seeing data: a long, plain-language guide to visualization',
+		description: t('articleSeeingDataDescription', lang),
+	},
+];
+---
+
+<section class="articles" aria-labelledby="articles-heading">
+	<div class="home-block home-block-title">
+		<h2 id="articles-heading">{t('articles', lang)}</h2>
+	</div>
+	<ul>
+		{articles.map((a) => (
+			<li class="home-block">
+				<a href={a.href} hreflang="en">{a.title}</a>
+				{lang !== 'en' && <span class="lang-note"> ({t('inEnglish', lang)})</span>}
+				<p>{a.description}</p>
+			</li>
+		))}
+	</ul>
+</section>
+
+<style>
+	.articles {
+		margin-top: 2.5em;
+	}
+	.articles h2 {
+		margin: 0;
+		font-size: 2em;
+	}
+	.articles ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+	.articles a {
+		font-weight: 700;
+	}
+	.articles p {
+		margin: 0.25em 0 0;
+		color: var(--text-muted);
+		font-size: 0.85em;
+	}
+	.lang-note {
+		color: var(--text-muted);
+		font-size: 0.85em;
+	}
+</style>
