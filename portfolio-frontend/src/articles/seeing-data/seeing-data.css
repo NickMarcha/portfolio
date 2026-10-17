@@ -196,6 +196,56 @@
 	font-weight: 700;
 }
 
+/* ---------- Citations ---------- */
+
+.article a.cite {
+	text-decoration: underline dotted;
+	text-underline-offset: 3px;
+}
+
+.cite-pop {
+	position: absolute;
+	inset: auto;
+	margin: 0;
+	width: min(380px, calc(100vw - 16px));
+	padding: 12px 14px;
+	border: 1px solid var(--border);
+	border-radius: 8px;
+	background: var(--surface);
+	box-shadow: var(--shadow);
+	color: var(--text);
+	font-size: 14px;
+	line-height: 1.45;
+}
+.cite-pop p {
+	margin: 0;
+}
+.cite-pop-actions {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	gap: 4px 16px;
+	margin-top: 10px !important;
+	padding-top: 8px;
+	border-top: 1px solid var(--border);
+}
+.cite-pop a:focus-visible,
+.article a.cite:focus-visible {
+	outline: 2px solid var(--primary);
+	outline-offset: 2px;
+}
+
+.article li[id^='ref-'] {
+	scroll-margin-top: 1rem;
+}
+.article li[id^='ref-']:target {
+	background: var(--primary-soft);
+	border-radius: 4px;
+}
+.article a.ref-link {
+	word-break: break-all;
+}
+
 /* ---------- Figures ---------- */
 
 .viz-fig {
