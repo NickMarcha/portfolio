@@ -23,6 +23,8 @@ const sections = [...articleHtml.matchAll(/<h2 id="([^"]+)">(.*?)<\/h2>/g)]
 <html lang="en">
 	<head>
 		<BaseHead title={title} description={description} lang="en" />
+		<!-- Unlisted draft: reachable by link, kept out of search engines. -->
+		<meta name="robots" content="noindex, nofollow" />
 	</head>
 	<body>
 		<div class="article-shell">

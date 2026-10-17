@@ -15,7 +15,12 @@ export default defineConfig({
 		locales: ['en', 'no', 'es'],
 		routing: { prefixDefaultLocale: false },
 	},
-	integrations: [mdx(), react(), sitemap()],
+	integrations: [
+		mdx(),
+		react(),
+		// Articles stay out of the sitemap while they're unlisted drafts.
+		sitemap({ filter: (page) => !page.includes('/articles/') }),
+	],
 	vite: {
 		plugins: [tailwindcss()],
 		resolve: {

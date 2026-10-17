@@ -131,8 +131,10 @@ const isDefaultOgImage = imageSrc === '/og-image.png';
 </script>
 <script>
 	(async () => {
-		// Tailnet preview builds (*.ts.net) must not count as visits.
+		// Tailnet preview builds (*.ts.net) must not count as visits, and unlisted
+		// article drafts are not tracked at all.
 		if (window.location.hostname.endsWith('.ts.net')) return;
+		if (window.location.pathname.startsWith('/articles/')) return;
 		const isLocal =
 			typeof window !== 'undefined' &&
 			(window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
