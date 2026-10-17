@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { controls, dataTable, fmt, readout, select, svg, tooltip, v, type Figure } from './lib';
+import { controls, dataTable, fmt, isNarrow, readout, select, svg, tooltip, v, type Figure } from './lib';
 import data from './data/8-4-west-migration.json';
 
 const CODE: Record<string, string> = {
@@ -21,13 +21,15 @@ const figure: Figure = {
 	credit:
 		'Data: U.S. Census Bureau, American Community Survey 2023 1-year state-to-state migration flows (public domain). Kriskogram after Xiao and Chun 2009.',
 	mount(el) {
-		const W = 680;
-		const H = 470;
-		const axisY = 236;
+		// Phone: the same line at 1 unit = 1px, states closer together and arcs a little thinner.
+		const narrow = isNarrow(el);
+		const W = narrow ? el.clientWidth : 680;
+		const H = narrow ? Math.round(W * 0.68 + 90) : 470;
+		const axisY = narrow ? H / 2 : 236;
 		const states = data.states;
-		const x = d3.scalePoint().domain(states).range([56, W - 56]);
+		const x = d3.scalePoint().domain(states).range(narrow ? [22, W - 22] : [56, W - 56]);
 		const squash = 0.68; // flatten the semicircles so the widest arc fits
-		const width = d3.scaleLinear().domain([0, d3.max(data.flows, (f) => f.n)!]).range([0, 16]);
+		const width = d3.scaleLinear().domain([0, d3.max(data.flows, (f) => f.n)!]).range([0, narrow ? 11 : 16]);
 		const east = (f: Flow) => x(f.to)! > x(f.from)!;
 
 		const row = controls(el);
@@ -40,14 +42,22 @@ const figure: Figure = {
 		const tip = tooltip(el);
 
 		root.append('line')
-			.attr('x1', 20)
-			.attr('x2', W - 20)
+			.attr('x1', narrow ? 2 : 20)
+			.attr('x2', W - (narrow ? 2 : 20))
 			.attr('y1', axisY)
 			.attr('y2', axisY)
 			.style('stroke', v('axis'));
 		const notes = root.append('g').style('font-size', '13px').style('fill', v('muted'));
-		notes.append('text').attr('x', 8).attr('y', 18).text('Above the line: moving east, left to right →');
-		notes.append('text').attr('x', 8).attr('y', H - 8).text('← Below the line: moving west, right to left');
+		notes
+			.append('text')
+			.attr('x', narrow ? 2 : 8)
+			.attr('y', 18)
+			.text(narrow ? 'Above: moving east →' : 'Above the line: moving east, left to right →');
+		notes
+			.append('text')
+			.attr('x', narrow ? 2 : 8)
+			.attr('y', H - 8)
+			.text(narrow ? '← Below: moving west' : '← Below the line: moving west, right to left');
 
 		// Clockwise arcs (sweep 1): a left-to-right flow bulges up, a right-to-left flow bulges down.
 		const arcPath = (f: Flow) => {

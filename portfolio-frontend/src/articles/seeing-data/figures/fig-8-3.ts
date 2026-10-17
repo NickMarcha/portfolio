@@ -1,6 +1,21 @@
 import * as d3 from 'd3';
-import { dataTable, fmt, readout, svg, tooltip, v, viridis, type Figure } from './lib';
+import { dataTable, fmt, isNarrow, readout, svg, tooltip, v, viridis, type Figure } from './lib';
 import data from './data/8-3-oslo-od.json';
+
+// Phone labels; the key above the matrix spells them out.
+const CODE: Record<string, string> = {
+	Grünerløkka: 'Grü',
+	Sentrum: 'Sen',
+	Frogner: 'Fro',
+	'St. Hanshaugen': 'StH',
+	'Gamle Oslo': 'GOs',
+	Sagene: 'Sag',
+	'Nordre Aker': 'NAk',
+	Ullern: 'Ull',
+	'Vestre Aker': 'VAk',
+	Bjerke: 'Bje',
+	Alna: 'Aln',
+};
 
 const short = (n: number) => (n >= 10000 ? `${Math.round(n / 1000)}k` : n >= 1000 ? `${(n / 1000).toFixed(1)}k` : String(n));
 
@@ -14,12 +29,21 @@ const figure: Figure = {
 		const names = data.districts;
 		const M = data.matrix;
 		const n = names.length;
-		const cell = 40;
+		// Phone: short district codes, no numbers in the (too small) cells; tap a cell for its count.
+		const narrow = isNarrow(el);
+		const left = narrow ? 36 : 124;
+		const top = narrow ? 50 : 112;
+		const W = narrow ? el.clientWidth : 660;
+		const cell = narrow ? Math.floor((W - left - 2) / n) : 40;
 		const side = n * cell;
-		const left = 124;
-		const top = 112;
-		const W = 660;
-		const H = top + side + 64;
+		const H = top + side + (narrow ? 100 : 64);
+		const label = (d: string) => (narrow ? (CODE[d] ?? d) : d);
+		if (narrow) {
+			const key = document.createElement('p');
+			key.className = 'viz-readout';
+			key.textContent = names.map((d) => `${CODE[d] ?? d} ${d}`).join(' · ');
+			el.append(key);
+		}
 
 		const cells = names.flatMap((from, i) => names.map((to, j) => ({ i, j, from, to, value: M[i][j] })));
 		const max = d3.max(cells, (c) => c.value)!;
@@ -44,13 +68,16 @@ const figure: Figure = {
 			.on('pointermove', (e, d) =>
 				tip.show(`From <strong>${d.from}</strong> to <strong>${d.to}</strong><br>${fmt.int(d.value)} trips`, e),
 			)
-			.on('pointerleave', () => tip.hide());
+			.on('pointerleave', () => tip.hide())
+			.on('click', (_, d) => {
+				if (narrow) pickText.text(`${d.from} to ${d.to}: ${fmt.int(d.value)} trips`);
+			});
 		cg.append('rect')
 			.attr('width', cell - 1)
 			.attr('height', cell - 1)
 			.style('fill', (d) => (d.value ? color(d.value) : v('grid')));
 		// Fixed light or dark ink on the viridis cell, whichever reads better; viridis is the same in both themes.
-		cg.append('text')
+		if (!narrow) cg.append('text')
 			.attr('x', (cell - 1) / 2)
 			.attr('y', (cell - 1) / 2)
 			.attr('dy', '0.35em')
@@ -65,29 +92,29 @@ const figure: Figure = {
 			.selectAll('text')
 			.data(names)
 			.join('text')
-			.attr('x', -8)
+			.attr('x', narrow ? -5 : -8)
 			.attr('y', (_, i) => i * cell + cell / 2)
 			.attr('dy', '0.35em')
 			.attr('text-anchor', 'end')
-			.text((d) => d);
+			.text(label);
 		g.append('g')
 			.selectAll('text')
 			.data(names)
 			.join('text')
-			.attr('transform', (_, i) => `translate(${i * cell + cell / 2},-8) rotate(-45)`)
+			.attr('transform', (_, i) => `translate(${i * cell + cell / 2},${narrow ? -5 : -8}) rotate(${narrow ? -90 : -45})`)
 			.attr('dy', '0.35em')
-			.text((d) => d);
-		g.selectAll('g > g:not(.cell) text').style('fill', v('ink')).style('font-size', '13px');
+			.text(label);
+		g.selectAll('g > g:not(.cell) text').style('fill', v('ink')).style('font-size', narrow ? '12px' : '13px');
 		root.append('text')
-			.attr('x', 8)
-			.attr('y', top - 10)
+			.attr('x', narrow ? 2 : 8)
+			.attr('y', narrow ? 12 : top - 10)
 			.text('From ↓  To →')
 			.style('fill', v('muted'))
 			.style('font-size', '12px');
 
 		// Legend: the log ramp with a few round ticks.
-		const lw = 260;
-		const lg = root.append('g').attr('transform', `translate(${left},${top + side + 18})`);
+		const lw = narrow ? W - 40 : 260;
+		const lg = root.append('g').attr('transform', `translate(${narrow ? 16 : left},${top + side + (narrow ? 36 : 18)})`);
 		const grad = root
 			.append('defs')
 			.append('linearGradient')
@@ -107,11 +134,19 @@ const figure: Figure = {
 			.style('font-size', '12px')
 			.text((d) => fmt.int(d));
 		lg.append('text')
-			.attr('x', lw + 12)
-			.attr('y', 9)
+			.attr('x', narrow ? 0 : lw + 12)
+			.attr('y', narrow ? -8 : 9)
 			.style('fill', v('muted'))
 			.style('font-size', '12px')
 			.text('trips (log scale)');
+
+		const pickText = root
+			.append('text')
+			.attr('x', 2)
+			.attr('y', H - 10)
+			.style('fill', v('ink'))
+			.style('font-size', '13px')
+			.text(narrow ? 'Tap a cell to see its trip count.' : '');
 
 		const within = d3.sum(d3.range(n), (i) => M[i][i]);
 		const cross = cells.filter((c) => c.i !== c.j).sort((a, b) => b.value - a.value)[0];

@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 import raw from './data/7-5-co2.json';
-import { controls, dataTable, gridY, readout, slider, styleAxis, svg, v, type Figure } from './lib';
+import { controls, dataTable, gridY, isNarrow, readout, slider, styleAxis, svg, v, type Figure } from './lib';
 
 type Row = { date: Date; ppm: number };
 const DATA: Row[] = (raw as [number, number, number][]).map(([y, mo, ppm]) => ({ date: new Date(y, mo - 1, 15), ppm }));
@@ -32,10 +32,11 @@ const figure: Figure = {
 			input.nextElementSibling!.textContent = text;
 		};
 
-		const W = 680;
-		const m = { top: 30, right: 16, left: 52 };
+		const narrow = isNarrow(el);
+		const W = narrow ? el.clientWidth : 680;
+		const m = narrow ? { top: 30, right: 12, left: 44 } : { top: 30, right: 16, left: 52 };
 		const iw = W - m.left - m.right;
-		const fh = 270;
+		const fh = narrow ? 240 : 270;
 		const ch = 56;
 		const gap = 52;
 		const H = m.top + fh + gap + ch + 30;
@@ -51,7 +52,7 @@ const figure: Figure = {
 		const grid = fg.append('g');
 		const fx = fg.append('g').attr('transform', `translate(0,${fh})`);
 		const fy = fg.append('g');
-		fg.append('text').attr('x', -48).attr('y', -14).style('fill', v('muted')).style('font-size', '13px').text('CO₂, parts per million');
+		fg.append('text').attr('x', -m.left + 4).attr('y', -14).style('fill', v('muted')).style('font-size', '13px').text('CO₂, parts per million');
 		const fLine = fg.append('path').attr('clip-path', `url(#${clipId})`).style('fill', 'none').style('stroke', v('series-1')).style('stroke-width', 2);
 		const fDots = fg.append('g').attr('clip-path', `url(#${clipId})`);
 
@@ -64,7 +65,7 @@ const figure: Figure = {
 			.style('fill', 'none')
 			.style('stroke', v('muted'))
 			.style('stroke-width', 1.25);
-		styleAxis(cg.append('g').attr('transform', `translate(0,${ch})`).call(d3.axisBottom(xAll).ticks(d3.timeYear.every(10))));
+		styleAxis(cg.append('g').attr('transform', `translate(0,${ch})`).call(d3.axisBottom(xAll).ticks(d3.timeYear.every(narrow ? 20 : 10))));
 		const brush = d3
 			.brushX()
 			.extent([
@@ -95,8 +96,8 @@ const figure: Figure = {
 			const [lo, hi] = d3.extent(rows.length ? rows : DATA, (d) => d.ppm) as [number, number];
 			const y = d3.scaleLinear().domain([lo - 1, hi + 1]).nice().range([fh, 0]);
 			gridY(grid, y, iw);
-			styleAxis(fx.call(d3.axisBottom(x).ticks(7)));
-			styleAxis(fy.call(d3.axisLeft(y).ticks(6)));
+			styleAxis(fx.call(d3.axisBottom(x).ticks(narrow ? 4 : 7)));
+			styleAxis(fy.call(d3.axisLeft(y).ticks(narrow ? 5 : 6)));
 			fLine.datum(DATA).attr('d', d3.line<Row>().x((d) => x(d.date)).y((d) => y(d.ppm)));
 			// Monthly dots only when they are far enough apart to read.
 			fDots

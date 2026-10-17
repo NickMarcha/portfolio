@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { dataTable, svg, v, type Figure } from './lib';
+import { dataTable, isNarrow, svg, v, type Figure } from './lib';
 
 // One made-up work week, hours counted from Monday 00:00.
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
@@ -26,12 +26,18 @@ const figure: Figure = {
 	caption:
 		'The same five steps of a made-up work week, shown with each of the visual properties that can carry time: position, length, angle, connection, labels and brightness.',
 	mount(el) {
-		const W = 680;
-		const pw = 320;
+		const narrow = isNarrow(el);
+		// Phones: one panel per row, full width.
+		const cols = narrow ? 1 : 2;
+		const W = narrow ? el.clientWidth : 680;
+		const pw = narrow ? W : 320;
 		const ph = 150;
 		const gapX = W - 2 * pw;
 		const head = 40;
-		const H = 3 * (ph + head) + 4;
+		const H = (6 / cols) * (ph + head) + 4;
+		// Squeeze the free positions so the labels still fit a narrow panel.
+		const sx = narrow ? Math.min(1, (pw - 70) / 250) : 1;
+		const free = FREE.map(([fx, fy]) => [fx * sx, fy]);
 		const root = svg(
 			el,
 			W,
@@ -50,7 +56,7 @@ const figure: Figure = {
 		];
 
 		panels.forEach((p, i) => {
-			const g = root.append('g').attr('transform', `translate(${(i % 2) * (pw + gapX)},${Math.floor(i / 2) * (ph + head)})`);
+			const g = root.append('g').attr('transform', `translate(${(i % cols) * (pw + gapX)},${Math.floor(i / cols) * (ph + head)})`);
 			g.append('text').attr('y', 14).style('font-size', '14px').style('font-weight', '700').style('fill', v('ink')).text(p.title);
 			g.append('text').attr('y', 31).style('font-size', '12px').style('fill', v('muted')).text(p.note);
 			p.draw(g.append('g').attr('transform', `translate(0,${head})`));
@@ -159,9 +165,9 @@ const figure: Figure = {
 				.append('path')
 				.attr('d', 'M0,0L10,5L0,10z')
 				.style('fill', v('muted'));
-			for (let i = 0; i < FREE.length - 1; i++) {
-				const [x1, y1] = FREE[i];
-				const [x2, y2] = FREE[i + 1];
+			for (let i = 0; i < free.length - 1; i++) {
+				const [x1, y1] = free[i];
+				const [x2, y2] = free[i + 1];
 				const d = Math.hypot(x2 - x1, y2 - y1);
 				const k = 10 / d;
 				g.append('line')
@@ -176,7 +182,7 @@ const figure: Figure = {
 			nodes(g, () => 1);
 		}
 		function nodes(g: G, op: (d: Ev, i: number) => number, sub?: (d: Ev) => string) {
-			const n = g.selectAll(null).data(EVENTS).join('g').attr('transform', (_, i) => `translate(${FREE[i][0]},${FREE[i][1]})`);
+			const n = g.selectAll(null).data(EVENTS).join('g').attr('transform', (_, i) => `translate(${free[i][0]},${free[i][1]})`);
 			n.append('circle').attr('r', 6).style('fill', v('series-1')).style('fill-opacity', op);
 			ink(n.append('text'))
 				.attr('x', 10)

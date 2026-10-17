@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { controls, dataTable, gridY, readout, styleAxis, svg, toggle, v, type Figure } from './lib';
+import { controls, dataTable, gridY, isNarrow, readout, styleAxis, svg, toggle, v, type Figure } from './lib';
 
 // Matplotlib's classic jet, as piecewise-linear RGB ramps.
 function jet(t: number) {
@@ -50,12 +50,13 @@ const figure: Figure = {
 		'Both maps show one gently curving surface with a single hill and a single basin. Jet paints bright bands around yellow and cyan that are not in the data. In greyscale, jet’s hill and basin both turn dark, because its lightness rises and then falls again, while viridis keeps low dark and high light.',
 	credit: 'Synthetic data. Jet as defined in matplotlib; viridis: van der Walt and Smith 2015. Lightness is CIELAB L*.',
 	mount(el) {
+		const narrow = isNarrow(el);
 		const row = controls(el);
 		const wrap = document.createElement('div');
 		wrap.style.cssText = 'display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: center;';
 		el.append(wrap);
 
-		const PW = 330;
+		const PW = narrow ? el.clientWidth : 330;
 		const IH = (PW * GH) / GW;
 		const PH = 26 + IH + 46;
 		const panels = MAPS.map((cm) => {
@@ -109,9 +110,9 @@ const figure: Figure = {
 		}
 
 		// Lightness profile of each colormap.
-		const W = 480;
+		const W = narrow ? el.clientWidth : 480;
 		const H = 250;
-		const m = { top: 30, right: 70, bottom: 40, left: 44 };
+		const m = narrow ? { top: 30, right: 62, bottom: 40, left: 36 } : { top: 30, right: 70, bottom: 40, left: 44 };
 		const iw = W - m.left - m.right;
 		const ih = H - m.top - m.bottom;
 		const chart = svg(el, W, H, 'Line chart of lightness along each colormap. Viridis rises steadily; jet rises to a peak near the middle and falls again.').style('margin', '14px auto 0');
@@ -120,8 +121,8 @@ const figure: Figure = {
 		const y = d3.scaleLinear().domain([0, 100]).range([ih, 0]);
 		gridY(g.append('g'), y, iw, 5);
 		styleAxis(g.append('g').call(d3.axisLeft(y).ticks(5)));
-		styleAxis(g.append('g').attr('transform', `translate(0,${ih})`).call(d3.axisBottom(x).ticks(5)));
-		g.append('text').attr('x', -40).attr('y', -14).style('fill', v('ink')).style('font-size', '14px').text('Lightness of each colormap (0 black, 100 white)');
+		styleAxis(g.append('g').attr('transform', `translate(0,${ih})`).call(d3.axisBottom(x).ticks(narrow ? 4 : 5)));
+		g.append('text').attr('x', narrow ? -m.left : -40).attr('y', -14).style('fill', v('ink')).style('font-size', '14px').text(narrow ? 'Lightness (0 black, 100 white)' : 'Lightness of each colormap (0 black, 100 white)');
 		g.append('text').attr('x', iw).attr('y', ih + 34).attr('text-anchor', 'end').style('fill', v('muted')).style('font-size', '13px').text('Data value, low to high');
 		const ts = d3.range(65).map((i) => i / 64);
 		MAPS.forEach((cm, k) => {

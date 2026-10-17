@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { button, controls, dataTable, gridY, readout, reducedMotion, select, slider, styleAxis, svg, v, type Figure } from './lib';
+import { button, controls, dataTable, gridY, isNarrow, readout, reducedMotion, select, slider, styleAxis, svg, v, type Figure } from './lib';
 import data from './data/9-1-hourly-2025.json';
 
 type Mode = 'animate' | 'multiples';
@@ -13,8 +13,14 @@ const figure: Figure = {
 		'Oslo city bike trips started per hour of the day, averaged over each month of 2025. The animation plays the months one after another. The small multiples put all twelve side by side.',
 	credit: 'Data: Oslo Bysykkel, NLOD. Hours in Oslo local time.',
 	mount(el) {
-		const W = 680;
-		const H = 420;
+		const narrow = isNarrow(el);
+		const W = narrow ? el.clientWidth : 680;
+		const H = narrow ? 300 : 420;
+		// Phones: small multiples in 2 columns, 6 rows.
+		const cols = narrow ? 2 : 4;
+		const pw = narrow ? (W - 40 - 16) / 2 : 140;
+		const ph = narrow ? 70 : 90;
+		const multH = narrow ? 26 + 6 * (ph + 42) - 16 : H;
 		const max = d3.max(SERIES.flat())!;
 		const yMax = Math.ceil(max / 100) * 100;
 
@@ -96,9 +102,10 @@ const figure: Figure = {
 			stop();
 			stage.selectAll('*').remove();
 			if (mode === 'animate') {
-				const m = { top: 30, right: 20, bottom: 32, left: 50 };
+				root.attr('viewBox', `0 0 ${W} ${H}`);
+				const m = narrow ? { top: 30, right: 18, bottom: 32, left: 42 } : { top: 30, right: 20, bottom: 32, left: 50 };
 				const g = stage.append('g').attr('transform', `translate(${m.left},${m.top})`);
-				update = panel(g, W - m.left - m.right, H - m.top - m.bottom, { axes: true, ticks: 6 });
+				update = panel(g, W - m.left - m.right, H - m.top - m.bottom, { axes: true, ticks: narrow ? 4 : 6 });
 				monthLabel = g
 					.append('text')
 					.attr('x', W - m.left - m.right)
@@ -117,15 +124,14 @@ const figure: Figure = {
 				out.textContent =
 					'One month at a time. To compare June with July you have to remember what June looked like after it is gone.';
 			} else {
-				const cols = 4;
-				const pw = 140;
-				const ph = 90;
-				const gx = (W - 44 - cols * pw) / (cols - 1);
+				root.attr('viewBox', `0 0 ${W} ${multH}`);
+				const left = narrow ? 40 : 44;
+				const gx = (W - left - cols * pw) / (cols - 1);
 				const gy = 42;
 				SERIES.forEach((_, i) => {
 					const g = stage
 						.append('g')
-						.attr('transform', `translate(${44 + (i % cols) * (pw + gx)},${26 + Math.floor(i / cols) * (ph + gy)})`);
+						.attr('transform', `translate(${left + (i % cols) * (pw + gx)},${26 + Math.floor(i / cols) * (ph + gy)})`);
 					panel(g, pw, ph, { axes: false, ticks: 2 })(i);
 					g.append('text')
 						.attr('y', -8)
@@ -137,7 +143,7 @@ const figure: Figure = {
 						const y = d3.scaleLinear().domain([0, yMax]).range([ph, 0]);
 						styleAxis(g.append('g').call(d3.axisLeft(y).ticks(2).tickSize(3)));
 					}
-					if (i >= 8) {
+					if (i >= 12 - cols) {
 						g.selectAll(null)
 							.data([0, 12, 23])
 							.join('text')

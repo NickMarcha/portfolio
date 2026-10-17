@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { controls, dataTable, readout, select, svg, toggle, v, type Figure } from './lib';
+import { controls, dataTable, isNarrow, readout, select, svg, toggle, v, type Figure } from './lib';
 
 // Machado, Oliveira and Fernandes 2009, severity 1.0. Applied to linear RGB.
 const MATRICES = {
@@ -108,6 +108,7 @@ const figure: Figure = {
 	credit:
 		'Made-up data. Palettes: ColorBrewer, Harrower and Brewer 2003. Simulation: Machado, Oliveira and Fernandes 2009, full severity. Difference is CIEDE2000, where 1 is about one just-noticeable step.',
 	mount(el) {
+		const narrow = isNarrow(el);
 		const row = controls(el);
 		let vision: Vision = 'normal';
 		let labelled = false;
@@ -117,7 +118,7 @@ const figure: Figure = {
 		el.append(wrap);
 		const out = readout(el);
 
-		const W = 330;
+		const W = narrow ? el.clientWidth : 330;
 		const barH = 24;
 		const rowH = 52;
 		const legendTop = 34 + DATA.length * rowH + 6;
@@ -126,7 +127,7 @@ const figure: Figure = {
 
 		const panels = PALETTES.map((pal) => {
 			const root = svg(wrap, W, H, `Stacked bar chart of answers to four survey statements, colored with the ${pal.name} palette.`).style('flex', `1 1 ${W - 40}px`);
-			root.append('text').attr('y', 18).style('fill', v('ink')).style('font-size', '15px').style('font-weight', '700').text(pal.name);
+			root.append('text').attr('y', 18).style('fill', v('ink')).style('font-size', '15px').style('font-weight', '700').text(narrow ? pal.name.replace(/ \(\w+\)/, '') : pal.name);
 			const rows = root
 				.selectAll('g.q')
 				.data(DATA)
@@ -195,7 +196,7 @@ const figure: Figure = {
 				(vision !== 'normal' ? ' Under about 10, two colors are easy to mix up.' : '');
 		}
 
-		select<Vision>(
+		const sel = select<Vision>(
 			row,
 			'Simulate',
 			[
@@ -209,6 +210,8 @@ const figure: Figure = {
 			},
 			'normal',
 		);
+		// Long option names would push the select past a phone's edge.
+		if (narrow) sel.style.maxWidth = `${el.clientWidth - 80}px`;
 		toggle(row, 'Label the bars', (on) => {
 			labelled = on;
 			draw();

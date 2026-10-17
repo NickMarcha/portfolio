@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { button, controls, dataTable, readout, reducedMotion, rng, select, svg, v, type Figure } from './lib';
+import { button, controls, dataTable, isNarrow, readout, reducedMotion, rng, select, svg, v, type Figure } from './lib';
 import data from './data/8-1-miserables.json';
 
 interface N extends d3.SimulationNodeDatum {
@@ -22,8 +22,10 @@ const figure: Figure = {
 	credit:
 		'Data: Les Misérables co-appearance network from D. E. Knuth, The Stanford GraphBase (1993), via vega-datasets. Layout: d3-force.',
 	mount(el) {
-		const W = 680;
-		const H = 470;
+		// Phone: a taller, narrower box at 1 unit = 1px, with a tighter layout so the groups still fit.
+		const narrow = isNarrow(el);
+		const W = narrow ? el.clientWidth : 680;
+		const H = narrow ? 520 : 470;
 		const pad = 14;
 
 		const nodes: N[] = data.nodes.map((n, i) => ({ i, name: pretty(n.name), degree: 0, weight: 0 }));
@@ -37,9 +39,9 @@ const figure: Figure = {
 			nbrs[l.source].add(l.target);
 			nbrs[l.target].add(l.source);
 		}
-		const labelled = new Set([...nodes].sort((a, b) => b.weight - a.weight).slice(0, 8).map((n) => n.i));
+		const labelled = new Set([...nodes].sort((a, b) => b.weight - a.weight).slice(0, narrow ? 5 : 8).map((n) => n.i));
 		labelled.add(0); // Myriel, so the separate bishop cluster has a name
-		const r = d3.scaleSqrt().domain([1, d3.max(nodes, (n) => n.degree)!]).range([4, 11]);
+		const r = d3.scaleSqrt().domain([1, d3.max(nodes, (n) => n.degree)!]).range(narrow ? [4, 8] : [4, 11]);
 		const w = d3.scaleLinear().domain([1, d3.max(links, (l) => l.value)!]).range([1, 5]);
 
 		const row = controls(el);
@@ -123,9 +125,9 @@ const figure: Figure = {
 				.attr('y2', (d) => (d.target as N).y!);
 			nodeSel.attr('cx', (d) => d.x!).attr('cy', (d) => d.y!);
 			labelSel
-				.attr('x', (d) => d.x! + (d.x! > W - 120 ? -1 : 1) * (r(d.degree) + 4))
+				.attr('x', (d) => d.x! + (d.x! > W - (narrow ? 90 : 120) ? -1 : 1) * (r(d.degree) + 4))
 				.attr('y', (d) => d.y!)
-				.attr('text-anchor', (d) => (d.x! > W - 120 ? 'end' : 'start'));
+				.attr('text-anchor', (d) => (d.x! > W - (narrow ? 90 : 120) ? 'end' : 'start'));
 			showLabels();
 		}
 
@@ -139,7 +141,7 @@ const figure: Figure = {
 				for (const i of byWeight) {
 					const n = nodes[i];
 					const tw = n.name.length * 7.2;
-					const left = n.x! > W - 120;
+					const left = n.x! > W - (narrow ? 90 : 120);
 					const x0 = left ? n.x! - r(n.degree) - 4 - tw : n.x! + r(n.degree) + 4;
 					const b: [number, number, number, number] = [x0, n.y! - 9, x0 + tw, n.y! + 9];
 					if (boxes.some((o) => b[0] < o[2] && o[0] < b[2] && b[1] < o[3] && o[1] < b[3])) continue;
@@ -167,13 +169,13 @@ const figure: Figure = {
 					d3
 						.forceLink<N, L>(links)
 						.id((d) => d.i)
-						.distance((d) => 60 - 4 * Math.min(8, d.value)),
+						.distance((d) => (narrow ? 34 : 60) - (narrow ? 2.5 : 4) * Math.min(8, d.value)),
 				)
-				.force('charge', d3.forceManyBody().strength(-120))
+				.force('charge', d3.forceManyBody().strength(narrow ? -45 : -120))
 				// Keeps the whole layout centred, so new seeds don't pile nodes against an edge.
 				.force('center', d3.forceCenter(W / 2, H / 2))
-				.force('x', d3.forceX(W / 2).strength(0.035))
-				.force('y', d3.forceY(H / 2).strength(0.1))
+				.force('x', d3.forceX(W / 2).strength(narrow ? 0.08 : 0.035))
+				.force('y', d3.forceY(H / 2).strength(narrow ? 0.05 : 0.1))
 				.force('collide', d3.forceCollide<N>((d) => r(d.degree) + 1.5))
 				.on('tick', place);
 			if (reducedMotion()) {

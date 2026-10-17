@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { controls, dataTable, readout, reducedMotion, select, svg, tooltip, v, type Figure } from './lib';
+import { controls, dataTable, isNarrow, readout, reducedMotion, select, svg, tooltip, v, type Figure } from './lib';
 import data from './data/8-1-miserables.json';
 
 type Order = 'cluster' | 'name' | 'frequency';
@@ -21,11 +21,13 @@ const figure: Figure = {
 	credit:
 		'After Mike Bostock’s Les Misérables co-occurrence matrix (bost.ocks.org/mike/miserables). Data: D. E. Knuth, The Stanford GraphBase (1993), via vega-datasets.',
 	mount(el) {
-		const W = 680;
-		const H = 616;
-		const left = 128;
-		const top = 44;
-		const side = 77 * 7;
+		// Phone: the matrix fills the width, and the highlighted name sits above it instead of to the left.
+		const narrow = isNarrow(el);
+		const W = narrow ? el.clientWidth : 680;
+		const left = narrow ? 2 : 128;
+		const top = narrow ? 30 : 44;
+		const side = narrow ? W - 4 : 77 * 7;
+		const H = narrow ? top + side + 34 : 616;
 
 		const n = data.nodes.length;
 		const names = data.nodes.map((d) => pretty(d.name));
@@ -79,7 +81,7 @@ const figure: Figure = {
 			.attr('text-anchor', 'middle')
 			.style('fill', v('muted'))
 			.style('font-size', '12px')
-			.text('77 characters along both axes, in the order chosen above');
+			.text(narrow ? '77 characters on both axes' : '77 characters along both axes, in the order chosen above');
 
 		const out = readout(el);
 		const tip = tooltip(el);
@@ -97,7 +99,7 @@ const figure: Figure = {
 			const on = selected >= 0;
 			cellSel.style('fill', (d) => (on && (d.i === selected || d.j === selected) ? v('highlight') : v('series-1')));
 			bands.style('display', on ? '' : 'none');
-			rowLabel.style('display', on ? '' : 'none');
+			rowLabel.style('display', on && !narrow ? '' : 'none');
 			colLabel.style('display', on ? '' : 'none');
 			let text = NOTES[order];
 			if (on) {
@@ -105,7 +107,7 @@ const figure: Figure = {
 				rowBand.attr('y', p);
 				colBand.attr('x', p);
 				rowLabel.attr('y', p + x.bandwidth() / 2).text(names[selected]);
-				colLabel.attr('x', Math.max(30, Math.min(side - 30, p + x.bandwidth() / 2))).text(names[selected]);
+				colLabel.attr('x', narrow ? side / 2 : Math.max(30, Math.min(side - 30, p + x.bandwidth() / 2))).text(names[selected]);
 				const k = cells.filter((c) => c.i === selected).length;
 				text += ` ${names[selected]} has ${k} filled cells in their row, one for each character they share a chapter with.`;
 			}

@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { controls, dataTable, readout, slider, svg, v, type Figure } from './lib';
+import { controls, dataTable, isNarrow, readout, slider, svg, toggle, v, type Figure } from './lib';
 
 // Made-up GPS tracks: x and y on a small street map (0-1), t in minutes after 20:00.
 type P = [number, number, number];
@@ -59,10 +59,13 @@ const figure: Figure = {
 		'A map on the floor and time running up, here one hour from 20:00 to 21:00. Each made-up taxi track becomes a line climbing through the cube. A vertical stretch is a taxi standing still; a nearly flat one is a taxi moving fast. The red point is a crossing at 20:33.',
 	credit: 'Synthetic tracks. Space-time cube after Hägerstrand 1970; taxi example after Kapler and Wright 2004.',
 	mount(el) {
-		const W = 680;
-		const H = 520;
-		const S = 270; // floor side in px
-		const Z = 260; // cube height in px
+		const narrow = isNarrow(el);
+		const W = narrow ? el.clientWidth : 680;
+		// Phones: shrink the cube so a rotated floor (up to 1.41 sides wide) plus the time and taxi labels fit.
+		const k = narrow ? Math.min(1, (W - 96) / (1.414 * 270)) : 1;
+		const H = Math.round(520 * k) + (narrow ? 16 : 0);
+		const S = 270 * k; // floor side in px
+		const Z = 260 * k; // cube height in px
 		const cx = W / 2;
 
 		const row = controls(el);
@@ -81,7 +84,7 @@ const figure: Figure = {
 			const a = (yaw * Math.PI) / 180;
 			const e = (tilt * Math.PI) / 180;
 			// Floor centre moves with the tilt so the whole cube stays inside the picture.
-			const cy = H / 2 + (Z * Math.cos(e)) / 2 + 10;
+			const cy = H / 2 + (Z * Math.cos(e)) / 2 + 10 * k;
 			const X = x - 0.5;
 			const Y = y - 0.5;
 			const rx = X * Math.cos(a) - Y * Math.sin(a);
@@ -150,9 +153,10 @@ const figure: Figure = {
 			const top = proj([left[0], left[1], 60]);
 			cubeG
 				.append('text')
-				.attr('x', top[0] - 8)
+				// On phones the left-most corner sits near the edge, so keep the label inside.
+				.attr('x', narrow ? Math.max(0, top[0] - 84) : top[0] - 8)
 				.attr('y', top[1] - 18)
-				.attr('text-anchor', 'end')
+				.attr('text-anchor', narrow ? 'start' : 'end')
 				.style('font-size', '12px')
 				.style('fill', v('muted'))
 				.text('Time runs up');
@@ -197,20 +201,31 @@ const figure: Figure = {
 			draw();
 		});
 		draw();
-		out.textContent =
-			'Taxi 1 crossed the red point’s spot at 20:12, too early. Taxi 2 was a block away at 20:33. Taxi 4 stood still almost the whole hour, a vertical line. Only Taxi 3’s line passes through the point: it waited, drove to the crossing at 20:33, then left fast, which is the nearly flat stretch.';
 
+		// The article asks the reader to find the taxi, so the answer waits for a button.
+		const QUESTION =
+			'The red point is a crossing at 20:33. Which taxi was there? Rotate the cube to check, then press “Show the answer”.';
+		const ANSWER =
+			'Taxi 1 crossed the red point’s spot at 20:12, too early. Taxi 2 was a block away at 20:33. Taxi 4 stood still almost the whole hour, a vertical line. Only Taxi 3’s line passes through the point: it waited, drove to the crossing at 20:33, then left fast, which is the nearly flat stretch.';
 		const rows = TAXIS.flatMap((d) => d.path.map(([x, y, t]) => ({ name: d.name, x, y, t })));
-		dataTable(
-			el,
-			[
-				{ label: 'Taxi', value: (r: (typeof rows)[number]) => r.name },
-				{ label: 'Time', value: (r) => (r.t === 60 ? '21:00' : clock(r.t)) },
-				{ label: 'Map x (0-1)', value: (r) => r.x, numeric: true },
-				{ label: 'Map y (0-1)', value: (r) => r.y, numeric: true },
-			],
-			rows,
-		);
+		type R = (typeof rows)[number];
+		const atScene = (r: R) => r.x === SCENE[0] && r.y === SCENE[1] && r.t === SCENE[2];
+		function answer(shown: boolean) {
+			out.textContent = shown ? ANSWER : QUESTION;
+			dataTable(
+				el,
+				[
+					{ label: 'Taxi', value: (r: R) => r.name },
+					{ label: 'Time', value: (r) => (r.t === 60 ? '21:00' : clock(r.t)) },
+					{ label: 'Map x (0-1)', value: (r) => r.x, numeric: true },
+					{ label: 'Map y (0-1)', value: (r) => r.y, numeric: true },
+					...(shown ? [{ label: 'At the red point', value: (r: R) => (atScene(r) ? 'Yes' : '') }] : []),
+				],
+				rows,
+			);
+		}
+		toggle(row, 'Show the answer', answer);
+		answer(false);
 	},
 };
 

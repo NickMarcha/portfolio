@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { controls, dataTable, readout, select, svg, v, type Figure } from './lib';
+import { controls, dataTable, isNarrow, readout, select, svg, v, type Figure } from './lib';
 import data from './data/8-5-folders.json';
 
 interface Raw {
@@ -30,7 +30,9 @@ const figure: Figure = {
 	caption:
 		'A small website project: three folders, some subfolders and fifteen files, sized in kilobytes. Drawn as indentation, a node-link tidy tree, a treemap, an icicle plot and a sunburst. The data never changes; what you can see easily does.',
 	mount(el) {
-		const W = 680;
+		// Phone: same five drawings at 1 unit = 1px; the tree gives its labels less room.
+		const narrow = isNarrow(el);
+		const W = narrow ? el.clientWidth : 680;
 		const H = 440;
 		const raw = data as Raw;
 		// Original order for the outline views, biggest-first for the space-filling ones.
@@ -74,7 +76,7 @@ const figure: Figure = {
 				.join('g')
 				.attr('transform', (_, i) => `translate(0,${8 + i * rh})`);
 			g.append('rect')
-				.attr('x', (d) => 16 + d.depth * 26)
+				.attr('x', (d) => (narrow ? 2 : 16) + d.depth * (narrow ? 18 : 26))
 				.attr('y', 2)
 				.attr('width', 11)
 				.attr('height', 11)
@@ -83,13 +85,13 @@ const figure: Figure = {
 				.style('fill-opacity', (d) => (isFile(d) ? 1 : 0.4))
 				.style('stroke', color);
 			text(g.append('text'))
-				.attr('x', (d) => 34 + d.depth * 26)
+				.attr('x', (d) => (narrow ? 20 : 34) + d.depth * (narrow ? 18 : 26))
 				.attr('y', 8)
 				.attr('dy', '0.35em')
 				.style('font-weight', (d) => (isFile(d) ? null : '700'))
 				.text(label);
 			g.append('text')
-				.attr('x', W - 20)
+				.attr('x', W - (narrow ? 2 : 20))
 				.attr('y', 8)
 				.attr('dy', '0.35em')
 				.attr('text-anchor', 'end')
@@ -99,8 +101,8 @@ const figure: Figure = {
 		}
 
 		function tree() {
-			const t = d3.tree<Raw>().size([H - 30, W - 260])(outline.copy());
-			const g = stage.append('g').attr('transform', 'translate(76,15)');
+			const t = d3.tree<Raw>().size([H - 30, narrow ? W - 160 : W - 260])(outline.copy());
+			const g = stage.append('g').attr('transform', `translate(${narrow ? 62 : 76},15)`);
 			g.append('g')
 				.selectAll('path')
 				.data(t.links())
@@ -127,9 +129,10 @@ const figure: Figure = {
 				.style('stroke', v('surface'))
 				.style('stroke-width', '1.5px');
 			halo(text(n.append('text')))
-				.attr('x', (d) => (isFile(d) ? 9 : -9))
-				.attr('dy', '0.35em')
-				.attr('text-anchor', (d) => (isFile(d) ? 'start' : 'end'))
+				// Phone: inner folders are labelled above their node, so they don't run into the next column.
+				.attr('x', (d) => (isFile(d) ? 9 : narrow && d.depth > 0 ? 0 : -9))
+				.attr('dy', (d) => (narrow && !isFile(d) && d.depth > 0 ? '-0.7em' : '0.35em'))
+				.attr('text-anchor', (d) => (isFile(d) ? 'start' : narrow && d.depth > 0 ? 'middle' : 'end'))
 				.text(label);
 		}
 
@@ -180,7 +183,7 @@ const figure: Figure = {
 		}
 
 		function sunburst() {
-			const R = H / 2 - 4;
+			const R = Math.min(W, H) / 2 - 4;
 			const t = d3.partition<Raw>().size([2 * Math.PI, R])(sized());
 			const g = stage.append('g').attr('transform', `translate(${W / 2},${H / 2})`);
 			const arc = d3

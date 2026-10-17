@@ -332,6 +332,21 @@
 .viz-controls input[type='range'] {
 	accent-color: var(--primary);
 }
+/* On a 360px phone a label + slider + value row is wider than the figure. Let the
+   slider shrink and long selects stay inside the figure. */
+.viz-controls label {
+	max-width: 100%;
+	min-width: 0;
+}
+.viz-controls input[type='range'] {
+	flex: 1 1 90px;
+	min-width: 60px;
+}
+.viz-controls select {
+	max-width: 100%;
+	min-width: 0;
+	text-overflow: ellipsis;
+}
 
 .viz-fig :focus-visible {
 	outline: 2px solid var(--primary);

@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 import penguinsRaw from './data/penguins.json';
-import { SERIES, button, controls, dataTable, gridY, readout, select, styleAxis, svg, v, type Figure } from './lib';
+import { SERIES, button, controls, dataTable, gridY, isNarrow, readout, select, styleAxis, svg, v, type Figure } from './lib';
 
 type Key = 'flipper_length_mm' | 'body_mass_g' | 'bill_length_mm' | 'bill_depth_mm';
 type Raw = { species: string } & Record<Key, number | null>;
@@ -45,9 +45,11 @@ const figure: Figure = {
 			attr.value,
 		);
 
-		const W = 600;
-		const H = 380;
-		const m = { top: 26, right: 90, bottom: 44, left: 48 };
+		// Phone: species labels move inside each panel, so the chart can use the full width.
+		const narrow = isNarrow(el);
+		const W = narrow ? el.clientWidth : 600;
+		const H = narrow ? 440 : 380;
+		const m = narrow ? { top: 48, right: 12, bottom: 44, left: 40 } : { top: 26, right: 90, bottom: 44, left: 48 };
 		const iw = W - m.left - m.right;
 		const ih = H - m.top - m.bottom;
 		const root = svg(el, W, H, 'Histograms of a penguin measurement for each species.');
@@ -79,7 +81,7 @@ const figure: Figure = {
 				const pg = g.append('g').attr('transform', `translate(0,${k * (ph + gap)})`);
 				gridY(pg.append('g'), y, iw, mode === 'juxtapose' ? 2 : 5);
 				styleAxis(pg.append('g').call(d3.axisLeft(y).ticks(mode === 'juxtapose' ? 2 : 5)));
-				const xa = pg.append('g').attr('transform', `translate(0,${ph})`).call(d3.axisBottom(x).ticks(6).tickSizeOuter(0));
+				const xa = pg.append('g').attr('transform', `translate(0,${ph})`).call(d3.axisBottom(x).ticks(narrow ? 4 : 6).tickSizeOuter(0));
 				styleAxis(xa);
 				if (k < panels.length - 1) xa.selectAll('.tick text').remove();
 				for (const se of group) {
@@ -108,12 +110,13 @@ const figure: Figure = {
 					}
 					// Direct label: at the panel's right edge, or beside each species' tallest bar.
 					const peak = se.bins[d3.maxIndex(se.bins, (b) => b.length)];
-					const lx = mode === 'juxtapose' ? iw + 8 : x((peak.x0! + peak.x1!) / 2);
-					const ly = mode === 'juxtapose' ? ph / 2 + 5 : y(peak.length) - 8;
+					const inside = mode === 'juxtapose' && narrow;
+					const lx = inside ? iw : mode === 'juxtapose' ? iw + 8 : x((peak.x0! + peak.x1!) / 2);
+					const ly = inside ? 12 : mode === 'juxtapose' ? ph / 2 + 5 : y(peak.length) - 8;
 					pg.append('text')
 						.attr('x', lx)
 						.attr('y', ly)
-						.attr('text-anchor', mode === 'juxtapose' ? 'start' : 'middle')
+						.attr('text-anchor', inside ? 'end' : mode === 'juxtapose' ? 'start' : 'middle')
 						.style('fill', v('ink'))
 						.style('font-size', '14px')
 						.style('font-weight', '700')
@@ -124,7 +127,7 @@ const figure: Figure = {
 				}
 			});
 			g.append('text').attr('x', iw).attr('y', ih + 38).attr('text-anchor', 'end').style('fill', v('muted')).style('font-size', '13px').text(attr.label);
-			g.append('text').attr('x', -44).attr('y', -12).style('fill', v('muted')).style('font-size', '13px').text('Penguins per bin');
+			g.append('text').attr('x', -m.left + 4).attr('y', narrow ? -30 : -12).style('fill', v('muted')).style('font-size', '13px').text('Penguins per bin');
 
 			out.textContent =
 				mode === 'juxtapose'

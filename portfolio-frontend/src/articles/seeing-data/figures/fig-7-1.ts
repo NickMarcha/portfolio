@@ -7,6 +7,7 @@ import {
 	dataTable,
 	fmt,
 	gridY,
+	isNarrow,
 	readout,
 	reducedMotion,
 	select,
@@ -81,9 +82,11 @@ const figure: Figure = {
 			);
 		}
 
-		const W = 600;
-		const H = 400;
-		const m = { top: 36, right: 16, bottom: 48, left: 60 };
+		const narrow = isNarrow(el);
+		const W = narrow ? el.clientWidth : 600;
+		const H = narrow ? 380 : 400;
+		const m = narrow ? { top: 56, right: 12, bottom: 48, left: 50 } : { top: 36, right: 16, bottom: 48, left: 60 };
+		const ticks = narrow ? 4 : 6;
 		const iw = W - m.left - m.right;
 		const ih = H - m.top - m.bottom;
 		const root = svg(el, W, H, 'Scatterplot of penguins, colored and shaped by species.');
@@ -92,14 +95,15 @@ const figure: Figure = {
 		const xAxis = g.append('g').attr('transform', `translate(0,${ih})`);
 		const yAxis = g.append('g');
 		const xTitle = g.append('text').attr('x', iw).attr('y', ih + 40).attr('text-anchor', 'end').style('fill', v('muted')).style('font-size', '13px');
-		const yTitle = g.append('text').attr('x', -56).attr('y', -14).style('fill', v('muted')).style('font-size', '13px');
+		const yTitle = g.append('text').attr('x', -m.left + 4).attr('y', -14).style('fill', v('muted')).style('font-size', '13px');
 		const dots = g.append('g');
 		const ring = g.append('circle').attr('r', 11).style('fill', 'none').style('stroke', v('highlight')).style('stroke-width', 2.5).style('display', 'none');
 
 		// Legend: shape and color together, so species never rests on hue alone.
-		const legend = root.append('g').attr('transform', `translate(${W - m.right - 290},14)`);
+		const gap = narrow ? Math.min(100, (W - 8) / 3) : 100;
+		const legend = root.append('g').attr('transform', `translate(${narrow ? 4 : W - m.right - 290},14)`);
 		SPECIES.forEach((s, i) => {
-			const lg = legend.append('g').attr('transform', `translate(${i * 100},0)`);
+			const lg = legend.append('g').attr('transform', `translate(${i * gap},0)`);
 			lg.append('path').attr('d', d3.symbol(SHAPES[i], 80)()).attr('transform', 'translate(6,0)').style('fill', SERIES[i]);
 			lg.append('text').attr('x', 16).attr('y', 5).style('fill', v('ink')).style('font-size', '13px').text(s);
 		});
@@ -153,8 +157,8 @@ const figure: Figure = {
 			ys = d3.scaleLinear().domain(pad(state.y, basis)).range([ih, 0]).nice();
 			const ms = reducedMotion() ? 0 : 400;
 			gridY(grid, ys, iw);
-			styleAxis(xAxis.call(d3.axisBottom(xs).ticks(6)));
-			styleAxis(yAxis.call(d3.axisLeft(ys).ticks(6)));
+			styleAxis(xAxis.call(d3.axisBottom(xs).ticks(ticks)));
+			styleAxis(yAxis.call(d3.axisLeft(ys).ticks(ticks)));
 			xTitle.text(label(state.x));
 			yTitle.text(label(state.y));
 

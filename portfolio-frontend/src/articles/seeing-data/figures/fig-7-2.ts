@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 import pairsRaw from './data/7-2-costars.json';
-import { controls, dataTable, readout, select, slider, svg, v, type Figure } from './lib';
+import { controls, dataTable, isNarrow, readout, select, slider, svg, v, type Figure } from './lib';
 
 type Pair = { a: string; b: string; films: string[] };
 const year = (f: string) => Number(f.slice(-5, -1));
@@ -16,6 +16,10 @@ const figure: Figure = {
 	mount(el) {
 		let minFilms = 2;
 		let picked: string | null = null;
+		// Phone: no room for 80 names around the ring, so the circle fills the width and the
+		// picked pair is named above it. Start with the top pair picked so the names show.
+		const narrow = isNarrow(el);
+		if (narrow) picked = key(PAIRS.filter((p) => p.films.length >= minFilms).sort((p, q) => q.films.length - p.films.length || key(p).localeCompare(key(q)))[0]);
 
 		const row = controls(el);
 		slider(row, 'Minimum shared films', { min: 2, max: 4, value: minFilms }, (n) => {
@@ -24,11 +28,15 @@ const figure: Figure = {
 			draw();
 		});
 		const pairSelect = select(row, 'Pair', [], (val) => pick(val || null));
+		// Long pair names would push the select past a phone's edge.
+		if (narrow) pairSelect.style.maxWidth = `${el.clientWidth - 50}px`;
 
-		const S = 680;
-		const r = 200;
-		const root = svg(el, S, S, 'Chord diagram of actors who appear together in top-rated films.');
-		const g = root.append('g').attr('transform', `translate(${S / 2},${S / 2})`);
+		const S = narrow ? el.clientWidth : 680;
+		const r = narrow ? S / 2 - 4 : 200;
+		const top = narrow ? 52 : 0;
+		const root = svg(el, S, S + top, 'Chord diagram of actors who appear together in top-rated films.');
+		const names = root.append('g');
+		const g = root.append('g').attr('transform', `translate(${S / 2},${top + S / 2})`);
 		const out = readout(el);
 
 		function draw() {
@@ -75,11 +83,26 @@ const figure: Figure = {
 				.data(chords.groups)
 				.join('path')
 				.attr('d', d3.arc<d3.ChordGroup>().innerRadius(r - 12).outerRadius(r) as never)
-				.style('fill', v('series-1'));
+				.style('fill', (d) => (narrow && sel && (sel.a === actors[d.index] || sel.b === actors[d.index]) ? v('highlight') : v('series-1')));
+			names.selectAll('*').remove();
+			if (narrow) {
+				const lines = sel ? [sel.a, `and ${sel.b}: ${sel.films.length} films`] : ['Pick a pair to name its actors.'];
+				names
+					.selectAll('text')
+					.data(lines)
+					.join('text')
+					.attr('x', S / 2)
+					.attr('y', (_, i) => 16 + i * 20)
+					.attr('text-anchor', 'middle')
+					.style('fill', v('ink'))
+					.style('font-size', '14px')
+					.style('font-weight', sel ? '700' : '400')
+					.text((t) => t);
+			}
 			const fontSize = actors.length > 40 ? 12 : 14;
 			g.append('g')
 				.selectAll('text')
-				.data(chords.groups)
+				.data(narrow ? [] : chords.groups)
 				.join('text')
 				.each((d) => Object.assign(d, { angle: (d.startAngle + d.endAngle) / 2 }))
 				.attr('transform', (d) => {
