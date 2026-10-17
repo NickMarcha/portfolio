@@ -226,7 +226,9 @@ const figure: Figure = {
 		});
 		const row2 = controls(el);
 		row2.style.marginTop = '8px';
-		el.insertBefore(row2, root.node());
+		// Wide SVGs sit inside a .viz-scroll wrapper, so insert before that.
+		const chart = root.node()!.closest('.viz-scroll') ?? root.node()!;
+		el.insertBefore(row2, chart);
 		for (const k of KINDS) {
 			const b = toggle(
 				row2,
