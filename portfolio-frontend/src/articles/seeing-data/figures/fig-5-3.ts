@@ -20,7 +20,7 @@ const figure: Figure = {
 	caption:
 		'The headline number on its own fills the frame. Put it back into everyone the poll speaks for and it is about one person in twelve, next to the 74% who believe neither claim.',
 	credit:
-		'Numbers as quoted in the course lecture: 21 million believe both, 74% (about 191 million) believe neither. The total (about 258 million) and the middle group are worked out from those two.',
+		'Poll numbers from Pape 2021: 21 million believe both, 74% (about 191 million) believe neither. The total (about 258 million) and the middle group are worked out from those two.',
 	mount(el) {
 		// Phone layout: the title wraps onto two lines and the 'Neither' label gets its own
 		// line under the bar, so it can't run into 'One of the two'.

@@ -36,7 +36,7 @@ const figure: Figure = {
 	title: 'Same box, different data',
 	caption:
 		'Two groups with identical minimum, quartiles, median and maximum. The box plots are identical, and the error bars only say that B is a bit more spread out. The violin and the raw values show what both hide: group B has two peaks and few values near its median.',
-	credit: 'Synthetic data. Strategies after Potter, Rosen and Johnson 2012.',
+	credit: 'Synthetic data. Strategies after Weiskopf 2022.',
 	mount(el) {
 		const narrow = isNarrow(el);
 		const W = narrow ? el.clientWidth : 680;

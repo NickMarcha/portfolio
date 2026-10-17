@@ -46,7 +46,7 @@ const figure: Figure = {
 	title: 'Where a boundary is drawn, people see a category',
 	caption:
 		'Top: points A and B are equally far from the mean, but the one inside the bar looks like it belongs and the one above looks like an outlier. Bottom: a made-up hurricane forecast drawn as a cone and as a sample of possible tracks. The cone’s outline is easy to read as a storm that grows; the tracks show a spread of paths.',
-	credit: 'Synthetic data, no real storm or map. Error-bar demo from the INF252 lecture; tracks after Liu et al. 2019.',
+	credit: 'Synthetic data, no real storm or map. Error-bar demo after Newman and Scholl 2012; tracks after Liu et al. 2019.',
 	mount(el) {
 		// ---------- Part 1 ----------
 		const row1 = controls(el);

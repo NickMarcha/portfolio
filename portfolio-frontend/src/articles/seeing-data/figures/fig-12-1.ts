@@ -30,7 +30,7 @@ const figure: Figure = {
 	title: 'Venn and Euler',
 	caption:
 		'The same three sets. The Venn diagram draws all seven regions inside the circles, and four of them are empty. The Euler diagram draws only what exists.',
-	credit: 'Example from the course. Made-up members.',
+	credit: 'Made-up example and members.',
 	mount(el) {
 		const narrow = isNarrow(el);
 		// Phones: the two panels stack, and the geometry (not the text) shrinks to fit the width.

@@ -43,15 +43,15 @@
 <p>Try it in <a href="#fig-1-1">Figure 1.1</a>. Count the V’s, then press the button to print every V in red.</p>
 <figure class="viz-fig" id="fig-1-1" data-fig="1.1"></figure>
 <p>The first time, you have to scan letter by letter. With the V’s in red, you count them at a glance. Nothing about the data changed. The task moved from cognition to perception.</p>
-<p>That is the whole game in one sentence, and the course repeated it often: replace cognition with perception.</p>
+<p>That is the whole game in one sentence, in Tamara Munzner’s words: replace cognition with perception [<a class="cite" href="#ref-munzner-2014">Munzner 2014</a>].</p>
 <h3 id="same-numbers-different-stories">Same numbers, different stories</h3>
 <p>In 1973 the statistician Francis Anscombe published four small datasets [<a class="cite" href="#ref-anscombe-1973">Anscombe 1973</a>]. They have the same mean, the same variance, the same correlation and the same regression line. On paper they are identical. Plotted in <a href="#fig-1-2">Figure 1.2</a>, one is a clean straight line, one is a curve, one is a straight line knocked off by a single outlier, and one is a vertical stack of points with one point far away.</p>
 <figure class="viz-fig" id="fig-1-2" data-fig="1.2"></figure>
 <p>In 2017 Justin Matejka and George Fitzmaurice took the idea further with the <a href="https://www.autodesk.com/research/publications/same-stats-different-graphs">Datasaurus Dozen</a>: thirteen datasets with the same summary statistics to two decimal places, one of which is a drawing of a dinosaur [<a class="cite" href="#ref-matejka-2017">Matejka and Fitzmaurice 2017</a>]. Switch between them in <a href="#fig-1-3">Figure 1.3</a> and watch the statistics underneath.</p>
 <figure class="viz-fig" id="fig-1-3" data-fig="1.3"></figure>
-<p>The lesson is the one on the course slides. Summaries can lose information. Details matter.</p>
+<p>The lesson is simple. Summaries can lose information. Details matter.</p>
 <h3 id="why-we-visualize-at-all">Why we visualize at all</h3>
-<p>The course listed several reasons, and they’re worth knowing separately:</p>
+<p>There are several reasons to visualize, and they’re worth knowing separately:</p>
 <ul>
 <li>To record information. A seismograph is a visualization that writes itself.</li>
 <li>To augment human abilities. Many real problems are badly defined. You don’t know what you’re looking for until you see it.</li>
@@ -61,14 +61,14 @@
 </ul>
 <figure class="viz-fig" id="fig-1-4" data-fig="1.4"></figure>
 <h3 id="the-human-in-the-loop">The human in the loop</h3>
-<p>You might ask why we don’t just let computers find the answers. Sometimes we should. The course was blunt about it: visualization is not needed when there is a trustworthy, time-saving automatic solution. A spam filter doesn’t need a chart.</p>
+<p>You might ask why we don’t just let computers find the answers. Sometimes we should. Tamara Munzner is blunt about it: visualization is not needed when there is a trustworthy, time-saving automatic solution [<a class="cite" href="#ref-munzner-2014">Munzner 2014</a>]. A spam filter doesn’t need a chart.</p>
 <p>But automated analysis only works reliably for problems that are well defined and well understood [<a class="cite" href="#ref-keim-2008">Keim et al. 2008</a>]. Real data is messy, and different models can tell different stories about the same numbers. A person looking at the data brings knowledge the algorithm doesn’t have. They can notice the thing nobody told them to look for. Keim’s phrase for this is that the human can “detect the expected and discover the unexpected.”</p>
 <p>So “human in the loop” means a cycle. The computer shows something. The person reads it, forms an idea, and acts by filtering, selecting or changing a setting. The computer updates. Round and round. Visualization augments people. It doesn’t replace them.</p>
 <h2 id="2-from-data-to-picture">2. From data to picture</h2>
 <p><strong>The short version.</strong> Every chart goes through the same few steps. You clean the data, pick the part you care about, decide which visual property shows which number, and then draw it. Each step involves choices, and those choices shape what people end up seeing.</p>
 <h3 id="the-visualization-pipeline">The visualization pipeline</h3>
 <figure class="viz-fig" id="fig-2-1" data-fig="2.1"></figure>
-<p>The course described the pipeline as a chain of data products, each made by one step (<a href="#fig-2-1">Figure 2.1</a>):</p>
+<p>Selan dos Santos and Ken Brodlie describe the pipeline as a chain of data products, each made by one step [<a class="cite" href="#ref-dos-santos-2004">dos Santos and Brodlie 2004</a>] (<a href="#fig-2-1">Figure 2.1</a>):</p>
 <ol>
 <li>Raw data goes through <strong>data analysis</strong> and comes out as processed, cleaned data.</li>
 <li><strong>Filtering</strong> picks out the focus data, the part you actually want to show.</li>
@@ -76,7 +76,7 @@
 <li><strong>Rendering</strong> turns those into pixels.</li>
 </ol>
 <p>Two things sit on top of the whole chain. The domain gives meaning to the data. Are the numbers 5001, 5007 and 5009 quantities, IDs or postal codes? You can’t tell from the numbers. The task is the question you’re trying to answer.</p>
-<p>One warning from the slides stuck with me. Decisions in processing and filtering already shape what you see, and they are not automatically objective.</p>
+<p>One warning about the pipeline stuck with me. Decisions in processing and filtering already shape what you see, and they are not automatically objective.</p>
 <h3 id="an-example-from-my-own-work">An example from my own work</h3>
 <p>My first programming exercise was a world map of sunshine. The data was a spreadsheet of monthly hours of sunshine for 382 cities in 140 countries, one row per city and one column per month. Walking through the pipeline:</p>
 <ul>
@@ -88,7 +88,7 @@
 <p>It looked good. It was also wrong in a way I only noticed much later. The data had many cities per country, 54 of them for the United States, and my code silently kept the last one in the list for each country. The whole US was colored by Yuma, Arizona, one of the sunniest places on Earth, at about 4,000 hours a year. The average of the 54 US cities is closer to 2,800. A processing decision I didn’t think about changed the picture. The fix is to average the cities per country, or to drop the country shapes and draw one dot per city.</p>
 <p>In <a href="#fig-2-2">Figure 2.2</a>, switch “Color by” to the average of each country’s cities, and compare the US with its 54 cities in the strip below the map.</p>
 <figure class="viz-fig" id="fig-2-2" data-fig="2.2"></figure>
-<p>That is exactly the warning on the slide, and I walked straight into it.</p>
+<p>That is exactly the warning above, and I walked straight into it.</p>
 <h3 id="what-kind-of-data-is-it">What kind of data is it?</h3>
 <p>Before you can draw anything, you need to know what kind of data you have. Munzner groups datasets into a few types [<a class="cite" href="#ref-munzner-2014">Munzner 2014</a>]:</p>
 <ul>
@@ -135,7 +135,7 @@
 <h2 id="3-how-your-eyes-and-brain-read-a-chart">3. How your eyes and brain read a chart</h2>
 <p><strong>The short version.</strong> Some things jump out at you instantly, like one red dot among grey ones. Other things take effort, like comparing two bars at opposite ends of a chart. Good design puts the important thing where your eyes catch it for free.</p>
 <h3 id="things-that-pop-out">Things that pop out</h3>
-<p><a href="#fig-3-1">Figure 3.1</a> is a small version of the experiment. Press “Start trial” and answer as fast as you can: is there a red square? With “Color only”, you find it immediately, and it takes the same time whether there are ten items or a thousand. This is called <strong>preattentive processing</strong>. It happens in under about 200 milliseconds, and the course slide made a point I like: despite the name, it still requires attention. What matters is contrast. The red square pops out because it is different from its neighbors, not because red is special.</p>
+<p><a href="#fig-3-1">Figure 3.1</a> is a small version of the experiment. Press “Start trial” and answer as fast as you can: is there a red square? With “Color only”, you find it immediately, and it takes the same time whether there are ten items or a thousand. This is called <strong>preattentive processing</strong>. It happens in under about 200 milliseconds, and despite the name, it still involves attention. Jeremy Wolfe and Igor Utochkin define a preattentive feature as one that guides attention [<a class="cite" href="#ref-wolfe-2019">Wolfe and Utochkin 2019</a>]. What matters is contrast. The red square pops out because it is different from its neighbors, not because red is special.</p>
 <figure class="viz-fig" id="fig-3-1" data-fig="3.1"></figure>
 <p>Features that pop out include color, size, orientation, line length and width, motion and flicker. Combinations don’t. Switch the figure to “Color and shape”. Finding the one red square among red circles and blue squares means checking items one at a time, because the target differs only by the combination of color and shape.</p>
 <p>For design, this means picking one feature to make the most important thing stand out. Highlight everything and nothing stands out.</p>
@@ -150,7 +150,7 @@
 <li><strong>Figure and ground.</strong> We split the scene into a foreground object and a background.</li>
 </ul>
 <p>Charts depend on these. Bars next to each other get compared first. Points of the same color read as one series. Heavy gridlines are bad partly because they compete with the data for the role of “figure”.</p>
-<p>One nuance from the course: researchers have found these principles vary across cultures, so they are partly learned, not universal laws of the eye.</p>
+<p>One nuance: researchers have found these principles vary across cultures, so they are partly learned, not universal laws of the eye [<a class="cite" href="#ref-kroupin-2025">Kroupin et al. 2025</a>].</p>
 <h3 id="quick-impressions-versus-careful-comparisons">Quick impressions versus careful comparisons</h3>
 <p>Steven Franconeri and colleagues reviewed decades of research on how people read charts [<a class="cite" href="#ref-franconeri-2021">Franconeri et al. 2021</a>]. One finding is that visual statistics are fast. At a glance you can tell the average size of a crowd of bubbles, the range, the overall trend. Comparisons are slow. “This bar is taller than that one” needs your eyes to jump between the two, and you can only make a few comparisons at a time.</p>
 <p>So the designer has to guide the comparison. If you want people to compare A and B, put them next to each other on a common baseline. Position and proximity are strong cues. Giving two bars the same color while placing them far apart is weak.</p>
@@ -159,7 +159,7 @@
 <p>Pie charts are designed to show proportions through angle. But when Drew Skau and Robert Kosara tested pie and donut charts where only one property carried the data, people seemed to read the pies mostly by arc length and area, not by angle [<a class="cite" href="#ref-skau-2016">Skau and Kosara 2016</a>]. All three are less accurate than comparing lengths.</p>
 <p>Before reading on, pick the second-biggest slice in <a href="#fig-3-3">Figure 3.3</a>, then press “Show as sorted bars”.</p>
 <figure class="viz-fig" id="fig-3-3" data-fig="3.3"></figure>
-<p>The course’s balanced verdict was that pie charts aren’t always bad. They’re fine for showing parts of a whole when there are fewer than five slices. For anything that needs precise comparison, use bars.</p>
+<p>Still, pie charts aren’t always bad. A common rule of thumb is that they’re fine for showing parts of a whole when there are fewer than five slices. For anything that needs precise comparison, use bars.</p>
 <h2 id="4-choosing-the-right-chart">4. Choosing the right chart</h2>
 <p><strong>The short version.</strong> The right chart depends on two things: what your data looks like, and what question you’re asking. Count the categories you’re splitting by, decide what you want people to compare, and the choice mostly makes itself.</p>
 <h3 id="start-with-the-task">Start with the task</h3>
@@ -174,7 +174,7 @@
 </ul>
 <p>Targets can be the whole dataset, with trends, outliers and features. Or one attribute, with its distribution and extremes. Or relationships between attributes, like correlation.</p>
 <h3 id="four-ways-to-arrange-a-table">Four ways to arrange a table</h3>
-<p>Most everyday charts show tables. The course’s lab on arranging tables gave four design choices, and the number of keys mostly decides which one you use.</p>
+<p>Most everyday charts show tables. Munzner gives four design choices for arranging them, and the number of keys mostly decides which one you use [<a class="cite" href="#ref-munzner-2014">Munzner 2014</a>].</p>
 <ol>
 <li><strong>Express values.</strong> Zero keys. Just place each item where its values say. With two quantitative values, that is a scatterplot.</li>
 <li><strong>Separate, order and align regions.</strong> One or more keys. Give each category its own region of space, put the regions in a sensible order, and line them up on a common baseline. With one categorical key and one value, that is a bar chart.</li>
@@ -271,9 +271,15 @@
 <p><strong>The short version.</strong> A chart can be built from true numbers and still mislead you. The usual tricks are cutting off the bottom of an axis, leaving out context, and picking colors or scales that exaggerate. The opposite mistake exists too. Sometimes the “safe” choice hides what matters.</p>
 <h3 id="tuftes-lie-factor">Tufte’s lie factor</h3>
 <p>Edward Tufte defined a simple measure of honesty [<a class="cite" href="#ref-tufte-1983">Tufte 1983</a>]:</p>
-<blockquote>
-<p>Lie factor = size of the effect shown in the graphic ÷ size of the effect in the data</p>
-</blockquote>
+<div class="equation" role="math" aria-label="Lie factor equals size of effect shown in graphic, divided by size of effect in data">
+<span class="eq-lhs" aria-hidden="true">Lie factor =</span>
+<math display="block" aria-hidden="true">
+<mfrac>
+<mtext>size of effect shown in graphic</mtext>
+<mtext>size of effect in data</mtext>
+</mfrac>
+</math>
+</div>
 <p>A lie factor of about 1 is honest. If sales grew 10% and the bars make it look like 300%, the lie factor is 30. Tufte’s broader principle is graphical integrity: show data variation, not design variation, and give context.</p>
 <h3 id="cutting-off-the-axis">Cutting off the axis</h3>
 <p>The classic trick is truncating the y-axis so it doesn’t start at zero. Franconeri and colleagues describe a real example: a chart of health insurance sign-ups that showed 6 million against a target of 7 million [<a class="cite" href="#ref-franconeri-2021">Franconeri et al. 2021</a>]. The real ratio is 6 to 7. The truncated bars made it look closer to 1 to 3.</p>
@@ -283,7 +289,7 @@
 <h3 id="but-zero-isnt-always-honest-either">But zero isn’t always honest either</h3>
 <p>Correll also wrote about the opposite case, a global temperature chart drawn on an axis from zero degrees Fahrenheit <a href="https://mcorrell.medium.com/an-inconvenient-graph-addc218579e9">see his essay “An inconvenient graph”</a>. Its lie factor is about 1. It also makes global warming look like a flat line, which hides a change of a degree or two that has enormous consequences. The more truthful version shows temperature anomalies on a truncated axis, with the uncertainty drawn in. Switch between “From 0 °F” and “As anomalies” in <a href="#fig-5-2">Figure 5.2</a> to see both.</p>
 <figure class="viz-fig" id="fig-5-2" data-fig="5.2"></figure>
-<p>So the course didn’t give a rule. It gave three questions:</p>
+<p>So there is no simple rule. Correll and colleagues’ advice comes down to three questions [<a class="cite" href="#ref-correll-2020">Correll et al. 2020</a>]:</p>
 <ol>
 <li>Take active responsibility for choosing the visual size of the effect.</li>
 <li>Ask what counts as an important change in this domain.</li>
@@ -291,7 +297,7 @@
 </ol>
 <p>The chart type matters too. A bar’s length encodes its value, so a truncated bar lies about its own length. A line chart encodes change through position and slope, so truncating it is easier to defend.</p>
 <h3 id="leaving-out-the-whole-picture">Leaving out the whole picture</h3>
-<p>One lecture example was a news graphic saying “21 million Americans believe both” that Biden is illegitimate and that force is justified to restore Trump. The number came from a real poll. The same poll showed 74% of people agreed with neither, roughly 191 million. The headline isn’t false. It just shows the scary slice without the whole. Press “Show the whole poll” in <a href="#fig-5-3">Figure 5.3</a> to put it back.</p>
+<p>One example is a news graphic saying “21 million Americans believe both” that Biden is illegitimate and that force is justified to restore Trump. The number came from a real poll [<a class="cite" href="#ref-pape-2021">Pape 2021</a>]. The same poll showed 74% of people agreed with neither, roughly 191 million. The headline isn’t false. It just shows the scary slice without the whole. Press “Show the whole poll” in <a href="#fig-5-3">Figure 5.3</a> to put it back.</p>
 <figure class="viz-fig" id="fig-5-3" data-fig="5.3"></figure>
 <p>Context is often missing by accident rather than malice. My sunshine map from <a href="#2-from-data-to-picture">section 2</a> is an example. Nobody was trying to mislead anyone. I just didn’t know the data had many cities per country.</p>
 <h3 id="i-built-a-deceptive-chart-on-purpose">I built a deceptive chart on purpose</h3>
@@ -317,7 +323,7 @@
 <li><strong>Hue</strong> is what we usually mean by “color”: red, green, blue.</li>
 </ul>
 <p>Luminance and saturation have a natural order. Darker can mean more. So they’re magnitude channels, good for ordered and quantitative data. Hue has no natural order. Is green more than red? So hue is an identity channel, good for categories.</p>
-<p>Keep the number of colors small. The course said three to nine steps is ideal, because the viewer has to hold the mapping in working memory while reading the chart.</p>
+<p>Keep the number of colors small. Three to nine steps is ideal, because the viewer has to hold the mapping in working memory while reading the chart.</p>
 <h3 id="what-makes-a-good-color-scale">What makes a good color scale</h3>
 <figure class="viz-fig" id="fig-6-1" data-fig="6.1"></figure>
 <p>For continuous data you need a colormap, a smooth gradient from low to high. Two properties matter most (<a href="#fig-6-1">Figure 6.1</a>):</p>
@@ -329,8 +335,8 @@
 <h3 id="why-the-rainbow-scale-is-a-problem">Why the rainbow scale is a problem</h3>
 <p>The rainbow, or “jet”, colormap fails both tests. Its luminance goes up from dark blue to bright yellow and then down again to dark red, so in greyscale the high and low ends look the same. Its perceptual steps are uneven. Some stretches barely change while others, around yellow and cyan, jump. Readers see sharp boundaries in data that changes smoothly. Compare jet and viridis on the same smooth surface in <a href="#fig-6-2">Figure 6.2</a>, then press “Show in greyscale”.</p>
 <figure class="viz-fig" id="fig-6-2" data-fig="6.2"></figure>
-<p>The course showed a map of sea floor depth off Nova Scotia where a band of color made one area look like a pit. The feature came from the color scale, not from the sea floor.</p>
-<p>Still, the course didn’t ban the rainbow. Colin Ware, Maureen Stone and Danielle Albers Szafir argue that rainbow maps are not all bad [<a class="cite" href="#ref-ware-2023">Ware, Stone and Szafir 2023</a>]. Because their hues are easy to name, they’re good for reading off a specific value using a key, and they can be redesigned to be perceptually uniform.</p>
+<p>Matt Hall showed the sea floor off Nova Scotia drawn with rainbow colormaps, where bands of color look like contours [<a class="cite" href="#ref-hall-2017">Hall 2017</a>]. The structure came from the color scale, not from the sea floor.</p>
+<p>Still, that doesn’t mean banning the rainbow. Colin Ware, Maureen Stone and Danielle Albers Szafir argue that rainbow maps are not all bad [<a class="cite" href="#ref-ware-2023">Ware, Stone and Szafir 2023</a>]. Because their hues are easy to name, they’re good for reading off a specific value using a key, and they can be redesigned to be perceptually uniform.</p>
 <p>Color also carries meaning. Blue for cold and red for hot is so familiar that reversing it costs the reader effort for no gain.</p>
 <h3 id="color-blindness">Color blindness</h3>
 <p>We see color with three types of cone cells in the eye, sensitive to short, medium and long wavelengths. Roughly speaking, blue, green and red. When one type is missing or works differently, some colors become hard to tell apart. The most common forms are red-green deficiencies. Protanopia affects the long-wavelength cones and deuteranopia the medium ones. They affect roughly 1 in 12 men and 1 in 200 women of Northern European ancestry. Use Simulate in <a href="#fig-6-4">Figure 6.4</a> to see a red-green palette through their eyes.</p>
@@ -346,14 +352,14 @@
 <h2 id="7-interaction">7. Interaction</h2>
 <p><strong>The short version.</strong> A static chart tells you something. An interactive one lets you ask it things. You can filter, zoom, hover for details, or click something in one chart and watch it light up in another. Interaction also costs time and attention, and most people never use it, so it has to be worth it.</p>
 <h3 id="why-make-it-interactive">Why make it interactive?</h3>
-<p>The course summed it up as “visualization shows the user, interaction tells the computer”. The arguments for interaction:</p>
+<p>One way to sum it up: visualization shows the user, interaction tells the computer. The arguments for interaction:</p>
 <ul>
 <li>It engages people.</li>
 <li>It manages complexity. You can’t show everything at once, so you let people filter and drill down.</li>
 <li>It allows hypothesis testing on the fly. Change a parameter and see what happens.</li>
 <li>It can record what you did, so you can retrace your steps.</li>
 </ul>
-<p>The arguments against were on a slide called “Interaction trade-offs”. Interaction costs time. It adds cognitive load. Many users never interact at all. The slide cited a figure of around 90% of readers not interacting, from Gregor Aisch’s 2017 essay on interactive graphics at the New York Times [<a class="cite" href="#ref-aisch-2017">Aisch 2017</a>]. And there’s a tension between visible controls, which take space, and invisible ones like hover, which nobody discovers.</p>
+<p>There are arguments against, too. Interaction costs time. It adds cognitive load. Many users never interact at all. A figure of around 90% of readers not interacting is often traced to Gregor Aisch’s 2017 essay on interactive graphics at the New York Times [<a class="cite" href="#ref-aisch-2017">Aisch 2017</a>]. And there’s a tension between visible controls, which take space, and invisible ones like hover, which nobody discovers.</p>
 <p>Christian Tominski and Heidrun Schumann put the balance into one rule they call the efficiency principle: “The gains from using an interactive visual approach should outweigh the computational resources and human effort necessary to carry out the analysis” [<a class="cite" href="#ref-tominski-2020">Tominski and Schumann 2020</a>].</p>
 <h3 id="the-mantra">The mantra</h3>
 <p>Ben Shneiderman’s visual information-seeking mantra is probably the most quoted sentence in the field [<a class="cite" href="#ref-shneiderman-1996">Shneiderman 1996</a>]:</p>
@@ -395,9 +401,9 @@
 <p>Each view only shows a few attributes, and the highlight ties them together. That’s what makes it powerful for data with many dimensions. A scatterplot matrix with linked brushing is the textbook example. Select a cluster in one small plot and see where those points fall in every other pair of attributes. Drag a box in any of the three views in <a href="#fig-7-4">Figure 7.4</a>.</p>
 <figure class="viz-fig" id="fig-7-4" data-fig="7.4"></figure>
 <h3 id="focus-and-context">Focus and context</h3>
-<p>“See the trees without missing the forest.” Focus plus context means showing the part you care about in full detail while the rest stays visible around it, so you don’t lose your bearings. The course’s example was a stock price chart. A large chart shows the selected months, and a thin strip below shows the whole timeline with a draggable window marking where you are. <a href="#fig-7-5">Figure 7.5</a> uses the same layout for carbon dioxide at Mauna Loa. Drag or resize the window in the strip.</p>
+<p>“See the trees without missing the forest.” Focus plus context means showing the part you care about in full detail while the rest stays visible around it, so you don’t lose your bearings. A common example is a stock price chart. A large chart shows the selected months, and a thin strip below shows the whole timeline with a draggable window marking where you are. <a href="#fig-7-5">Figure 7.5</a> uses the same layout for carbon dioxide at Mauna Loa. Drag or resize the window in the strip.</p>
 <figure class="viz-fig" id="fig-7-5" data-fig="7.5"></figure>
-<p>The course contrasted this with overview plus detail, shown as a dashboard with several levels: an overview strip, a more detailed chart, and a small table for the selected item. Each level has its own encoding.</p>
+<p>Overview plus detail is different. Picture a dashboard with several levels: an overview strip, a more detailed chart, and a small table for the selected item. Each level has its own encoding.</p>
 <p>You’ll find textbooks that draw the line differently, calling the stock chart pattern overview plus detail and keeping “focus plus context” for single distorted views like a fisheye lens. The underlying idea is the same either way. Keep the context on screen while you zoom in.</p>
 <h2 id="8-networks-and-trees">8. Networks and trees</h2>
 <p><strong>The short version.</strong> A network is things connected to other things: friends, flights, web links. You can draw it as dots and lines, or as a grid where each filled cell means “these two are connected”. Each works best for different questions. Trees, like the folders on your computer, are a special kind of network, and they have their own set of tricks.</p>
@@ -463,7 +469,7 @@
 </ul>
 <p>A kriskogram takes some training to read, like an adjacency matrix. Once you know the above-and-below rule, patterns like a state that mostly loses people to its neighbors stand out quickly.</p>
 <h3 id="trees">Trees</h3>
-<p>The course described four main ways to draw a tree. <a href="#fig-8-5">Figure 8.5</a> draws one folder tree in each of them. Pick one with “Draw it as”.</p>
+<p>There are four main ways to draw a tree. Michael McGuffin and Jean-Marc Robert compare how much space each one needs [<a class="cite" href="#ref-mcguffin-2010">McGuffin and Robert 2010</a>]. <a href="#fig-8-5">Figure 8.5</a> draws one folder tree in each of them. Pick one with “Draw it as”.</p>
 <figure class="viz-fig" id="fig-8-5" data-fig="8.5"></figure>
 <p><strong>Indentation</strong> is the file browser. Each item gets a row, and its depth is shown by how far it is pushed to the right. It’s great for reading labels and terrible for seeing the overall shape of a big tree.</p>
 <p><strong>Node-link</strong> drawings of trees have a classic algorithm, the Reingold-Tilford “tidy tree” [<a class="cite" href="#ref-reingold-1981">Reingold and Tilford 1981</a>]. Its rules are to put nodes of the same depth on the same level, avoid crossings, pack subtrees as tightly as possible, draw identical subtrees identically, and center each parent over its children. The catch is that trees usually get wider very fast, so you need zooming, filtering, collapsing branches or a different layout.</p>
@@ -508,7 +514,7 @@
 <p>What if you need both where and when? The space-time cube, an idea that goes back to the geographer Torsten Hägerstrand, puts a map on the floor and runs time straight up. A moving person or vehicle becomes a line climbing through the cube. Standing still makes a vertical line. Moving fast makes a nearly flat one. If two lines touch, two things were in the same place at the same time.</p>
 <p>Try it in <a href="#fig-9-3">Figure 9.3</a>. The red point is a crossing at 20:33. Rotate the cube to see which line actually touches it.</p>
 <figure class="viz-fig" id="fig-9-3" data-fig="9.3"></figure>
-<p>The course’s example was GeoTime, which uses this to analyze movements [<a class="cite" href="#ref-kapler-2004">Kapler and Wright 2004</a>]. In the example, investigators looking into a hit-and-run used the GPS tracks of four taxis to work out which one could have been at the scene. The cost is the usual cost of 3D: things hide behind each other, perspective distorts distances, and you need to rotate the view to read it well.</p>
+<p>One example is GeoTime, which uses this to analyze movements [<a class="cite" href="#ref-kapler-2004">Kapler and Wright 2004</a>]. In the example, investigators looking into a hit-and-run used the GPS tracks of four taxis to work out which one could have been at the scene. The cost is the usual cost of 3D: things hide behind each other, perspective distorts distances, and you need to rotate the view to read it well.</p>
 <h2 id="10-maps">10. Maps</h2>
 <p><strong>The short version.</strong> You can’t flatten a globe without stretching it, just as you can’t flatten an orange peel without tearing it. Every world map distorts something: sizes, distances, directions or shapes. Which map is right depends on what you need. And the most popular kind of data map, where countries are colored by a number, has traps of its own.</p>
 <h3 id="two-kinds-of-maps">Two kinds of maps</h3>
@@ -536,7 +542,7 @@
 <p>A choropleth map colors each region by a value, like unemployment per county. It’s everywhere, and it has two well-known hazards.</p>
 <p><strong>Spurious correlations.</strong> Many raw counts just follow population. A map of total cases of almost anything looks like a map of where people live. The <a href="https://xkcd.com/1138/">xkcd comic “Heatmap”</a> makes this joke perfectly. The fix is to normalize, for example per 100 people. Switch “Color by” in <a href="#fig-10-2">Figure 10.2</a> from the raw count to the share to see the difference.</p>
 <p><strong>Big regions shout.</strong> A big region takes up a lot of ink however few people live in it. On a US map, Montana dominates the eye even if very few people live there. Datawrapper has a <a href="https://www.datawrapper.de/blog/choroplethmaps">good guide</a> to doing choropleths well.</p>
-<p>The course’s “best case” list was one variable at a time, normalized where it makes sense, a careful choice of regions and colors, and regions of roughly equal size. I’d add an equal-area projection, so that Mercator doesn’t make Scandinavia look more important than it is. My sunshine map used Equal Earth for exactly that reason.</p>
+<p>A choropleth works best with one variable at a time, normalized where it makes sense, with a careful choice of regions and colors [<a class="cite" href="#ref-muth-2018">Muth 2018</a>], and with regions of roughly equal size. I’d add an equal-area projection, so that Mercator doesn’t make Scandinavia look more important than it is. My sunshine map used Equal Earth for exactly that reason.</p>
 <h3 id="alternatives-to-the-choropleth">Alternatives to the choropleth</h3>
 <figure class="viz-fig" id="fig-10-4" data-fig="10.4"></figure>
 <ul>
@@ -550,7 +556,7 @@
 <p><strong>The short version.</strong> Visual analytics is what you do when the data is too big and messy for either a person or an algorithm alone. The computer crunches, the person looks and steers, and the two take turns. It works like a loop: show something, select what looks interesting, see where else it shows up, and repeat with sharper tools.</p>
 <h3 id="why-combine-humans-and-algorithms">Why combine humans and algorithms</h3>
 <p>Daniel Keim and colleagues define visual analytics as combining automated analysis with interactive visualization [<a class="cite" href="#ref-keim-2008">Keim et al. 2008</a>]. Their argument is that automated methods only work reliably for problems that are well defined and well understood. Real data, especially from simulations and measurements, is multi-faceted. Different models can fit the same data equally well and still tell different stories about it. The statistician Leo Breiman called this the Rashomon effect, after the film where witnesses give conflicting accounts of the same event [<a class="cite" href="#ref-breiman-2001">Breiman 2001</a>]. Visual analytics keeps a person in the loop to judge which story holds up.</p>
-<p>The course called this visual data science, and said it shines on data that is big, has many attributes per item, and often has a spatial or temporal side. Simulation output is the typical case: millions of grid cells, each with temperature, pressure, velocity and more, over many time steps.</p>
+<p>This is sometimes called visual data science. It shines on data that is big, has many attributes per item, and often has a spatial or temporal side. Simulation output is the typical case: millions of grid cells, each with temperature, pressure, velocity and more, over many time steps.</p>
 <h3 id="the-running-example-an-engines-cooling-jacket">The running example: an engine’s cooling jacket</h3>
 <p>The lectures used a simulation of coolant flowing through the cooling jacket of a car engine. Every cell of the 3D model has a temperature, a velocity and other values. Engineers want to know where it gets dangerously hot, and why.</p>
 <h3 id="four-nested-loops">Four nested loops</h3>
@@ -561,7 +567,7 @@
 <p><strong>Level two, between the lines.</strong> Combine brushes with logic: AND, OR and subtract. “Hot AND slow-moving” finds the places where coolant sits still and heats up. Combining brushes this way builds up a precise description of a feature, sometimes called a feature definition language [<a class="cite" href="#ref-doleisch-2003">Doleisch, Gasser and Hauser 2003</a>].</p>
 <p>Try it in <a href="#fig-11-2">Figure 11.2</a>. Brush A selects hot cells, brush B slow ones, and “Combine” joins them.</p>
 <figure class="viz-fig" id="fig-11-2" data-fig="11.2"></figure>
-<p><strong>Level three, dive deeper.</strong> Some interesting things aren’t in any column of the data. They’re implicit. Level three makes them explicit by deriving new attributes and then brushing those. The slides paired each user goal with a method:</p>
+<p><strong>Level three, dive deeper.</strong> Some interesting things aren’t in any column of the data. They’re implicit. Level three makes them explicit by deriving new attributes and then brushing those. Each user goal has a matching method:</p>
 
 
 
@@ -598,21 +604,21 @@
 <table><thead><tr><th>What you want to see</th><th>How to derive it</th></tr></thead><tbody><tr><td>Relative values</td><td>Normalization</td></tr><tr><td>Change</td><td>Derivatives, like a temperature gradient</td></tr><tr><td>Properties that depend on more than one point</td><td>Integration along a path or over a region</td></tr><tr><td>Statistical properties</td><td>Descriptive statistics, like the mean or spread over time per cell</td></tr><tr><td>Ratios or differences</td><td>Ratios and differences</td></tr><tr><td>Anything else</td><td>Data mining, like clustering or embeddings</td></tr></tbody></table>
 <p>For example, if each cell has 100 time steps of temperature, you can compute each cell’s standard deviation over time and brush the cells that fluctuate most. Those might suffer from thermal stress even if their average looks fine.</p>
 <p>Level three also has smarter brushes. Angular brushing selects lines in a parallel coordinates plot by their slope [<a class="cite" href="#ref-hauser-2002">Hauser, Ledermann and Doleisch 2002</a>]. Similarity brushing lets you sketch a curve and select every curve that looks like it [<a class="cite" href="#ref-muigg-2008">Muigg et al. 2008</a>].</p>
-<p><strong>Level four, application-specific features.</strong> At the deepest level the tools are built for one domain. The course’s example was AVOCLA (<a href="#fig-11-3">Figure 11.3</a>), an aortic vortex classification for cardiologists [<a class="cite" href="#ref-meuschke-2016">Meuschke et al. 2016</a>]. Doctors suspect that swirling blood flow in the aorta is linked to heart disease, but they have classified vortices by hand, using properties that aren’t standardized. AVOCLA clusters the path lines that make up each vortex and classifies them semi-automatically by size, orientation, shape, when they occur in the heartbeat, and where they sit along the vessel. Nothing about it would help with stock prices.</p>
+<p><strong>Level four, application-specific features.</strong> At the deepest level the tools are built for one domain. One example is AVOCLA (<a href="#fig-11-3">Figure 11.3</a>), an aortic vortex classification for cardiologists [<a class="cite" href="#ref-meuschke-2016">Meuschke et al. 2016</a>]. Doctors suspect that swirling blood flow in the aorta is linked to heart disease, but they have classified vortices by hand, using properties that aren’t standardized. AVOCLA clusters the path lines that make up each vortex and classifies them semi-automatically by size, orientation, shape, when they occur in the heartbeat, and where they sit along the vessel. Nothing about it would help with stock prices.</p>
 <figure class="viz-fig" id="fig-11-3" data-fig="11.3"></figure>
-<p>Most of the work happens at level one. The slides called it the Pareto rule. You only go deeper when the simpler loop can’t find what you need, because each deeper level costs more computation and expertise, and is less general.</p>
+<p>Most of the work happens at level one, a kind of Pareto rule. You only go deeper when the simpler loop can’t find what you need, because each deeper level costs more computation and expertise, and is less general.</p>
 <h2 id="12-sets-and-text">12. Sets and text</h2>
 <p><strong>The short version.</strong> Sets are groups that can overlap, like “people who own a cat” and “people who own a dog”. The familiar circles of a Venn diagram stop working after three or four groups. Text is harder still, because words have meanings a computer doesn’t understand. Word clouds are the famous text visualization, and they have more weaknesses than strengths.</p>
 <h3 id="sets">Sets</h3>
 <p>Set data shows up everywhere: which genres a film belongs to, which symptoms a patient has, which software a person uses. Bilal Alsallakh and colleagues surveyed the field and grouped the tasks into three levels [<a class="cite" href="#ref-alsallakh-2014">Alsallakh et al. 2014</a>]. There are tasks about the sets themselves, like how big each set is and how much two sets overlap. There are tasks about the elements, like which sets a particular film belongs to. And there are tasks about the elements’ attributes, like whether films that are both comedy and drama get better ratings.</p>
 <p><strong>Venn and Euler diagrams.</strong> Both draw sets as closed curves, where overlap means intersection. A Venn diagram always draws every possible overlap, so three sets give eight regions, whether or not anything is in them. An Euler diagram only draws the overlaps that exist. If your sets are mammals, birds and cats, as in <a href="#fig-12-1">Figure 12.1</a>, an Euler diagram puts cats inside mammals and keeps birds separate. A Venn diagram is forced to include a region for cats that are also birds, and an empty region still suggests “this could happen”.</p>
 <figure class="viz-fig" id="fig-12-1" data-fig="12.1"></figure>
-<p>Both break down quickly. A Venn diagram of six sets exists, and the course showed one shaped like bananas, but nobody can read it. Euler diagrams sometimes can’t be drawn with circles at all.</p>
+<p>Both break down quickly. A Venn diagram of six sets exists. A famous one, from a paper on the banana genome, is drawn as bananas, but nobody can read it [<a class="cite" href="#ref-dhont-2012">D’Hont et al. 2012</a>]. Euler diagrams sometimes can’t be drawn with circles at all.</p>
 <p><strong>UpSet</strong> solves this by dropping the circles entirely [<a class="cite" href="#ref-lex-2014">Lex et al. 2014</a>]. It lists each combination of sets as a row in a matrix, with dots showing which sets are in the combination, and draws a bar chart of how many elements each combination has. It scales to many sets and lets you sort combinations by size (<a href="#fig-12-2">Figure 12.2</a>). It takes a minute to learn and then it’s far more useful.</p>
 <figure class="viz-fig" id="fig-12-2" data-fig="12.2"></figure>
 <h3 id="text">Text</h3>
 <p>Words are a strange kind of data. To a computer they are nominal, just labels. But there are tens of thousands of them, and they have meaning. “Norway”, “Bergen” and “Hardangervidda” are related. January comes before February. “Tennis”, “running” and “piano” are all hobbies. None of that is visible from the letters.</p>
-<p>Kostiantyn Kucher and Andreas Kerren built a large visual survey of text visualization techniques, which is a good place to browse [<a class="cite" href="#ref-kucher-2015">Kucher and Kerren 2015</a>]. The course grouped what people want from text into five tasks:</p>
+<p>Kostiantyn Kucher and Andreas Kerren built a large visual survey of text visualization techniques, which is a good place to browse [<a class="cite" href="#ref-kucher-2015">Kucher and Kerren 2015</a>]. What people want from text falls roughly into five tasks:</p>
 <ul>
 <li><strong>Understand</strong> a document by reading it, helped by highlighting.</li>
 <li><strong>Summarize</strong> it, to get the gist.</li>
@@ -630,7 +636,7 @@
 <li>Optionally, <strong>weight</strong> the counts. TF-IDF boosts words that are common in one document but rare across the collection, which is how you find what makes a document distinctive.</li>
 </ol>
 <h3 id="word-clouds">Word clouds</h3>
-<p>A word cloud, or tag cloud, draws the words from a bag of words with font size by frequency. The course was clear about the trade-offs.</p>
+<p>A word cloud, or tag cloud, draws the words from a bag of words with font size by frequency. The trade-offs are clear.</p>
 <p>Strengths: it’s good for getting the gist quickly, and for finding words to search for next.</p>
 <p>Weaknesses:</p>
 <ul>
@@ -657,7 +663,7 @@
 <li><strong>3D.</strong> Tissue density inside a body from a CT or MRI scanner.</li>
 </ul>
 <h3 id="voxels-and-cells">Voxels and cells</h3>
-<p>In 3D, data comes on a grid of voxels, short for volume elements, the way a pixel is a picture element. A voxel is a point sample in space, not a little cube. When you group the eight voxels at the corners of a small cube, you get a cell, and values inside the cell are found by trilinear interpolation. The slides called these two ways of interpreting the same data.</p>
+<p>In 3D, data comes on a grid of voxels, short for volume elements, the way a pixel is a picture element. A voxel is a point sample in space, not a little cube. When you group the eight voxels at the corners of a small cube, you get a cell, and values inside the cell are found by trilinear interpolation. These are two ways of interpreting the same data.</p>
 <h3 id="three-ways-to-show-a-scalar-field">Three ways to show a scalar field</h3>
 <p><strong>Slicing.</strong> Fix one coordinate and show the 2D slice. This is what a radiologist scrolls through on a CT viewer. Values are exact and nothing hides anything else, but the viewer has to assemble the 3D shape in their head.</p>
 <p><strong>Isocontours.</strong> Pick a value and show where the data equals it. In 2D these are isolines, like contour lines on a map. In 3D they’re isosurfaces, like the surface where tissue density equals that of bone. The classic algorithm is marching cubes [<a class="cite" href="#ref-lorensen-1987">Lorensen and Cline 1987</a>]. It visits each cell and checks which of its eight corners are above the threshold. That gives 256 cases, which reduce by symmetry to 15 basic ones, each with a ready-made pattern of triangles. It then interpolates along the cell edges to place the triangles where the surface actually crosses. The result is a clear surface, but only for one value. Everything is either inside or outside.</p>
@@ -685,7 +691,7 @@
 <h2 id="14-flow">14. Flow</h2>
 <p><strong>The short version.</strong> Air flowing over a wing, blood through an artery, wind across a country. Flow data is a direction and a speed at every point. Engineers used to make it visible with smoke, dye and threads in wind tunnels. Today they simulate it on computers and draw lines and textures that mimic those old experiments.</p>
 <h3 id="where-flow-data-comes-from">Where flow data comes from</h3>
-<p>There are two sources. <strong>Experimental fluid dynamics</strong> makes real flow visible around a scale model, as with smoke in a wind tunnel. <strong>Computational fluid dynamics</strong> simulates the flow by solving the Navier-Stokes equations, then visualizes the result. The course’s point was that the computational methods were designed to mimic the experimental ones [<a class="cite" href="#ref-post-1993">Post and van Walsum 1993</a>].</p>
+<p>There are two sources. <strong>Experimental fluid dynamics</strong> makes real flow visible around a scale model, as with smoke in a wind tunnel. <strong>Computational fluid dynamics</strong> simulates the flow by solving the Navier-Stokes equations, then visualizes the result. Many of the computational methods were modeled on the experimental ones [<a class="cite" href="#ref-post-1993">Post and van Walsum 1993</a>].</p>
 
 
 
@@ -761,7 +767,7 @@
 <h3 id="making-a-chart-readable">Making a chart readable</h3>
 <figure class="viz-fig" id="fig-15-1" data-fig="15.1"></figure>
 <figure class="viz-fig" id="fig-15-2" data-fig="15.2"></figure>
-<p>A few concrete techniques from the course:</p>
+<p>A few concrete techniques:</p>
 <ul>
 <li><strong>Banking to 45 degrees.</strong> People judge the slopes of lines most accurately when they’re around 45 degrees, so you can choose the chart’s aspect ratio to get there [<a class="cite" href="#ref-cleveland-1988">Cleveland, McGill and McGill 1988</a>]. Press “Bank to 45°” in <a href="#fig-15-1">Figure 15.1</a> to try it. Later work by Justin Talbot and colleagues showed it isn’t a hard rule [<a class="cite" href="#ref-talbot-2012">Talbot, Gerth and Hanrahan 2012</a>].</li>
 <li><strong>Good tick marks.</strong> Talbot and colleagues formalized what makes axis labels good. Simplicity means round numbers like multiples of 10, 5 or 2. Coverage means labels reach close to the ends of the data. Density means not too many and not too few. Legibility means horizontal text with room to breathe [<a class="cite" href="#ref-talbot-2010">Talbot, Lin and Hanrahan 2010</a>].</li>
@@ -782,9 +788,9 @@
 <li>use many colors</li>
 <li>use an unusual chart type</li>
 </ul>
-<p>A follow-up study found people remember titles most, and that pictograms, used well, help recognition without hurting understanding [<a class="cite" href="#ref-borkin-2016">Borkin et al. 2016</a>]. One slide in the course said it plainly: a memorable visualization is not necessarily a good visualization. Memorable matters most when you’re talking to the public, who see a chart once. An analyst looking at a dashboard every day needs precision.</p>
+<p>A follow-up study found people remember titles most, and that pictograms, used well, help recognition without hurting understanding [<a class="cite" href="#ref-borkin-2016">Borkin et al. 2016</a>]. Borkin and colleagues say it plainly: a more memorable visualization is not necessarily a more comprehensible one [<a class="cite" href="#ref-borkin-2013">Borkin et al. 2013</a>]. Memorable matters most when you’re talking to the public, who see a chart once. An analyst looking at a dashboard every day needs precision.</p>
 <h3 id="engagement-and-emotion">Engagement and emotion</h3>
-<p>Engagement is a fuzzy word, and the course used a framework from Kevin Doherty and Gavin Doherty that splits it three ways [<a class="cite" href="#ref-doherty-2018">Doherty and Doherty 2018</a>]. Cognitive engagement is thinking, the effort and attention someone puts in. Behavioral engagement is action, like clicking, scrolling and exploring. Emotional engagement is feeling.</p>
+<p>Engagement is a fuzzy word. Kevin Doherty and Gavin Doherty offer a framework that splits it three ways [<a class="cite" href="#ref-doherty-2018">Doherty and Doherty 2018</a>]. Cognitive engagement is thinking, the effort and attention someone puts in. Behavioral engagement is action, like clicking, scrolling and exploring. Emotional engagement is feeling.</p>
 <p>Emotion is often measured on two scales. Valence is how pleasant something feels, and arousal is how intense. Helen Kennedy and Rosemary Lucy Hill interviewed ordinary people about the charts they meet in daily life and found that emotions shape how people engage with numbers, from pleasure in a beautiful chart to distrust of a source [<a class="cite" href="#ref-kennedy-2018">Kennedy and Hill 2018</a>]. A 2024 study found that even meaningless data with an upward trend makes people feel better than a downward one, and more variance makes them more tense [<a class="cite" href="#ref-blair-2024">Blair, Wang and Perin 2024</a>]. Designers can change that feeling with axis limits and scales, which is exactly why they should be careful.</p>
 <h3 id="telling-stories">Telling stories</h3>
 <figure class="viz-fig" id="fig-15-4" data-fig="15.4"></figure>
@@ -795,14 +801,14 @@
 <li><strong>The interactive slideshow.</strong> The author controls the order of slides, but readers can explore inside each one.</li>
 <li><strong>The drill-down story.</strong> The author sets a general theme, and readers choose which parts to open.</li>
 </ul>
-<p>The lecture’s examples covered the spectrum. The New York Times piece <a href="https://www.nytimes.com/interactive/2023/12/14/opinion/my-life-with-long-covid.html">“My Life With Long Covid”</a> is author-driven. Die Zeit’s <a href="https://www.zeit.de/politik/deutschland/2019-05/east-west-exodus-migration-east-germany-demography">East-West exodus</a> works like an interactive slideshow. The OECD’s <a href="https://www.oecdbetterlifeindex.org/">Better Life Index</a> is reader-driven, letting you weight what matters to you. Segel and Heer concluded that data stories tend to work best with constrained interaction at checkpoints.</p>
+<p>Real examples cover the spectrum. The New York Times piece <a href="https://www.nytimes.com/interactive/2023/12/14/opinion/my-life-with-long-covid.html">“My Life With Long Covid”</a> is author-driven. Die Zeit’s <a href="https://www.zeit.de/politik/deutschland/2019-05/east-west-exodus-migration-east-germany-demography">East-West exodus</a> works like an interactive slideshow. The OECD’s <a href="https://www.oecdbetterlifeindex.org/">Better Life Index</a> is reader-driven, letting you weight what matters to you. Segel and Heer concluded that data stories tend to work best with constrained interaction at checkpoints.</p>
 <p>Why stories at all? Science communicators used to assume a “deficit model”: give people enough information and they’ll know what to do. But people decide based on their goals, values and beliefs too. A story connects the data to those.</p>
 <h3 id="framing">Framing</h3>
 <p>Every choice in a chart is an editorial choice: what data to include, how to encode it, what to put in the title, what to highlight. Jessica Hullman and Nicholas Diakopoulos call this visualization rhetoric [<a class="cite" href="#ref-hullman-2011">Hullman and Diakopoulos 2011</a>]. The same data framed two ways leads people to different conclusions. You can’t avoid framing. You can be aware of it and honest about it.</p>
 <h2 id="16-uncertainty">16. Uncertainty</h2>
 <p><strong>The short version.</strong> Almost every number comes with some doubt: measurement error, a forecast that could go several ways, missing data. Showing that doubt is more honest and helps people make better decisions. It’s also hard, because people misread uncertainty displays all the time, even experts.</p>
 <h3 id="what-uncertainty-is">What uncertainty is</h3>
-<p>The course’s working definition is a quantitative estimate of the error present in data. Two related ideas are worth separating:</p>
+<p>A simple working definition is a quantitative estimate of the error present in data. Two related ideas are worth separating:</p>
 <ul>
 <li><strong>Accuracy</strong> is how close a measurement is to the true value.</li>
 <li><strong>Precision</strong> is how close repeated measurements of the same thing are to each other.</li>
@@ -816,7 +822,7 @@
 <p>Franconeri and colleagues put it well: without understanding uncertainty, people can’t calibrate their sense of how reliable a pattern or claim is [<a class="cite" href="#ref-franconeri-2021">Franconeri et al. 2021</a>].</p>
 <p>But there are honest reasons people leave it out. It can be hard to interpret. The chart may already be complex. And it can reduce trust, since some readers take visible uncertainty as a sign of weak analysis. Jessica Hullman interviewed authors and found that leaving uncertainty out is the norm. Many believe their chart shows a signal, their analysis has already validated it, and uncertainty would only blur it [<a class="cite" href="#ref-hullman-2020">Hullman 2020</a>].</p>
 <h3 id="the-challenges">The challenges</h3>
-<p>The course listed five:</p>
+<p>Five stand out:</p>
 <ol>
 <li>It varies by domain. A 70% chance of rain is familiar. Uncertainty about where a tumor ends is a different matter.</li>
 <li>Visual channels are limited. If position and color already show the data, there’s little left for uncertainty.</li>
@@ -826,14 +832,14 @@
 </ol>
 <h3 id="ways-to-show-it">Ways to show it</h3>
 <figure class="viz-fig" id="fig-16-2" data-fig="16.2"></figure>
-<p>The lecture listed strategies adapted from Kristin Potter and colleagues [<a class="cite" href="#ref-potter-2012">Potter, Rosen and Johnson 2012</a>]:</p>
+<p>Daniel Weiskopf groups the strategies, building on work by Lace Padilla and colleagues [<a class="cite" href="#ref-weiskopf-2022">Weiskopf 2022</a>]. In short:</p>
 <ul>
 <li><strong>Show the distribution.</strong> A violin plot shows the full shape of the data, where a box plot can hide very different distributions behind identical boxes (<a href="#fig-16-2">Figure 16.2</a>).</li>
 <li><strong>Show samples.</strong> Draw many possible outcomes. An ensemble of hurricane tracks, or hypothetical outcome plots that animate random draws one at a time.</li>
 <li><strong>Show a summary.</strong> A range like an error bar or a cone, or a visual property like blur, transparency or fading toward grey.</li>
 </ul>
 <h3 id="error-bars-and-the-hurricane-cone">Error bars and the hurricane cone</h3>
-<p>Error bars are the most common display, and they confuse people. They can mean a standard deviation, a standard error or a confidence interval, which are very different things, and readers rarely know which. They also show the ends of a continuous distribution as if they were hard limits. The course showed a bar chart like the top of <a href="#fig-16-3">Figure 16.3</a>, with two dots at the same distance from the mean, one just inside the bar and one just above it. People judged the one inside the bar more likely to belong. Visual boundaries become mental categories.</p>
+<p>Error bars are the most common display, and they confuse people. They can mean a standard deviation, a standard error or a confidence interval, which are very different things, and readers rarely know which. They also show the ends of a continuous distribution as if they were hard limits. George Newman and Brian Scholl showed people bar charts like the top of <a href="#fig-16-3">Figure 16.3</a>, with two dots at the same distance from the mean, one just inside the bar and one just above it. People judged the one inside the bar more likely to belong [<a class="cite" href="#ref-newman-2012">Newman and Scholl 2012</a>]. Visual boundaries become mental categories.</p>
 <p>Hurricane forecasts show the same problem at a scale where it matters. The familiar “cone of uncertainty” shows where the center of the storm might go. Many people read it as the storm getting bigger. Le Liu and colleagues proposed drawing a small, well-chosen sample of possible tracks instead, so the spread is visible without a misleading outline [<a class="cite" href="#ref-liu-2019">Liu et al. 2019</a>]. Switch the bottom of the figure between A cone and A sample of tracks to compare.</p>
 <figure class="viz-fig" id="fig-16-3" data-fig="16.3"></figure>
 <h3 id="icon-arrays">Icon arrays</h3>
@@ -904,7 +910,7 @@
 <p><strong>The short version.</strong> A chart that only works for people with perfect eyesight, a mouse and a steady hand excludes a lot of people. Accessibility means making the information available to everyone, through good contrast and labels, a data table, and sometimes sound or touch instead of sight.</p>
 <h3 id="who-its-for">Who it’s for</h3>
 <p>Frank Elavsky and colleagues define accessibility as “the practice of making information, content, and functionality fully available to and usable by people with disabilities” [<a class="cite" href="#ref-elavsky-2022">Elavsky, Bennett and Moritz 2022</a>]. The World Health Organization estimates that about 16% of the world’s population lives with some form of disability [<a href="https://www.who.int/news-room/fact-sheets/detail/disability-and-health">WHO</a>]. Disabilities can be visual, like color blindness or low vision. They can be cognitive, like dementia or a learning disability. Or they can be motor, like Parkinson’s disease or arthritis.</p>
-<p>The course also talked about situational disability. Reading your phone in bright sunlight, listening to a message in a loud bar, or holding a child while trying to use a tablet. Accessible design helps all of these. A line from the slides I like: accessibility is not a feature, it is necessary for a user’s experience to exist at all.</p>
+<p>Microsoft’s Inclusive Design toolkit also describes situational disability [<a class="cite" href="#ref-microsoft-2016">Microsoft 2016</a>]. Reading your phone in bright sunlight, listening to a message in a loud bar, or holding a child while trying to use a tablet. Accessible design helps all of these. A line from the slides I like: accessibility is not a feature, it is necessary for a user’s experience to exist at all.</p>
 <h3 id="guidelines">Guidelines</h3>
 <p>The general web standard is the <a href="https://www.w3.org/TR/WCAG22/">Web Content Accessibility Guidelines</a>, WCAG. It is built on four principles. Content must be perceivable, operable, understandable and robust, often shortened to POUR.</p>
 <p>For charts specifically, Elavsky and colleagues made Chartability, a set of about 50 testable heuristics organized under POUR plus three more principles: compromising, assistive and flexible [<a class="cite" href="#ref-elavsky-2022">Elavsky, Bennett and Moritz 2022</a>]. Some of the critical ones:</p>
@@ -919,7 +925,7 @@
 <p>Try it in <a href="#fig-18-1">Figure 18.1</a>. Switch between “Inaccessible” and “Accessible” and watch the checklist.</p>
 <figure class="viz-fig" id="fig-18-1" data-fig="18.1"></figure>
 <h3 id="beyond-sight-sound">Beyond sight: sound</h3>
-<p>Sonification maps data to sound. The main channels are pitch, volume, tempo and timbre, the quality that makes a piano sound different from a violin. Timbre works like hue, good for categories rather than amounts. LoudNumbers’ sonification of the UK’s July 2022 heatwave was one of the lecture’s examples. Press “Play” in <a href="#fig-18-2">Figure 18.2</a> to hear global temperature since 1880.</p>
+<p>Sonification maps data to sound. The main channels are pitch, volume, tempo and timbre, the quality that makes a piano sound different from a violin. Timbre works like hue, good for categories rather than amounts. LoudNumbers’ sonification of the UK’s July 2022 heatwave is one example [<a class="cite" href="#ref-loudnumbers">LoudNumbers</a>]. Press “Play” in <a href="#fig-18-2">Figure 18.2</a> to hear global temperature since 1880.</p>
 <figure class="viz-fig" id="fig-18-2" data-fig="18.2"></figure>
 <p>Hearing works differently from seeing. Vision takes in a whole chart at once. Sound arrives one piece at a time, so it’s serial and leans on memory. Sonification is faster than having a screen reader read each number aloud, but it isn’t always accurate, and mappings aren’t always intuitive. What should “louder” mean for an ordered category?</p>
 <h3 id="beyond-sight-touch">Beyond sight: touch</h3>
@@ -932,7 +938,7 @@
 <p>Every step, from cleaning data to choosing a color scale, is a decision that shapes what people see. My own sunshine map showed me that you can mislead without meaning to.</p>
 <p>Honesty isn’t one rule. Starting the axis at zero can hide the truth as easily as cutting it off. The real question is always what change matters, to whom.</p>
 <p>And the human stays in the loop. The best tools, from a radiologist’s volume renderer to an engineer’s linked views of a simulation, don’t replace judgment. They give it something to work with.</p>
-<p>Alberto Cairo, quoted in the accessibility lecture, said that a picture is worth a thousand words, if you know how to read it. A lot of this field is about making sure more people can.</p>
+<p>Alberto Cairo puts it this way: a picture is worth a thousand words, if you know how to read it [<a class="cite" href="#ref-cairo-2019">Cairo 2019</a>]. A lot of this field is about making sure more people can.</p>
 <h2 id="sources-and-further-reading">Sources and further reading</h2>
 <p>Sources are grouped by the section where they first appear. If you only read one book, make it Munzner’s.</p>
 <p><strong>General</strong></p>
@@ -951,13 +957,16 @@
 <p><strong>2. From data to picture</strong></p>
 <ul>
 <li id="ref-cleveland-1984">Cleveland, W. S., &#x26; McGill, R. (1984). Graphical perception: Theory, experimentation, and application to the development of graphical methods. <em>Journal of the American Statistical Association</em>, 79(387), 531-554. <a class="ref-link" href="https://doi.org/10.1080/01621459.1984.10478080">doi.org/10.1080/01621459.1984.10478080</a></li>
+<li id="ref-dos-santos-2004">dos Santos, S., &#x26; Brodlie, K. (2004). Gaining understanding of multivariate and multidimensional data through visualization. <em>Computers &#x26; Graphics</em>, 28(3), 311-325. <a class="ref-link" href="https://doi.org/10.1016/j.cag.2004.03.013">doi.org/10.1016/j.cag.2004.03.013</a></li>
 <li id="ref-kindlmann-2014">Kindlmann, G., &#x26; Scheidegger, C. (2014). An algebraic process for visualization design. <em>IEEE Transactions on Visualization and Computer Graphics</em>, 20(12), 2181-2190. <a class="ref-link" href="https://doi.org/10.1109/TVCG.2014.2346325">doi.org/10.1109/TVCG.2014.2346325</a></li>
 <li id="ref-tufte-1983">Tufte, E. R. (1983). <em>The Visual Display of Quantitative Information</em>. Graphics Press. 2nd edition 2001. <a class="ref-link" href="https://www.edwardtufte.com/book/the-visual-display-of-quantitative-information/">edwardtufte.com</a></li>
 </ul>
 <p><strong>3. How your eyes and brain read a chart</strong></p>
 <ul>
 <li id="ref-franconeri-2021">Franconeri, S. L., Padilla, L. M., Shah, P., Zacks, J. M., &#x26; Hullman, J. (2021). The science of visual data communication: What works. <em>Psychological Science in the Public Interest</em>, 22(3), 110-161. <a class="ref-link" href="https://doi.org/10.1177/15291006211051956">doi.org/10.1177/15291006211051956</a></li>
+<li id="ref-kroupin-2025">Kroupin, I., Davis, H., Lopes, R., Konkle, T., &#x26; Muthukrishna, M. (2025). Visual illusions reveal wide range of cross-cultural differences in visual perception. Preprint, PsyArXiv. <a class="ref-link" href="https://doi.org/10.31234/osf.io/gxzcp_v3">doi.org/10.31234/osf.io/gxzcp_v3</a></li>
 <li id="ref-skau-2016">Skau, D., &#x26; Kosara, R. (2016). Arcs, angles, or areas: Individual data encodings in pie and donut charts. <em>Computer Graphics Forum</em>, 35(3), 121-130. <a class="ref-link" href="https://doi.org/10.1111/cgf.12888">doi.org/10.1111/cgf.12888</a></li>
+<li id="ref-wolfe-2019">Wolfe, J. M., &#x26; Utochkin, I. S. (2019). What is a preattentive feature? <em>Current Opinion in Psychology</em>, 29, 19-26. <a class="ref-link" href="https://doi.org/10.1016/j.copsyc.2018.11.005">doi.org/10.1016/j.copsyc.2018.11.005</a></li>
 </ul>
 <p><strong>4. Choosing the right chart</strong></p>
 <ul>
@@ -967,9 +976,11 @@
 <ul>
 <li id="ref-correll-2020">Correll, M., Bertini, E., &#x26; Franconeri, S. (2020). Truncating the y-axis: Threat or menace? <em>Proceedings of CHI 2020</em>. <a class="ref-link" href="https://doi.org/10.1145/3313831.3376222">doi.org/10.1145/3313831.3376222</a></li>
 <li id="ref-correll">Correll, M. An inconvenient graph. Essay on Medium. <a class="ref-link" href="https://mcorrell.medium.com/an-inconvenient-graph-addc218579e9">mcorrell.medium.com</a></li>
+<li id="ref-pape-2021">Pape, R. A. (2021). 21 million Americans say Biden is ‘illegitimate’ and Trump should be restored by violence, survey finds. <em>The Conversation</em>, 23 September 2021. <a class="ref-link" href="https://theconversation.com/21-million-americans-say-biden-is-illegitimate-and-trump-should-be-restored-by-violence-survey-finds-168359">theconversation.com</a></li>
 </ul>
 <p><strong>6. Color</strong></p>
 <ul>
+<li id="ref-hall-2017">Hall, M. (2017). No more rainbows! Blog post, Agile Scientific. <a class="ref-link" href="https://agilescientific.com/blog/2017/12/14/no-more-rainbows">agilescientific.com</a></li>
 <li id="ref-harrower-2003">Harrower, M., &#x26; Brewer, C. A. (2003). ColorBrewer.org: An online tool for selecting colour schemes for maps. <em>The Cartographic Journal</em>, 40(1), 27-37. <a class="ref-link" href="https://doi.org/10.1179/000870403235002042">doi.org/10.1179/000870403235002042</a></li>
 <li id="ref-van-der-walt-2015">van der Walt, S., &#x26; Smith, N. (2015). A better default colormap for Matplotlib. Talk at SciPy 2015. <a class="ref-link" href="https://bids.github.io/colormap/">bids.github.io</a></li>
 <li id="ref-ware-2023">Ware, C., Stone, M., &#x26; Szafir, D. A. (2023). Rainbow colormaps are not all bad. <em>IEEE Computer Graphics and Applications</em>. <a class="ref-link" href="https://doi.org/10.1109/MCG.2023.3246111">doi.org/10.1109/MCG.2023.3246111</a></li>
@@ -984,6 +995,7 @@
 <p><strong>8. Networks and trees</strong></p>
 <ul>
 <li id="ref-henry-2007">Henry, N., Fekete, J.-D., &#x26; McGuffin, M. J. (2007). NodeTrix: A hybrid visualization of social networks. <em>IEEE Transactions on Visualization and Computer Graphics</em>, 13(6), 1302-1309. <a class="ref-link" href="https://doi.org/10.1109/TVCG.2007.70582">doi.org/10.1109/TVCG.2007.70582</a></li>
+<li id="ref-mcguffin-2010">McGuffin, M. J., &#x26; Robert, J.-M. (2010). Quantifying the space-efficiency of 2D graphical representations of trees. <em>Information Visualization</em>, 9(2), 115-140. <a class="ref-link" href="https://doi.org/10.1057/ivs.2009.4">doi.org/10.1057/ivs.2009.4</a></li>
 <li id="ref-reingold-1981">Reingold, E. M., &#x26; Tilford, J. S. (1981). Tidier drawings of trees. <em>IEEE Transactions on Software Engineering</em>, SE-7(2), 223-228. <a class="ref-link" href="https://doi.org/10.1109/TSE.1981.234519">doi.org/10.1109/TSE.1981.234519</a></li>
 <li id="ref-shneiderman-1992">Shneiderman, B. (1992). Tree visualization with tree-maps: 2-d space-filling approach. <em>ACM Transactions on Graphics</em>, 11(1), 92-99. <a class="ref-link" href="https://doi.org/10.1145/102377.115768">doi.org/10.1145/102377.115768</a></li>
 <li id="ref-schottler-2021">Schöttler, S., Yang, Y., Pfister, H., &#x26; Bach, B. (2021). Visualizing and interacting with geospatial networks: A survey and design space. <em>Computer Graphics Forum</em>, 40(6), 5-33. <a class="ref-link" href="https://doi.org/10.1111/cgf.14198">doi.org/10.1111/cgf.14198</a></li>
@@ -998,6 +1010,10 @@
 <li id="ref-kapler-2004">Kapler, T., &#x26; Wright, W. (2004). GeoTime information visualization. <em>Proceedings of IEEE InfoVis 2004</em>, 25-32. <a class="ref-link" href="https://doi.org/10.1109/INFVIS.2004.27">doi.org/10.1109/INFVIS.2004.27</a></li>
 <li id="ref-maceachren-1995">MacEachren, A. M. (1995). <em>How Maps Work: Representation, Visualization, and Design</em>. Guilford Press. <a class="ref-link" href="https://www.guilford.com/books/How-Maps-Work/Alan-MacEachren/9781572300408">guilford.com</a></li>
 </ul>
+<p><strong>10. Maps</strong></p>
+<ul>
+<li id="ref-muth-2018">Muth, L. C. (2018). What to consider when creating choropleth maps. Blog post, Datawrapper. <a class="ref-link" href="https://www.datawrapper.de/blog/choroplethmaps">datawrapper.de</a></li>
+</ul>
 <p><strong>11. Visual analytics</strong></p>
 <ul>
 <li id="ref-breiman-2001">Breiman, L. (2001). Statistical modeling: The two cultures. <em>Statistical Science</em>, 16(3), 199-231. <a class="ref-link" href="https://doi.org/10.1214/ss/1009213726">doi.org/10.1214/ss/1009213726</a></li>
@@ -1009,6 +1025,7 @@
 <p><strong>12. Sets and text</strong></p>
 <ul>
 <li id="ref-alsallakh-2014">Alsallakh, B., Micallef, L., Aigner, W., Hauser, H., Miksch, S., &#x26; Rodgers, P. (2014). Visualizing sets and set-typed data: State-of-the-art and future challenges. <em>EuroVis State of the Art Reports</em>. <a class="ref-link" href="https://doi.org/10.2312/eurovisstar.20141170">doi.org/10.2312/eurovisstar.20141170</a></li>
+<li id="ref-dhont-2012">D’Hont, A., Denoeud, F., Aury, J.-M., et al. (2012). The banana (<em>Musa acuminata</em>) genome and the evolution of monocotyledonous plants. <em>Nature</em>, 488(7410), 213-217. <a class="ref-link" href="https://doi.org/10.1038/nature11241">doi.org/10.1038/nature11241</a></li>
 <li id="ref-hohman-2017">Hohman, F., Soni, S., Stewart, I., &#x26; Stasko, J. (2017). A viz of ice and fire: Exploring entertainment video using color and dialogue. <em>VIS4DH Workshop at IEEE VIS 2017</em>.</li>
 <li id="ref-kucher-2015">Kucher, K., &#x26; Kerren, A. (2015). Text visualization techniques: Taxonomy, visual survey, and community insights. <em>Proceedings of IEEE PacificVis 2015</em>, 117-121. The survey is browsable at textvis.lnu.se. <a class="ref-link" href="https://doi.org/10.1109/PACIFICVIS.2015.7156366">doi.org/10.1109/PACIFICVIS.2015.7156366</a></li>
 <li id="ref-lex-2014">Lex, A., Gehlenborg, N., Strobelt, H., Vuillemot, R., &#x26; Pfister, H. (2014). UpSet: Visualization of intersecting sets. <em>IEEE Transactions on Visualization and Computer Graphics</em>, 20(12), 1983-1992. <a class="ref-link" href="https://doi.org/10.1109/TVCG.2014.2346248">doi.org/10.1109/TVCG.2014.2346248</a></li>
@@ -1049,7 +1066,9 @@
 <ul>
 <li id="ref-hullman-2020">Hullman, J. (2020). Why authors don’t visualize uncertainty. <em>IEEE Transactions on Visualization and Computer Graphics</em>, 26(1), 130-139. <a class="ref-link" href="https://doi.org/10.1109/TVCG.2019.2934287">doi.org/10.1109/TVCG.2019.2934287</a></li>
 <li id="ref-liu-2019">Liu, L., Padilla, L., Creem-Regehr, S. H., &#x26; House, D. H. (2019). Visualizing uncertain tropical cyclone predictions using representative samples from ensembles of forecast tracks. <em>IEEE Transactions on Visualization and Computer Graphics</em>, 25(1), 882-891. <a class="ref-link" href="https://doi.org/10.1109/TVCG.2018.2865193">doi.org/10.1109/TVCG.2018.2865193</a></li>
+<li id="ref-newman-2012">Newman, G. E., &#x26; Scholl, B. J. (2012). Bar graphs depicting averages are perceptually misinterpreted: The within-the-bar bias. <em>Psychonomic Bulletin &#x26; Review</em>, 19(4), 601-607. <a class="ref-link" href="https://doi.org/10.3758/s13423-012-0247-5">doi.org/10.3758/s13423-012-0247-5</a></li>
 <li id="ref-potter-2012">Potter, K., Rosen, P., &#x26; Johnson, C. R. (2012). From quantification to visualization: A taxonomy of uncertainty visualization approaches. In <em>Uncertainty Quantification in Scientific Computing</em>, IFIP AICT 377, 226-249. Springer. <a class="ref-link" href="https://doi.org/10.1007/978-3-642-32677-6_15">doi.org/10.1007/978-3-642-32677-6_15</a></li>
+<li id="ref-weiskopf-2022">Weiskopf, D. (2022). Uncertainty visualization: Concepts, methods, and applications in biological data visualization. <em>Frontiers in Bioinformatics</em>, 2, 793819. <a class="ref-link" href="https://doi.org/10.3389/fbinf.2022.793819">doi.org/10.3389/fbinf.2022.793819</a></li>
 </ul>
 <p><strong>17. How do you know a visualization works?</strong></p>
 <ul>
@@ -1058,8 +1077,14 @@
 <p><strong>18. Accessibility</strong></p>
 <ul>
 <li id="ref-elavsky-2022">Elavsky, F., Bennett, C., &#x26; Moritz, D. (2022). How accessible is my visualization? Evaluating visualization accessibility with Chartability. <em>Computer Graphics Forum</em>, 41(3), 57-70. <a class="ref-link" href="https://doi.org/10.1111/cgf.14522">doi.org/10.1111/cgf.14522</a></li>
+<li id="ref-loudnumbers">LoudNumbers. UK Heatwave 2022. Sonification. <a class="ref-link" href="https://www.loudnumbers.net/sonifications">loudnumbers.net</a></li>
+<li id="ref-microsoft-2016">Microsoft (2016). <em>Inclusive Microsoft Design</em> toolkit manual. <a class="ref-link" href="https://download.microsoft.com/download/b/0/d/b0d4bf87-09ce-4417-8f28-d60703d672ed/inclusive_toolkit_manual_final.pdf">microsoft.com</a></li>
 <li id="ref-who">World Health Organization. Disability and health. Fact sheet. <a class="ref-link" href="https://www.who.int/news-room/fact-sheets/detail/disability-and-health">who.int</a></li>
 <li id="ref-w3c-2023">W3C (2023). <em>Web Content Accessibility Guidelines (WCAG) 2.2</em>. <a class="ref-link" href="https://www.w3.org/TR/WCAG22/">w3.org</a></li>
+</ul>
+<p><strong>19. What I took away</strong></p>
+<ul>
+<li id="ref-cairo-2019">Cairo, A. (2019). <em>How Charts Lie: Getting Smarter about Visual Information</em>. W. W. Norton. <a class="ref-link" href="https://wwnorton.com/books/9781324001560">wwnorton.com</a></li>
 </ul>
 <p><strong>A note on the examples</strong></p>
 <p>Many of the examples in this article were used in the visualization courses I took during my master’s. The original sources are cited above wherever I could trace them. Any mistakes in retelling them are mine.</p>
