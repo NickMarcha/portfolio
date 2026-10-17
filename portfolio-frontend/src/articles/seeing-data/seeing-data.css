@@ -303,6 +303,7 @@
 details.viz-table {
 	margin-top: 10px;
 	font-size: 14px;
+	overflow-x: auto;
 }
 details.viz-table summary {
 	cursor: pointer;
