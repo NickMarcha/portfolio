@@ -1,0 +1,554 @@
+{
+	"1.1": {
+		"heading": "Why pictures work",
+		"what": "The letter string from the text. A toggle or button highlights every V in red",
+		"status": "OWN",
+		"interactive": "Yes, toggle",
+		"data": "None",
+		"credit": "Demo idea after Munzner 2014"
+	},
+	"1.2": {
+		"heading": "Same numbers, different stories",
+		"what": "Anscombe's quartet as four small scatterplots, with the shared statistics underneath",
+		"status": "OWN",
+		"interactive": "Optional. Hover to show the shared regression line",
+		"data": "Anscombe 1973. The numbers are in the paper and in R's built-in `anscombe` dataset",
+		"credit": "\"Data: Anscombe 1973\""
+	},
+	"1.3": {
+		"heading": "Same numbers, different stories",
+		"what": "Datasaurus Dozen. A dropdown switches dataset while the summary statistics stay identical",
+		"status": "OWN",
+		"interactive": "Yes, the animated transition is the point",
+		"data": "`datasauRus` R package, MIT licensed. Check that the license covers the data",
+		"credit": "\"Data: Alberto Cairo, Matejka & Fitzmaurice 2017\""
+	},
+	"1.4": {
+		"heading": "Why we visualize at all",
+		"what": "John Snow's 1854 cholera map",
+		"status": "PD",
+		"interactive": "No",
+		"data": "Original map, on Wikimedia Commons",
+		"credit": "\"John Snow, 1854\""
+	},
+	"2.1": {
+		"heading": "The visualization pipeline",
+		"what": "Diagram: raw → processed → focus → encoded → image, with domain and task above",
+		"status": "OWN",
+		"interactive": "No",
+		"data": "None",
+		"credit": ""
+	},
+	"2.2": {
+		"heading": "An example from my own work",
+		"what": "Your sunshine map, plus a side-by-side \"last city wins\" vs \"average per country\" version of the US",
+		"status": "SHOT + OWN",
+		"interactive": "Optional month slider",
+		"data": "Your Exercise 1 data. Check where sunshine.csv came from",
+		"credit": "Your own"
+	},
+	"2.3": {
+		"heading": "Marks and channels",
+		"what": "One table shown as scatterplot, bar chart and heatmap, labeled with mark and channel",
+		"status": "OWN",
+		"interactive": "No",
+		"data": "Palmer Penguins",
+		"credit": ""
+	},
+	"2.4": {
+		"heading": "Some channels are better than others",
+		"what": "Cleveland & McGill style ranking: the same 5 values as position, length, angle, area, color",
+		"status": "OWN",
+		"interactive": "Optional \"guess the ratio\" quiz",
+		"data": "Made up",
+		"credit": "After Cleveland & McGill 1984"
+	},
+	"2.5": {
+		"heading": "The most famous chart",
+		"what": "Minard's 1869 map",
+		"status": "PD",
+		"interactive": "No",
+		"data": "Original, on Wikimedia Commons",
+		"credit": "\"Charles Joseph Minard, 1869\""
+	},
+	"2.6": {
+		"heading": "A test for whether a chart is \"grammatically correct\"",
+		"what": "Elevation above and below sea level on a diverging colormap, with a \"negate data\" button that swaps the colors",
+		"status": "OWN",
+		"interactive": "Yes",
+		"data": "Any small elevation grid, e.g. synthetic",
+		"credit": "After Kindlmann & Scheidegger 2014"
+	},
+	"3.1": {
+		"heading": "Things that pop out",
+		"what": "Find the red dot. Two modes: color only, which is instant, and color plus shape, which needs a search. A timer shows how long you took",
+		"status": "OWN",
+		"interactive": "Yes, great demo",
+		"data": "Random",
+		"credit": "After Treisman's visual search studies, via Munzner ch. 5"
+	},
+	"3.2": {
+		"heading": "Grouping: Gestalt principles",
+		"what": "Five small panels: proximity, similarity, symmetry, parallelism, figure and ground",
+		"status": "OWN",
+		"interactive": "No",
+		"data": "None",
+		"credit": ""
+	},
+	"3.3": {
+		"heading": "The trouble with pie charts",
+		"what": "The same 5 values as a pie and as a sorted bar chart. Ask the reader which slice is second biggest",
+		"status": "OWN",
+		"interactive": "Optional quiz",
+		"data": "Made up",
+		"credit": "After Skau & Kosara 2016"
+	},
+	"4.1": {
+		"heading": "Four ways to arrange a table",
+		"what": "A small gallery with one thumbnail per row of the idiom table",
+		"status": "OWN",
+		"interactive": "Optional",
+		"data": "Palmer Penguins, plus public time-series data",
+		"credit": "Breakdown after Munzner 2014"
+	},
+	"4.2": {
+		"heading": "Bars or lines?",
+		"what": "The same categorical data wrongly drawn as a line next to correctly drawn bars",
+		"status": "OWN",
+		"interactive": "No",
+		"data": "Made up",
+		"credit": ""
+	},
+	"4.3": {
+		"heading": "Sketch before you build",
+		"what": "A photo of your own Five Design-Sheet sketches, if you still have them",
+		"status": "SHOT",
+		"interactive": "No",
+		"data": "Your own",
+		"credit": "Method: Roberts et al. 2016"
+	},
+	"5.1": {
+		"heading": "Cutting off the axis",
+		"what": "The sign-up example, 6 million vs a 7 million target, as bars. A slider moves the axis baseline from 0 upwards and the lie factor updates live",
+		"status": "OWN",
+		"interactive": "Yes, strong demo",
+		"data": "The two numbers from the text",
+		"credit": "After Franconeri et al. 2021"
+	},
+	"5.2": {
+		"heading": "But zero isn't always honest either",
+		"what": "Global temperature twice: in Fahrenheit from zero, and as anomalies with an uncertainty band",
+		"status": "OWN",
+		"interactive": "Optional toggle",
+		"data": "NASA GISTEMP",
+		"credit": "Idea after Correll's essay \"An inconvenient graph\""
+	},
+	"5.3": {
+		"heading": "Leaving out the whole picture",
+		"what": "A part-to-whole bar: the 21 million against the 74% who believe neither",
+		"status": "OWN",
+		"interactive": "No",
+		"data": "Find and cite the original poll before using",
+		"credit": ""
+	},
+	"5.4": {
+		"heading": "I built a deceptive chart on purpose",
+		"what": "Your honest and deceptive genre charts side by side",
+		"status": "SHOT",
+		"interactive": "No",
+		"data": "Your Exercise 2. IMDB data has usage terms, but a screenshot of your own chart is low risk. Don't redistribute the dataset",
+		"credit": "Your own"
+	},
+	"6.1": {
+		"heading": "What makes a good color scale",
+		"what": "The same smooth field in rainbow and viridis, with toggles for greyscale and simulated color blindness",
+		"status": "OWN",
+		"interactive": "Yes, the best color demo",
+		"data": "Synthetic smooth surface or a public elevation grid",
+		"credit": "Viridis: van der Walt & Smith 2015"
+	},
+	"6.2": {
+		"heading": "Why the rainbow scale is a problem",
+		"what": "A luminance curve under each colormap, showing rainbow going up and down",
+		"status": "OWN",
+		"interactive": "No",
+		"data": "Computed from the colormaps",
+		"credit": ""
+	},
+	"6.3": {
+		"heading": "Why the rainbow scale is a problem",
+		"what": "The Nova Scotia sea floor map",
+		"status": "LINK",
+		"interactive": "",
+		"data": "Find the original source if you want to mention it",
+		"credit": ""
+	},
+	"6.4": {
+		"heading": "Color blindness",
+		"what": "One chart in red-green vs a color-blind-safe palette, with a simulation toggle",
+		"status": "OWN",
+		"interactive": "Yes",
+		"data": "Made up",
+		"credit": "Palettes: ColorBrewer, Harrower & Brewer 2003"
+	},
+	"7.1": {
+		"heading": "The mantra",
+		"what": "A small penguin explorer: overview scatterplot, filters, tooltip details. Include a \"pin axes\" checkbox to show why fixed scales matter",
+		"status": "OWN",
+		"interactive": "Yes",
+		"data": "Palmer Penguins",
+		"credit": "Mantra: Shneiderman 1996"
+	},
+	"7.2": {
+		"heading": "The mantra",
+		"what": "Your Exercise 3 chord diagram + poster grid",
+		"status": "SHOT",
+		"interactive": "No",
+		"data": "Movie posters are copyrighted. Crop them out, blur them, or show only the chord diagram",
+		"credit": "Your own"
+	},
+	"7.3": {
+		"heading": "Several views at once",
+		"what": "Small multiples: one penguin histogram per species",
+		"status": "OWN",
+		"interactive": "No",
+		"data": "Palmer Penguins",
+		"credit": ""
+	},
+	"7.4": {
+		"heading": "Linked highlighting",
+		"what": "A scatterplot matrix with linked brushing",
+		"status": "OWN",
+		"interactive": "Yes",
+		"data": "Palmer Penguins",
+		"credit": ""
+	},
+	"7.5": {
+		"heading": "Focus and context",
+		"what": "Big time-series chart plus a thin full-range chart with a draggable window",
+		"status": "OWN",
+		"interactive": "Yes",
+		"data": "Daily bike trips from Oslo on Two Wheels",
+		"credit": "Pattern made popular by Bostock's D3 \"focus + context\" example. Rebuild it, don't copy it"
+	},
+	"8.1": {
+		"heading": "Dots and lines",
+		"what": "Force-directed layout you can drag, with a \"restart\" button that gives a different layout each time",
+		"status": "OWN",
+		"interactive": "Yes",
+		"data": "Les Misérables network",
+		"credit": ""
+	},
+	"8.2": {
+		"heading": "The grid view",
+		"what": "The same network as an adjacency matrix with an ordering dropdown: alphabetical, by cluster, by degree",
+		"status": "OWN",
+		"interactive": "Yes",
+		"data": "Les Misérables network",
+		"credit": "After Bostock's Les Misérables matrix. Link to his version too"
+	},
+	"8.3": {
+		"heading": "The grid view",
+		"what": "The Oslo on Two Wheels origin-destination matrix",
+		"status": "SHOT",
+		"interactive": "No",
+		"data": "Your project",
+		"credit": "Your own"
+	},
+	"8.4": {
+		"heading": "Flows between places",
+		"what": "Your kriskogram explorer: one static image plus a link to the live demo",
+		"status": "SHOT",
+		"interactive": "Link to live",
+		"data": "Your project",
+		"credit": "Your own. Kriskogram: Xiao & Chun 2009"
+	},
+	"8.5": {
+		"heading": "Trees",
+		"what": "One small folder tree drawn four ways: indentation, node-link, treemap, icicle",
+		"status": "OWN",
+		"interactive": "Optional idiom switcher",
+		"data": "A made-up folder structure",
+		"credit": ""
+	},
+	"8.6": {
+		"heading": "Trees",
+		"what": "Flat treemap vs cushion treemap of the same data",
+		"status": "OWN",
+		"interactive": "Optional toggle",
+		"data": "Same tree",
+		"credit": "After van Wijk & van de Wetering 1999"
+	},
+	"9.1": {
+		"heading": "Two ways to show time",
+		"what": "The same bike data animated vs as a static line chart, with a play button",
+		"status": "OWN",
+		"interactive": "Yes",
+		"data": "Oslo Bysykkel",
+		"credit": ""
+	},
+	"9.2": {
+		"heading": "Which visual properties can carry time?",
+		"what": "A calendar heatmap of daily trips over a year",
+		"status": "OWN",
+		"interactive": "Optional hover",
+		"data": "Oslo Bysykkel",
+		"credit": ""
+	},
+	"9.3": {
+		"heading": "The space-time cube",
+		"what": "A 3D cube with a few synthetic trajectories that you can rotate",
+		"status": "OWN",
+		"interactive": "Yes, three.js or similar",
+		"data": "Synthetic paths",
+		"credit": "Concept: Hägerstrand 1970. Example: Kapler & Wright 2004"
+	},
+	"10.1": {
+		"heading": "Projections",
+		"what": "A projection switcher between Mercator, Equal Earth, Albers and azimuthal equidistant, with Tissot circles drawn on top",
+		"status": "OWN",
+		"interactive": "Yes, the best map demo. `d3-geo` has all of these",
+		"data": "Natural Earth",
+		"credit": "Tissot's indicatrix"
+	},
+	"10.2": {
+		"heading": "The choropleth map and its traps",
+		"what": "US states colored by a raw count vs per capita, with a toggle",
+		"status": "OWN",
+		"interactive": "Yes",
+		"data": "US Census",
+		"credit": ""
+	},
+	"10.3": {
+		"heading": "The choropleth map and its traps",
+		"what": "xkcd \"Heatmap\"",
+		"status": "LINK",
+		"interactive": "",
+		"data": "xkcd is CC BY-NC 2.5. Linking is simplest",
+		"credit": "Randall Munroe"
+	},
+	"10.4": {
+		"heading": "Alternatives to the choropleth",
+		"what": "The same data as a symbol map, a grid cartogram and a dot density map",
+		"status": "OWN",
+		"interactive": "Optional tabs",
+		"data": "US Census",
+		"credit": ""
+	},
+	"11.1": {
+		"heading": "Four nested loops",
+		"what": "A stand-in for the engine example: a 2D synthetic temperature and velocity field, a histogram for each, and linked brushing with an AND mode. Level 3: a \"derive gradient\" button that adds a new histogram",
+		"status": "OWN",
+		"interactive": "Yes, the showpiece",
+		"data": "Synthetic field",
+		"credit": "Levels after Muigg et al. 2008. Don't use the original engine images"
+	},
+	"11.2": {
+		"heading": "Four nested loops",
+		"what": "Diagram of the nested loops L1 to L4",
+		"status": "OWN",
+		"interactive": "No",
+		"data": "None",
+		"credit": "After Hauser and colleagues"
+	},
+	"11.3": {
+		"heading": "Four nested loops",
+		"what": "AVOCLA figures",
+		"status": "LINK",
+		"interactive": "",
+		"data": "Link to the paper's DOI",
+		"credit": "Meuschke et al. 2016"
+	},
+	"12.1": {
+		"heading": "Sets",
+		"what": "Euler vs Venn for mammals, birds and cats",
+		"status": "OWN",
+		"interactive": "No",
+		"data": "Made up",
+		"credit": ""
+	},
+	"12.2": {
+		"heading": "Sets",
+		"what": "An UpSet plot of something relatable, like which streaming services friends use",
+		"status": "OWN",
+		"interactive": "Optional",
+		"data": "Made up or a small survey",
+		"credit": "Technique: Lex et al. 2014"
+	},
+	"12.3": {
+		"heading": "Word clouds",
+		"what": "Word cloud vs top-20 bar chart of the same text, with a stop-word toggle",
+		"status": "OWN",
+		"interactive": "Yes, the toggle makes the point",
+		"data": "A Project Gutenberg text",
+		"credit": ""
+	},
+	"12.4": {
+		"heading": "Keeping the context",
+		"what": "A small word tree on the same text",
+		"status": "OWN",
+		"interactive": "Optional",
+		"data": "Same text",
+		"credit": "After Wattenberg & Viégas 2008"
+	},
+	"13.1": {
+		"heading": "Three ways to show a scalar field",
+		"what": "2D version: a colormap, isolines with a threshold slider (marching squares), and a 1D slice profile",
+		"status": "OWN",
+		"interactive": "Yes",
+		"data": "Synthetic or public elevation grid",
+		"credit": ""
+	},
+	"13.2": {
+		"heading": "How a volume becomes an image",
+		"what": "Diagram of a ray through a grid with samples, and the four pipeline steps",
+		"status": "OWN",
+		"interactive": "No",
+		"data": "None",
+		"credit": "After Levoy 1988"
+	},
+	"13.3": {
+		"heading": "Two details that matter",
+		"what": "1D pre- vs post-classification demo: two voxels at 0 and 100, a transfer function spike at 50, a slider for the spike position",
+		"status": "OWN",
+		"interactive": "Yes, very clear",
+		"data": "None",
+		"credit": ""
+	},
+	"13.4": {
+		"heading": "How a volume becomes an image",
+		"what": "A real volume rendering with an editable transfer function",
+		"status": "OWN",
+		"interactive": "Yes, but heavy. Libraries like vtk.js can do it",
+		"data": "A public CT dataset. Check its license first",
+		"credit": ""
+	},
+	"14.1": {
+		"heading": "Following the flow",
+		"what": "A circular flow field with a step-size slider, Euler spiraling outwards next to RK-2 and RK-4",
+		"status": "OWN",
+		"interactive": "Yes, strong demo",
+		"data": "Analytic field, v = (−y, x)",
+		"credit": ""
+	},
+	"14.2": {
+		"heading": "Four kinds of lines",
+		"what": "Animated chimney: wind turning over time, with streamline, pathline and streakline drawn live",
+		"status": "OWN",
+		"interactive": "Yes. Recreate the idea, not the course animations",
+		"data": "Analytic, time-varying field",
+		"credit": ""
+	},
+	"14.3": {
+		"heading": "Textures",
+		"what": "LIC of the same field",
+		"status": "OWN",
+		"interactive": "Optional",
+		"data": "Analytic field",
+		"credit": "After Cabral & Leedom 1993"
+	},
+	"14.4": {
+		"heading": "Textures",
+		"what": "IBFV demo",
+		"status": "LINK",
+		"interactive": "",
+		"data": "van Wijk's site",
+		"credit": "van Wijk 2002"
+	},
+	"15.1": {
+		"heading": "Making a chart readable",
+		"what": "A line chart with an aspect-ratio slider, showing banking to 45 degrees",
+		"status": "OWN",
+		"interactive": "Yes",
+		"data": "Any time series",
+		"credit": "After Cleveland et al. 1988"
+	},
+	"15.2": {
+		"heading": "Making a chart readable",
+		"what": "The same chart with a legend vs direct labels",
+		"status": "OWN",
+		"interactive": "No",
+		"data": "Made up",
+		"credit": ""
+	},
+	"15.3": {
+		"heading": "Chart junk",
+		"what": "\"Monstrous Costs\" and \"Iraq's Bloody Toll\"",
+		"status": "LINK",
+		"interactive": "",
+		"data": "Both are distinctive copyrighted designs",
+		"credit": "Nigel Holmes; Simon Scarr / South China Morning Post"
+	},
+	"15.4": {
+		"heading": "Telling stories",
+		"what": "Diagram of the author-driven to reader-driven spectrum with the three structures",
+		"status": "OWN",
+		"interactive": "No",
+		"data": "None",
+		"credit": "After Segel & Heer 2010"
+	},
+	"16.1": {
+		"heading": "What uncertainty is",
+		"what": "Four dartboards: precise/accurate combinations",
+		"status": "OWN",
+		"interactive": "No",
+		"data": "None",
+		"credit": ""
+	},
+	"16.2": {
+		"heading": "Ways to show it",
+		"what": "The same data as a bar with error bars, a box plot, and a violin plot",
+		"status": "OWN",
+		"interactive": "No",
+		"data": "Synthetic, with two different distributions behind identical boxes",
+		"credit": ""
+	},
+	"16.3": {
+		"heading": "Error bars and the hurricane cone",
+		"what": "A cone vs a sample of synthetic tracks",
+		"status": "OWN",
+		"interactive": "Optional \"draw new samples\" button",
+		"data": "Synthetic tracks",
+		"credit": "After Liu et al. 2019. Don't reuse their figures"
+	},
+	"16.4": {
+		"heading": "Icon arrays",
+		"what": "3 in 100 icons, with a slider for the risk",
+		"status": "OWN",
+		"interactive": "Yes",
+		"data": "None",
+		"credit": ""
+	},
+	"17.1": {
+		"heading": "Munzner's nested model",
+		"what": "Diagram of the four nested levels",
+		"status": "OWN",
+		"interactive": "No",
+		"data": "None",
+		"credit": "After Munzner 2009"
+	},
+	"17.2": {
+		"heading": "An honest look at my own project",
+		"what": "A screenshot of Oslo on Two Wheels, plus a link to the live story",
+		"status": "SHOT",
+		"interactive": "Link",
+		"data": "Your project",
+		"credit": "Your own"
+	},
+	"18.1": {
+		"heading": "Guidelines",
+		"what": "One chart done well: high contrast, title, summary, a \"show data table\" button, keyboard focus on the bars",
+		"status": "OWN",
+		"interactive": "Yes",
+		"data": "Any small dataset",
+		"credit": "Heuristics: Elavsky et al. 2022"
+	},
+	"18.2": {
+		"heading": "Beyond sight: sound",
+		"what": "The same chart with a \"play\" button that sonifies it with the Web Audio API, pitch mapped to value",
+		"status": "OWN",
+		"interactive": "Yes",
+		"data": "Same data",
+		"credit": "Inspired by LoudNumbers. Link to their heatwave piece"
+	}
+}

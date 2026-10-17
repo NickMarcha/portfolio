@@ -1,0 +1,81 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import GitHubButton from '../../components/GitHubButton.astro';
+import ShareButton from '../../components/ShareButton.astro';
+import ThemeToggle from '../../components/ThemeToggle.astro';
+import articleHtml from '../../articles/seeing-data/article.html?raw';
+import '../../articles/seeing-data/seeing-data.css';
+
+const title = 'Seeing data: a long, plain-language guide to visualization';
+const description =
+	'What visualization is and how it works, from bar charts and color scales to volume rendering and flow, based on my visualization course work at the University of Bergen.';
+
+// Wide tables scroll sideways on small screens instead of overflowing the page.
+const body = articleHtml.replace(/<table>/g, '<div class="table-scroll"><table>').replace(/<\/table>/g, '</table></div>');
+
+const sections = [...articleHtml.matchAll(/<h2 id="([^"]+)">(.*?)<\/h2>/g)]
+	.map(([, id, text]) => ({ id, text: text.replace(/<[^>]+>/g, '') }))
+	.filter((s) => !['how-to-read-this', 'contents'].includes(s.id));
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={title} description={description} lang="en" />
+	</head>
+	<body>
+		<div class="article-shell">
+			<nav class="article-toc" aria-label="Sections">
+				<p class="toc-title">Contents</p>
+				<ol>
+					{sections.map((s) => (
+						<li>
+							<a href={`#${s.id}`}>{s.text}</a>
+						</li>
+					))}
+				</ol>
+			</nav>
+			<main class="article">
+				<header class="article-header">
+					<h1>{title}</h1>
+					<aside class="ai-note" aria-label="About this article">
+						<p>
+							A note before you start: this article was written with heavy help from AI. The content comes
+							from my own course work, notes and experience in visualization at the University of Bergen,
+							and I mainly made it as a reference for myself to come back to.
+						</p>
+					</aside>
+				</header>
+				<article set:html={body} />
+			</main>
+		</div>
+		<Footer />
+		<ShareButton pathname={Astro.url.pathname} lang="en" />
+		<GitHubButton lang="en" />
+		<ThemeToggle lang="en" />
+
+		<script>
+			import '../../articles/seeing-data/load-figures';
+
+			// Highlight the section being read in the sidebar.
+			const links = new Map(
+				[...document.querySelectorAll<HTMLAnchorElement>('.article-toc a')].map((a) => [
+					a.hash.slice(1),
+					a,
+				]),
+			);
+			const headings = [...links.keys()]
+				.map((id) => document.getElementById(id))
+				.filter((h): h is HTMLElement => h !== null);
+			const mark = () => {
+				let current = headings[0];
+				for (const h of headings) if (h.getBoundingClientRect().top < 120) current = h;
+				for (const a of links.values()) a.removeAttribute('aria-current');
+				links.get(current?.id ?? '')?.setAttribute('aria-current', 'true');
+			};
+			addEventListener('scroll', mark, { passive: true });
+			mark();
+		</script>
+	</body>
+</html>

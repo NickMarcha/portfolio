@@ -1,0 +1,354 @@
+/* "Seeing data" article: page layout, figure chrome and the --viz-* tokens.
+   Series colors are the dataviz reference palette, validated against the site's
+   surfaces (#ffffff light, #1e1e1e dark). Change them only after re-running the
+   validator. */
+
+:root,
+[data-theme='light'] {
+	--viz-surface: var(--surface);
+	--viz-ink: var(--text);
+	--viz-muted: #6b6560;
+	--viz-grid: #ebe9e6;
+	--viz-axis: #c3c2b7;
+	--viz-highlight: #e34948;
+	--viz-dim: #c9c6c1;
+	--viz-series-1: #2a78d6;
+	--viz-series-2: #eb6834;
+	--viz-series-3: #1baf7a;
+	--viz-series-4: #eda100;
+	--viz-series-5: #e87ba4;
+	--viz-series-6: #008300;
+	--viz-series-7: #6250d6;
+	--viz-series-8: #e34948;
+	--viz-div-low: #2a78d6;
+	--viz-div-mid: #f0efec;
+	--viz-div-high: #e34948;
+}
+
+[data-theme='dark'] {
+	--viz-muted: #a0a0a0;
+	--viz-grid: #2c2c2a;
+	--viz-axis: #4a4a47;
+	--viz-highlight: #e66767;
+	--viz-dim: #4a4a47;
+	--viz-series-1: #3987e5;
+	--viz-series-2: #d95926;
+	--viz-series-3: #199e70;
+	--viz-series-4: #c98500;
+	--viz-series-5: #d55181;
+	--viz-series-6: #008300;
+	--viz-series-7: #9085e9;
+	--viz-series-8: #e66767;
+	--viz-div-low: #3987e5;
+	--viz-div-mid: #383835;
+	--viz-div-high: #e66767;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme='light']):not([data-theme='dark']),
+	[data-theme='system'] {
+		--viz-muted: #a0a0a0;
+		--viz-grid: #2c2c2a;
+		--viz-axis: #4a4a47;
+		--viz-highlight: #e66767;
+		--viz-dim: #4a4a47;
+		--viz-series-1: #3987e5;
+		--viz-series-2: #d95926;
+		--viz-series-3: #199e70;
+		--viz-series-4: #c98500;
+		--viz-series-5: #d55181;
+		--viz-series-6: #008300;
+		--viz-series-7: #9085e9;
+		--viz-series-8: #e66767;
+		--viz-div-low: #3987e5;
+		--viz-div-mid: #383835;
+		--viz-div-high: #e66767;
+	}
+}
+
+/* ---------- Layout ---------- */
+
+.article-shell {
+	display: grid;
+	grid-template-columns: minmax(0, 760px);
+	justify-content: center;
+	gap: 3rem;
+	padding: 3em 1em 6em;
+}
+
+@media (min-width: 1240px) {
+	.article-shell {
+		grid-template-columns: 240px minmax(0, 760px);
+		justify-content: center;
+	}
+}
+
+.article-toc {
+	display: none;
+}
+
+@media (min-width: 1240px) {
+	.article-toc {
+		display: block;
+		position: sticky;
+		top: 1.5rem;
+		align-self: start;
+		max-height: calc(100vh - 3rem);
+		overflow-y: auto;
+		font-size: 14px;
+		line-height: 1.4;
+	}
+	.article-toc ol {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+	.article-toc a {
+		display: block;
+		padding: 4px 8px;
+		border-left: 2px solid transparent;
+		color: var(--text-muted);
+		text-decoration: none;
+	}
+	.article-toc a:hover {
+		color: var(--text);
+	}
+	.article-toc a[aria-current='true'] {
+		border-left-color: var(--primary);
+		color: var(--text);
+	}
+	.article-toc .toc-title {
+		margin: 0 0 8px 8px;
+		font-weight: 700;
+		color: var(--text);
+	}
+}
+
+.article {
+	min-width: 0;
+	font-size: 18px;
+	line-height: 1.65;
+}
+
+.article-header h1 {
+	font-size: 2.4em;
+	line-height: 1.15;
+	margin-bottom: 0.75em;
+}
+
+.ai-note {
+	margin: 0 0 2.5em;
+	padding: 12px 16px;
+	border: 1px solid var(--border);
+	border-left: 3px solid var(--primary);
+	border-radius: 8px;
+	background: var(--surface);
+	font-size: 16px;
+	color: var(--text);
+}
+.ai-note p {
+	margin: 0;
+}
+
+.article h2 {
+	font-size: 1.7em;
+	margin: 2.4em 0 0.6em;
+	padding-top: 0.6em;
+	border-top: 1px solid var(--border);
+	scroll-margin-top: 1rem;
+}
+.article h3 {
+	font-size: 1.25em;
+	margin: 1.8em 0 0.5em;
+	scroll-margin-top: 1rem;
+}
+.article p,
+.article ul,
+.article ol {
+	margin: 0 0 1em;
+}
+.article li {
+	margin-bottom: 0.3em;
+}
+.article blockquote {
+	font-size: 1.05em;
+	margin: 1.2em 0;
+	color: var(--text);
+}
+
+.article table {
+	border-collapse: collapse;
+	font-size: 15px;
+	line-height: 1.4;
+	margin: 1.2em 0 1.6em;
+}
+.article .table-scroll {
+	overflow-x: auto;
+}
+.article th,
+.article td {
+	text-align: left;
+	vertical-align: top;
+	padding: 6px 10px;
+	border-bottom: 1px solid var(--border);
+}
+.article th {
+	font-weight: 700;
+}
+
+/* ---------- Figures ---------- */
+
+.viz-fig {
+	margin: 2em 0;
+	padding: 16px;
+	background: var(--viz-surface);
+	border: 1px solid var(--border);
+	border-radius: 8px;
+	font-size: 15px;
+	line-height: 1.45;
+	color: var(--viz-ink);
+}
+
+.viz-fig svg text {
+	font-family: 'Atkinson', sans-serif;
+}
+
+.viz-fig figcaption {
+	margin-top: 12px;
+	color: var(--text);
+}
+.viz-fig figcaption .fig-num {
+	font-weight: 700;
+}
+.viz-fig figcaption .fig-credit {
+	display: block;
+	margin-top: 4px;
+	color: var(--viz-muted);
+	font-size: 13px;
+}
+
+.viz-fig img {
+	display: block;
+	margin: 0 auto;
+	border-radius: 4px;
+}
+
+.viz-controls {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px 16px;
+	margin-bottom: 12px;
+	font-size: 14px;
+}
+.viz-controls label {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+.viz-controls output {
+	min-width: 3.5em;
+	font-variant-numeric: tabular-nums;
+	color: var(--viz-muted);
+}
+.viz-controls button,
+.viz-controls select {
+	font: inherit;
+	font-size: 14px;
+	padding: 4px 10px;
+	border: 1px solid var(--border);
+	border-radius: 6px;
+	background: var(--bg);
+	color: var(--text);
+	cursor: pointer;
+	transition: background-color 120ms;
+}
+.viz-controls button:hover {
+	background: var(--primary-soft);
+}
+.viz-controls button[aria-pressed='true'] {
+	border-color: var(--primary);
+	background: var(--primary-pastel);
+}
+.viz-controls input[type='range'] {
+	accent-color: var(--primary);
+}
+
+.viz-fig :focus-visible {
+	outline: 2px solid var(--primary);
+	outline-offset: 2px;
+}
+
+.viz-readout {
+	margin: 8px 0 0;
+	font-variant-numeric: tabular-nums;
+	color: var(--text);
+}
+
+.viz-tooltip {
+	position: absolute;
+	z-index: 5;
+	pointer-events: none;
+	max-width: 240px;
+	padding: 6px 8px;
+	border: 1px solid var(--border);
+	border-radius: 6px;
+	background: var(--surface);
+	box-shadow: var(--shadow);
+	font-size: 13px;
+	line-height: 1.35;
+	color: var(--text);
+}
+
+details.viz-table {
+	margin-top: 10px;
+	font-size: 14px;
+}
+details.viz-table summary {
+	cursor: pointer;
+	color: var(--viz-muted);
+}
+details.viz-table table {
+	margin: 8px 0 0;
+	font-size: 13px;
+	width: auto;
+}
+details.viz-table td.num,
+details.viz-table th.num {
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+}
+
+/* Placeholder for a figure that isn't built yet. Visible in previews so the
+   proofreader sees where figures go. */
+.viz-fig.is-placeholder {
+	border-style: dashed;
+	background: transparent;
+	color: var(--text-muted);
+}
+.viz-fig.is-placeholder dl {
+	display: grid;
+	grid-template-columns: max-content 1fr;
+	gap: 2px 12px;
+	margin: 6px 0 0;
+	font-size: 14px;
+}
+.viz-fig.is-placeholder dt {
+	font-weight: 700;
+}
+.viz-fig.is-placeholder dd {
+	margin: 0;
+}
+
+@media (max-width: 720px) {
+	.article {
+		font-size: 17px;
+	}
+	.article-header h1 {
+		font-size: 1.9em;
+	}
+	.viz-fig {
+		padding: 10px;
+		margin: 1.5em -4px;
+	}
+}
