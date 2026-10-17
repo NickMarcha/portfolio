@@ -205,6 +205,37 @@
 	text-underline-offset: 3px;
 }
 
+/* Display equations (MathML, rendered natively by the browser). */
+.equation {
+	margin: 1.4em 0;
+	padding: 14px 16px;
+	border-left: 3px solid var(--primary);
+	background: var(--surface);
+	border-radius: 0 8px 8px 0;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	gap: 4px 10px;
+	color: var(--text);
+}
+.equation math {
+	font-family: 'Atkinson', sans-serif;
+	font-size: 1.05em;
+	color: var(--text);
+}
+.equation mfrac {
+	padding: 0 0.3em;
+}
+.equation mtext {
+	padding: 0.15em 0.2em;
+}
+@media (max-width: 560px) {
+	.equation math {
+		font-size: 0.9em;
+	}
+}
+
 /* ---------- Citations ---------- */
 
 .article a.cite {
