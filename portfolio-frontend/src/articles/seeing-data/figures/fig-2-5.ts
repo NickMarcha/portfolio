@@ -10,7 +10,7 @@ const READ = [
 const figure: Figure = {
 	title: 'Minard’s map of Napoleon’s Russian campaign',
 	caption:
-		'The tan band leaves the Niemen on the left with over 400,000 men and narrows all the way to Moscow; the black band of the retreat comes back thinner still, ending with about 10,000. The temperature line along the bottom falls as the band shrinks.',
+		'The tan band is the army on its way to Moscow, the black band its retreat. The temperature line along the bottom falls as the band shrinks.',
 	credit:
 		'Charles Joseph Minard, 1869. Public domain, via Wikimedia Commons: https://commons.wikimedia.org/wiki/File:Minard.png',
 	mount(el) {

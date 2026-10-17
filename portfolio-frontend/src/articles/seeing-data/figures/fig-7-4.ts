@@ -27,7 +27,7 @@ const DATA: P[] = (penguinsRaw as Raw[])
 const figure: Figure = {
 	title: 'Brushing and linking',
 	caption:
-		'Three views of the same 342 penguins, each showing two measurements. Drag a box in any view, or use the buttons and the slider, and the same birds light up in the other two. A group that overlaps in one view can stand apart in another.',
+		'Three views of the same 342 penguins, each showing two measurements. A selection in one view lights up the same birds in the other two, and a group that overlaps in one view can stand apart in another.',
 	credit: 'Data: Palmer Penguins, Gorman, Williams and Fraser 2014, via Horst, Hill and Gorman 2020 (CC0).',
 	mount(el) {
 		let selected: Set<number> | null = null;

@@ -33,7 +33,7 @@ const signed = (n: number) => `${n > 0 ? '+' : n < 0 ? '−' : ''}${Math.abs(n).
 const figure: Figure = {
 	title: 'One dataset, an honest chart and a deceptive one',
 	caption:
-		'Both versions use the same thirteen numbers. The deceptive one only changes design decisions: it sorts by the size of the gap, drops the sample sizes and colors bars like a traffic light. Film-Noir (3 films) and Thriller (1 film) end up looking like the most controversial genres in cinema.',
+		'Both versions use the same thirteen numbers and differ only in design decisions.',
 	credit:
 		'Nick Marcha, INF252 Programming Exercise 2. Per-genre averages computed from the “IMDB Movies Dataset” of the top 1000 films on Kaggle (Harshit Shankhdhar); only the aggregates are shown here, not the underlying dataset.',
 	mount(el) {

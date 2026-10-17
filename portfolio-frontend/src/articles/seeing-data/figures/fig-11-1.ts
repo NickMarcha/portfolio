@@ -252,7 +252,7 @@ export function brushHistogram(opts: {
 const figure: Figure = {
 	title: 'Show and brush',
 	caption:
-		'Level one of interactive visual analysis. Brush the hottest bars in the temperature histogram and the cells with those temperatures light up in the jacket, with everything else faded into context. You brushed values and asked where they occur: feature localization.',
+		'Level one of interactive visual analysis. Brushing values in the histogram and seeing where they occur in the jacket is feature localization.',
 	credit:
 		'Synthetic data: a made-up 2D stand-in for the engine cooling jacket used in the course, not simulation output. Levels after Muigg et al. 2008.',
 	mount(el) {

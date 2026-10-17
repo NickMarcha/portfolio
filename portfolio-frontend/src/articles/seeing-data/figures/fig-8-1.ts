@@ -18,7 +18,7 @@ const pretty = (s: string) => s.replace(/\.(?=\S)/g, '. ');
 const figure: Figure = {
 	title: 'Les Misérables as dots and lines',
 	caption:
-		'Characters in Victor Hugo’s novel, linked when they appear in the same chapter. A force-directed layout pulls linked characters together, and the groups form on their own. Start again from new random positions: the network is the same, the picture is not. Drag a character to pull on the springs.',
+		'Characters in Victor Hugo’s novel, linked when they appear in the same chapter. A force-directed layout pulls linked characters together, and the groups form on their own.',
 	credit:
 		'Data: Les Misérables co-appearance network from D. E. Knuth, The Stanford GraphBase (1993), via vega-datasets. Layout: d3-force.',
 	mount(el) {

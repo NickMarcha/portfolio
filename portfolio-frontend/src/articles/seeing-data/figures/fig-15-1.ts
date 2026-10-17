@@ -8,7 +8,7 @@ const DATA = (raw as [number, number, number][]).map(([y, m, ppm]) => ({ t: y + 
 const figure: Figure = {
 	title: 'Banking to 45 degrees',
 	caption:
-		'Twenty years of monthly CO₂ readings from Mauna Loa. Change the chart’s shape, or press the button to bank it so the typical line segment sits at 45 degrees. Banked, the shape of the yearly cycle shows: CO₂ drops quickly each summer and climbs back slowly.',
+		'Twenty years of monthly CO₂ readings from Mauna Loa. Banked so the typical line segment sits at 45 degrees, the shape of the yearly cycle shows: CO₂ drops quickly each summer and climbs back slowly.',
 	credit:
 		'Data: Mauna Loa monthly mean CO₂, Xin Lan, NOAA Global Monitoring Laboratory (gml.noaa.gov/ccgg/trends), and Ralph Keeling, Scripps Institution of Oceanography; freely available US government data. Method after Cleveland, McGill and McGill 1988.',
 	mount(el) {

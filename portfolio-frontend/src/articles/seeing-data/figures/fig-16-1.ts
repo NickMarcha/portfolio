@@ -28,7 +28,7 @@ const THROWS = BOARDS.map((b) => {
 const figure: Figure = {
 	title: 'Accuracy and precision',
 	caption:
-		'Ten darts on each board. Accuracy is how close the darts land to the bullseye on average; precision is how tightly they group. The two are independent, and a tight cluster in the wrong place is precisely wrong.',
+		'Ten darts on each board. Accuracy is how close the darts land to the bullseye on average; precision is how tightly they group.',
 	mount(el) {
 		const W = 640;
 		const H = 440;

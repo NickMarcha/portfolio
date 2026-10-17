@@ -40,7 +40,7 @@ const DATA: P[] = (penguinsRaw as Raw[])
 const figure: Figure = {
 	title: 'Overview, zoom and filter, details on demand',
 	caption:
-		'All 342 measured penguins first. Filter by species or island, then pick out one bird for its details. With "Keep axes fixed" off, the axes jump to fit whatever is left, and the same point lands somewhere else each time.',
+		'All 342 measured penguins first, then filtered by species or island, then one bird’s details. With "Keep axes fixed" off, the axes jump to fit whatever is left, and the same point lands somewhere else each time.',
 	credit: 'Data: Palmer Penguins, Gorman, Williams and Fraser 2014, via Horst, Hill and Gorman 2020 (CC0). Mantra: Shneiderman 1996.',
 	mount(el) {
 		const state = {

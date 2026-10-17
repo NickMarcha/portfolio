@@ -15,7 +15,7 @@ const PERSON =
 const figure: Figure = {
 	title: 'Icon arrays',
 	caption:
-		'A risk of 3 in 100, drawn as 100 people with 3 of them marked. Move the slider to change the risk. Then compare two risks: with different totals the picture misleads, with the same total you can count.',
+		'A risk of 3 in 100, drawn as 100 people with 3 of them marked. When you compare two risks, different totals mislead and the same total lets you count.',
 	credit: 'Advice from Franconeri et al. 2021.',
 	mount(el) {
 		const W = 680;

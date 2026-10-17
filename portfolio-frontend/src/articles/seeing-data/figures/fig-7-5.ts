@@ -11,7 +11,7 @@ const monthFmt = d3.timeFormat('%b %Y');
 const figure: Figure = {
 	title: 'Focus plus context',
 	caption:
-		'Carbon dioxide in the air at Mauna Loa, one value per month since 1958. The thin strip shows the whole record; the window in it picks the stretch the large chart shows. Drag or resize the window, or use the sliders. Zoomed in to a few years, you see the yearly cycle as northern plants take up CO₂ each summer; the strip keeps the long climb in view.',
+		'Carbon dioxide in the air at Mauna Loa, one value per month since 1958. The thin strip shows the whole record; the window in it picks the stretch the large chart shows. Zoomed in to a few years, you see the yearly cycle as northern plants take up CO₂ each summer; the strip keeps the long climb in view.',
 	credit:
 		'Data: NOAA Global Monitoring Laboratory and Scripps Institution of Oceanography (C. D. Keeling), Mauna Loa monthly mean CO₂, gml.noaa.gov/ccgg/trends, freely available to the public. Pattern after the classic D3 focus + context example (Bostock).',
 	mount(el) {

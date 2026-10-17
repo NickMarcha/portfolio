@@ -10,7 +10,7 @@ const key = (p: Pair) => `${p.a}|${p.b}`;
 const figure: Figure = {
 	title: 'Who acts with whom',
 	caption:
-		'A rebuild of the chord diagram from my third programming exercise, without the poster grid that sat next to it. Each arc is an actor, each ribbon a pair of actors who share films among IMDB’s top-rated films from 2000 to 2020. Raise the minimum to filter, then pick a pair, or click a ribbon, to see the films they share.',
+		'A rebuild of the chord diagram from my third programming exercise, without the poster grid that sat next to it. Each arc is an actor, each ribbon a pair of actors who share films among IMDB’s top-rated films from 2000 to 2020.',
 	credit:
 		'Own work, INF252 exercise 3. Data: IMDB top 1000 movies, compiled by Harshit Shankhdhar on Kaggle (CC0). Colors simplified from the original, which gave every actor its own hue.',
 	mount(el) {

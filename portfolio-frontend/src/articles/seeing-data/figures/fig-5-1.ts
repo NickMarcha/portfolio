@@ -9,7 +9,7 @@ const DATA = [
 const figure: Figure = {
 	title: 'Moving the baseline',
 	caption:
-		'The same two numbers, 6 million sign-ups against a 7 million target. Raise the bottom of the axis and the gap looks far bigger than it is. The lie factor compares the gap the bars show with the real one.',
+		'The same two numbers, 6 million sign-ups against a 7 million target. The higher the axis starts, the bigger the gap looks. The lie factor compares the gap the bars show with the real one.',
 	credit: 'Example from Franconeri et al. 2021. Lie factor after Tufte 1983.',
 	mount(el) {
 		const W = 560;

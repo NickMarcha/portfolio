@@ -33,7 +33,7 @@ const ATTRS: Record<Attr, { label: string; option: string; unit: string; step: n
 const figure: Figure = {
 	title: 'Combining brushes',
 	caption:
-		'Level two. Brush A selects hot cells, brush B slow ones, and the operator combines them. Hot AND slow leaves the places where coolant sits still behind each bore and heats up. Switch B to the temperature gradient, an attribute derived from the data, for a taste of level three.',
+		'Level two. Hot AND slow leaves the places where coolant sits still behind each bore and heats up. Switch B to the temperature gradient, an attribute derived from the data, for a taste of level three.',
 	credit:
 		'Synthetic data: a made-up 2D stand-in for the engine cooling jacket, not simulation output. Levels after Muigg et al. 2008; brush logic after Doleisch, Gasser and Hauser 2003.',
 	mount(el) {

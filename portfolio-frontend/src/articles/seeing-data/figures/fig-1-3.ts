@@ -40,7 +40,7 @@ const cut2 = (n: number) => (Math.trunc(n * 100) / 100).toFixed(2).replace('-', 
 const figure: Figure = {
 	title: 'The Datasaurus Dozen',
 	caption:
-		'Thirteen datasets of 142 points each. Switch between them and watch the summary statistics underneath: they are computed from the points shown and, cut to two decimals as in the original paper, they never change.',
+		'Thirteen datasets of 142 points each. The summary statistics underneath are computed from the points shown and, cut to two decimals as in the original paper, they never change.',
 	credit: 'Data: Alberto Cairo; Matejka and Fitzmaurice 2017, via the datasauRus R package (MIT licence).',
 	mount(el) {
 		const W = 640;

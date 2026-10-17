@@ -13,7 +13,7 @@ const MAX = 100;
 const figure: Figure = {
 	title: 'Five numbers, five channels',
 	caption:
-		'The same five values drawn with position, length, angle, area and color, in the order of Cleveland and McGill’s ranking. Try to say how many times bigger E is than A in each panel, then show the values. The guesses usually get worse as you go down the list.',
+		'The same five values drawn with position, length, angle, area and color, in the order of Cleveland and McGill’s ranking. Judging how many times bigger E is than A usually gets harder as you go down the list.',
 	credit: 'After Cleveland and McGill 1984. Values made up.',
 	mount(el) {
 		const row = controls(el);

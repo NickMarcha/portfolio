@@ -27,7 +27,7 @@ function contrast(a: string, b: string) {
 const figure: Figure = {
 	title: 'The same chart, inaccessible and accessible',
 	caption:
-		'Switch between two versions of one bar chart and watch the checklist. The first only works for someone with good eyesight and a mouse. The second passes the same checks with a title, a summary, strong contrast, labels on the bars, keyboard focus and a data table.',
+		'Two versions of one bar chart. The first only works for someone with good eyesight and a mouse. The second passes the same checks with a title, a summary, strong contrast, labels on the bars, keyboard focus and a data table.',
 	credit: 'Data: Palmer Penguins (Horst, Hill and Gorman 2020), CC0. Checks from WCAG and Chartability (Elavsky, Bennett and Moritz 2022).',
 	mount(el) {
 		const row = controls(el);

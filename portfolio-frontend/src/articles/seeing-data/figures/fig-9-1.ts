@@ -10,7 +10,7 @@ const SERIES = data.perDay;
 const figure: Figure = {
 	title: 'Time as time, or time as space',
 	caption:
-		'Oslo city bike trips started per hour of the day, averaged over each month of 2025. The animation plays the months one after another. The small multiples put all twelve side by side. Try this with each: in which month does the morning rush shrink while the afternoon one stays?',
+		'Oslo city bike trips started per hour of the day, averaged over each month of 2025. The animation plays the months one after another. The small multiples put all twelve side by side.',
 	credit: 'Data: Oslo Bysykkel, NLOD. Hours in Oslo local time.',
 	mount(el) {
 		const W = 680;

@@ -56,7 +56,7 @@ const clock = (t: number) => `20:${String(Math.round(t)).padStart(2, '0')}`;
 const figure: Figure = {
 	title: 'A space-time cube',
 	caption:
-		'A map on the floor and time running up, here one hour from 20:00 to 21:00. Each made-up taxi track becomes a line climbing through the cube. A vertical stretch is a taxi standing still; a nearly flat one is a taxi moving fast. The red point is a crossing at 20:33. Rotate the cube to see which line actually touches it.',
+		'A map on the floor and time running up, here one hour from 20:00 to 21:00. Each made-up taxi track becomes a line climbing through the cube. A vertical stretch is a taxi standing still; a nearly flat one is a taxi moving fast. The red point is a crossing at 20:33.',
 	credit: 'Synthetic tracks. Space-time cube after Hägerstrand 1970; taxi example after Kapler and Wright 2004.',
 	mount(el) {
 		const W = 680;

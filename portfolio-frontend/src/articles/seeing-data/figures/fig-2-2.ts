@@ -74,7 +74,7 @@ type Mode = 'last' | 'mean';
 const figure: Figure = {
 	title: 'Sunshine by country, two ways',
 	caption:
-		'Hours of sunshine a year. My first version colored each country by whichever city came last in the spreadsheet, so the whole United States took the value of Yuma, Arizona. Averaging the cities in each country gives a different map. The strip below shows all 54 US cities.',
+		'Hours of sunshine a year, with each country colored by the last city in the spreadsheet or by the average of its cities. The strip below shows all 54 US cities.',
 	credit:
 		'Data: Wikipedia, List of cities by sunshine duration, via Prasert Kanawattanachai on Kaggle (CC BY-SA 4.0). Map: Natural Earth via world-atlas (public domain). My own exercise, redrawn.',
 	mount(el) {

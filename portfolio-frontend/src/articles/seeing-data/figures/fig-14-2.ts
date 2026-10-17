@@ -48,7 +48,7 @@ type Kind = (typeof KINDS)[number]['key'];
 const figure: Figure = {
 	title: 'Four kinds of lines from one chimney',
 	caption:
-		'The wind swings up and down over time and blows harder higher up. The streamline follows the wind as it is right now. The pathline is the route of one puff. The streakline is the smoke plume, every puff that left the chimney. The timeline is a row of bubbles released at the same moment.',
+		'The wind swings up and down over time and blows harder higher up, so the four lines all differ.',
 	mount(el) {
 		const row = controls(el);
 		const W = 680;

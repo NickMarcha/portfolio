@@ -28,7 +28,7 @@ const kb = (n: number) => `${n} KB`;
 const figure: Figure = {
 	title: 'One folder, drawn five ways',
 	caption:
-		'A small website project: three folders, some subfolders and fifteen files, sized in kilobytes. Switch between indentation, a node-link tidy tree, a treemap, an icicle plot and a sunburst. The data never changes; what you can see easily does.',
+		'A small website project: three folders, some subfolders and fifteen files, sized in kilobytes. Drawn as indentation, a node-link tidy tree, a treemap, an icicle plot and a sunburst. The data never changes; what you can see easily does.',
 	mount(el) {
 		const W = 680;
 		const H = 440;

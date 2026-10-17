@@ -29,7 +29,7 @@ interface Note {
 const figure: Figure = {
 	title: 'Venn and Euler',
 	caption:
-		'The same three sets. The Venn diagram has to draw all seven regions, so four of them sit there empty, including one for cats that are also birds. The Euler diagram draws only what exists: cats inside mammals, birds on their own.',
+		'The same three sets. The Venn diagram draws all seven regions, four of them empty. The Euler diagram draws only what exists.',
 	credit: 'Example from the course. Made-up members.',
 	mount(el) {
 		const W = 680;

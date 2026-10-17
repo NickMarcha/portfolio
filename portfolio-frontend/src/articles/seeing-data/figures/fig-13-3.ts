@@ -48,7 +48,7 @@ function composite(order: 'ftb' | 'btf', upTo: number) {
 const figure: Figure = {
 	title: 'Classify after interpolating, composite front to back',
 	caption:
-		'Top: only density 50 should glow, and the two voxels hold 0 and 100. Coloring the voxels first and blending the colors loses the membrane between them; blending the densities first finds it. Bottom: compositing front to back can stop once the pixel is nearly opaque.',
+		'Top: coloring two voxels first and blending the colors loses the membrane between them; blending the densities first finds it. Bottom: compositing front to back can stop once the pixel is nearly opaque.',
 	credit: 'Compositing after Levoy 1988.',
 	mount(el) {
 		// ---------- Part A: pre- vs post-interpolative classification ----------

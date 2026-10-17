@@ -57,7 +57,7 @@ function layout(list: [string, number][], W: number, H: number, family: string):
 const figure: Figure = {
 	title: 'A word cloud and a bar chart of the same words',
 	caption:
-		'The 40 most frequent words in Alice’s Adventures in Wonderland, as a cloud and as a sorted bar chart of the top 20. Turn stop-word removal off and “the” wins. In the cloud, compare words with similar counts: the longer one looks bigger.',
+		'The 40 most frequent words in Alice’s Adventures in Wonderland, as a cloud and as a sorted bar chart of the top 20.',
 	credit: 'Text: Lewis Carroll, Alice’s Adventures in Wonderland (1865), Project Gutenberg eBook #11, public domain.',
 	mount(el) {
 		const W = 680;

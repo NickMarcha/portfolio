@@ -12,7 +12,7 @@ const GAIN = 0.06; // quiet on purpose
 const figure: Figure = {
 	title: 'Hearing a chart',
 	caption:
-		'Global temperature since 1880, drawn as a line and played as a tone. Higher temperature means higher pitch, so the last few decades climb audibly. Press Play to listen; nothing plays on its own.',
+		'Global temperature since 1880, drawn as a line and played as a tone. Higher temperature means higher pitch, so the last few decades climb audibly. Nothing plays on its own.',
 	credit:
 		'Data: NASA GISS Surface Temperature Analysis (GISTEMP v4), annual global means against 1951–1980, public domain. Idea after Loud Numbers.',
 	mount(el) {

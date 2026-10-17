@@ -80,7 +80,7 @@ const INFO: Record<Key, { label: string; keeps: string; loses: string }> = {
 const figure: Figure = {
 	title: 'Four ways to flatten the world',
 	caption:
-		'The same countries and the same small circles, all 500 km across on the globe, under four projections. On Mercator the circles stay round but swell towards the poles, and Greenland rivals Africa. On the equal-area maps they keep their size and get squashed instead.',
+		'The same countries and the same small circles, all 500 km across on the globe, under four projections. On Mercator, Greenland rivals Africa.',
 	credit: 'Map data: Natural Earth via world-atlas (public domain). Distortion circles: Tissot’s indicatrix. Projections: d3-geo.',
 	mount(el) {
 		const W = 680;

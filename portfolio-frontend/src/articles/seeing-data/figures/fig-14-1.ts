@@ -33,7 +33,7 @@ const METHODS = [
 const figure: Figure = {
 	title: 'Three ways to take a step',
 	caption:
-		'Starting at the dot, each method follows a flow that goes round in circles, for exactly one turn. Euler overshoots on every step and spirals outwards; Runge-Kutta 2 and 4 stay close to the circle. Make the steps bigger and Runge-Kutta 2 starts drifting too, while Runge-Kutta 4 holds out longest.',
+		'Starting at the dot, each method follows a flow that goes round in circles, for exactly one turn. Euler overshoots on every step and spirals outwards; Runge-Kutta 2 and 4 stay close to the circle. With bigger steps, Runge-Kutta 2 starts drifting too, while Runge-Kutta 4 holds out longest.',
 	mount(el) {
 		const row = controls(el);
 		const W = 680;

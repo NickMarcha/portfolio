@@ -104,7 +104,7 @@ const VISION_LABEL: Record<Vision, string> = {
 const figure: Figure = {
 	title: 'A red-green palette through color-blind eyes',
 	caption:
-		'The same made-up survey drawn twice. Simulate protanopia or deuteranopia: in the red-green palette "disagree" and "agree" become almost the same yellow-brown, and with deuteranopia so do the two ends. The red-blue palette keeps every pair apart. Labels in the bars fix it for any palette.',
+		'The same made-up survey drawn twice. Under protanopia or deuteranopia, the red-green palette’s "disagree" and "agree" become almost the same yellow-brown, and with deuteranopia so do the two ends. The red-blue palette keeps every pair apart. Labels in the bars fix it for any palette.',
 	credit:
 		'Made-up data. Palettes: ColorBrewer, Harrower and Brewer 2003. Simulation: Machado, Oliveira and Fernandes 2009, full severity. Difference is CIEDE2000, where 1 is about one just-noticeable step.',
 	mount(el) {

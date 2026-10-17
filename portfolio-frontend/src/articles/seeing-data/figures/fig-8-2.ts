@@ -17,7 +17,7 @@ const NOTES: Record<Order, string> = {
 const figure: Figure = {
 	title: 'The same network as a grid',
 	caption:
-		'Each row and column is a character, and a filled cell means the two appear in the same chapter. Stronger color means more shared chapters. Change the row order and the blocks along the diagonal appear and vanish.',
+		'Each row and column is a character, and a filled cell means the two appear in the same chapter. Stronger color means more shared chapters. The blocks along the diagonal appear and vanish with the row order.',
 	credit:
 		'After Mike Bostock’s Les Misérables co-occurrence matrix (bost.ocks.org/mike/miserables). Data: D. E. Knuth, The Stanford GraphBase (1993), via vega-datasets.',
 	mount(el) {

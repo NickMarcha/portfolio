@@ -47,7 +47,7 @@ function image(f: (t: number) => string, toGrey: boolean) {
 const figure: Figure = {
 	title: 'The same smooth surface in jet and in viridis',
 	caption:
-		'Both maps show one gently curving surface with a single hill and a single basin. Jet paints bright bands around yellow and cyan that are not in the data. Switch to greyscale: jet’s hill and basin both turn dark, because its lightness rises and then falls again, while viridis keeps low dark and high light.',
+		'Both maps show one gently curving surface with a single hill and a single basin. Jet paints bright bands around yellow and cyan that are not in the data. In greyscale, jet’s hill and basin both turn dark, because its lightness rises and then falls again, while viridis keeps low dark and high light.',
 	credit: 'Synthetic data. Jet as defined in matplotlib; viridis: van der Walt and Smith 2015. Lightness is CIELAB L*.',
 	mount(el) {
 		const row = controls(el);

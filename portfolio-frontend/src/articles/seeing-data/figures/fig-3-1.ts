@@ -32,7 +32,7 @@ const MODE_LABEL: Record<Mode, string> = {
 const figure: Figure = {
 	title: 'Find the red square',
 	caption:
-		'Press Start, then answer as fast as you can: is there a red square? With color only, the target pops out and the time hardly changes with the number of items. With color and shape, the target hides among red circles and blue squares, and you have to search.',
+		'With color only, the red square pops out and the time hardly changes with the number of items. With color and shape, it hides among red circles and blue squares, and you have to search.',
 	credit: 'After Treisman’s visual search experiments, via Munzner 2014.',
 	mount(el) {
 		const random = rng(31);
