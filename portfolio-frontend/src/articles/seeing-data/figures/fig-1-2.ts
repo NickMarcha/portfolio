@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { controls, dataTable, fmt, gridY, styleAxis, svg, toggle, v, type Figure } from './lib';
+import { controls, dataTable, fmt, gridY, isNarrow, styleAxis, svg, toggle, v, type Figure } from './lib';
 
 // Anscombe 1973, Table 1. Sets I-III share their x values.
 const X = [10, 8, 13, 9, 11, 14, 6, 4, 12, 7, 5];
@@ -26,8 +26,11 @@ const figure: Figure = {
 		'Four datasets of eleven points each. The numbers under the plots are computed from the data: the same means, correlation and regression line, and variances that differ by at most 0.01. Only the pictures differ.',
 	credit: 'Data: Anscombe 1973.',
 	mount(el) {
-		const W = 320;
-		const H = 240;
+		// Phone layout: the panels stack one per row; size each SVG to the body so text stays
+		// 12px, and give the stats table one column per number so it fits without scrolling.
+		const narrow = isNarrow(el);
+		const W = narrow ? el.clientWidth : 320;
+		const H = narrow ? Math.round(W * 0.75) : 240;
 		const m = { top: 28, right: 18, bottom: 30, left: 36 };
 		const iw = W - m.left - m.right;
 		const ih = H - m.top - m.bottom;
@@ -37,7 +40,7 @@ const figure: Figure = {
 
 		const row = controls(el);
 		const grid = document.createElement('div');
-		grid.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 8px 16px;';
+		grid.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); gap: 8px 16px;';
 		el.append(grid);
 
 		const lines: d3.Selection<SVGLineElement, unknown, null, undefined>[] = [];
@@ -82,9 +85,9 @@ const figure: Figure = {
 
 		// The shared statistics, visible rather than tucked in the data table.
 		const table = document.createElement('table');
-		table.style.cssText = 'margin: 12px 0 0; font-size: 14px; font-variant-numeric: tabular-nums; width: auto;';
+		table.style.cssText = `margin: 12px 0 0; font-size: ${narrow ? 12 : 14}px; font-variant-numeric: tabular-nums; width: auto;`;
 		const head = table.createTHead().insertRow();
-		for (const h of ['', ...all.map((s) => `Dataset ${s.name}`)]) {
+		for (const h of ['', ...all.map((s) => (narrow ? s.name : `Dataset ${s.name}`))]) {
 			const th = document.createElement('th');
 			th.scope = 'col';
 			th.textContent = h;
@@ -93,12 +96,17 @@ const figure: Figure = {
 		}
 		const body = table.createTBody();
 		const rows: [string, (st: ReturnType<typeof stats>) => string][] = [
-			['Mean of x', (st) => fmt.num(st.mx)],
-			['Variance of x', (st) => fmt.num(st.vx)],
-			['Mean of y', (st) => fmt.num(st.my)],
-			['Variance of y', (st) => fmt.num(st.vy)],
+			[narrow ? 'Mean x' : 'Mean of x', (st) => fmt.num(st.mx)],
+			[narrow ? 'Variance x' : 'Variance of x', (st) => fmt.num(st.vx)],
+			[narrow ? 'Mean y' : 'Mean of y', (st) => fmt.num(st.my)],
+			[narrow ? 'Variance y' : 'Variance of y', (st) => fmt.num(st.vy)],
 			['Correlation', (st) => fmt.num(st.r)],
-			['Regression line', (st) => `y = ${fmt.num(st.intercept)} + ${fmt.num(st.slope)}x`],
+			...(narrow
+				? ([
+						['Intercept', (st) => fmt.num(st.intercept)],
+						['Slope', (st) => fmt.num(st.slope)],
+					] as [string, (st: ReturnType<typeof stats>) => string][])
+				: ([['Regression line', (st) => `y = ${fmt.num(st.intercept)} + ${fmt.num(st.slope)}x`]] as [string, (st: ReturnType<typeof stats>) => string][])),
 		];
 		for (const [label, f] of rows) {
 			const tr = body.insertRow();
@@ -113,6 +121,7 @@ const figure: Figure = {
 				td.style.textAlign = 'right';
 			}
 		}
+		if (narrow) for (const c of table.querySelectorAll<HTMLElement>('th, td')) c.style.padding = '4px 5px';
 		const wrap = document.createElement('div');
 		wrap.style.overflowX = 'auto';
 		wrap.append(table);

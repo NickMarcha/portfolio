@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { dataTable, gridY, styleAxis, svg, v, viridis, SERIES, type Figure } from './lib';
+import { dataTable, gridY, isNarrow, styleAxis, svg, v, viridis, SERIES, type Figure } from './lib';
 import raw from './data/penguins.json';
 
 type Penguin = { species: string; island: string; flipper_length_mm: number | null; body_mass_g: number | null };
@@ -27,9 +27,10 @@ const figure: Figure = {
 	credit: 'Data: Palmer Penguins, Horst, Hill and Gorman 2020 (CC0).',
 	mount(el) {
 		const grid = document.createElement('div');
-		grid.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px 24px;';
+		grid.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: 16px 24px;';
 		el.append(grid);
-		const W = 320;
+		// Phone layout: the panels already stack; size each SVG to the body so text stays 12-13px.
+		const W = isNarrow(el) ? el.clientWidth : 320;
 		const H = 240;
 
 		// Scatterplot

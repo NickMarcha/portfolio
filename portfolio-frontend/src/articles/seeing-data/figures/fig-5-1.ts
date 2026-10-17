@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { controls, dataTable, gridY, readout, slider, styleAxis, svg, v, type Figure } from './lib';
+import { controls, dataTable, gridY, isNarrow, readout, slider, styleAxis, svg, v, type Figure } from './lib';
 
 const DATA = [
 	{ label: 'Sign-ups', value: 6 },
@@ -12,9 +12,10 @@ const figure: Figure = {
 		'The same two numbers, 6 million sign-ups against a 7 million target. The higher the axis starts, the bigger the gap looks. The lie factor compares the gap the bars show with the real one.',
 	credit: 'Example from Franconeri et al. 2021. Lie factor after Tufte 1983.',
 	mount(el) {
-		const W = 560;
+		const narrow = isNarrow(el);
+		const W = narrow ? el.clientWidth : 560;
 		const H = 300;
-		const m = { top: 20, right: 20, bottom: 36, left: 56 };
+		const m = narrow ? { top: 20, right: 8, bottom: 36, left: 44 } : { top: 20, right: 20, bottom: 36, left: 56 };
 		const iw = W - m.left - m.right;
 		const ih = H - m.top - m.bottom;
 
@@ -27,7 +28,7 @@ const figure: Figure = {
 			.scaleBand()
 			.domain(DATA.map((d) => d.label))
 			.range([0, iw])
-			.padding(0.45);
+			.padding(narrow ? 0.3 : 0.45);
 		styleAxis(g.append('g').attr('transform', `translate(0,${ih})`).call(d3.axisBottom(x).tickSize(0)))
 			.selectAll('.tick text')
 			.style('fill', v('ink'))

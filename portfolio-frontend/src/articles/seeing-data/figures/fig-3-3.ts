@@ -33,7 +33,7 @@ const figure: Figure = {
 		const reveal = button(row, 'Show as sorted bars', () => show());
 
 		const wrap = document.createElement('div');
-		wrap.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 8px 24px;';
+		wrap.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); gap: 8px 24px;';
 		el.append(wrap);
 		const pieCell = document.createElement('div');
 		const barCell = document.createElement('div');

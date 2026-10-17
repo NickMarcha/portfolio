@@ -1,9 +1,8 @@
 import * as d3 from 'd3';
-import { button, controls, dataTable, diverging, fmt, onThemeChange, readout, rng, svg, v, type Figure } from './lib';
+import { button, controls, dataTable, diverging, fmt, isNarrow, onThemeChange, readout, rng, svg, v, type Figure } from './lib';
 
 const NX = 80;
 const NY = 50;
-const CELL = 8;
 
 // Synthetic terrain: a few seeded Gaussian hills and basins, scaled to ±1,200 m.
 function terrain(): number[] {
@@ -41,7 +40,11 @@ const figure: Figure = {
 		let z = terrain();
 		let negated = false;
 		const M = 1200;
+		// Phone layout: cells shrink so the grid fits the body width at 1 unit = 1 px.
+		const narrow = isNarrow(el);
+		const CELL = narrow ? el.clientWidth / NX : 8;
 		const W = NX * CELL;
+		const LW = narrow ? Math.min(320, W - 16) : 320;
 		const H = NY * CELL + 56;
 
 		const row = controls(el);
@@ -56,8 +59,8 @@ const figure: Figure = {
 		const thresholds = d3.range(-M, M + 1, 200);
 
 		// Legend
-		const lg = root.append('g').attr('transform', `translate(${W / 2 - 160},${NY * CELL + 16})`);
-		const lx = d3.scaleLinear().domain([-M, M]).range([0, 320]);
+		const lg = root.append('g').attr('transform', `translate(${W / 2 - LW / 2},${NY * CELL + 16})`);
+		const lx = d3.scaleLinear().domain([-M, M]).range([0, LW]);
 		const swatches = lg.append('g');
 		lg.append('g')
 			.selectAll('text')

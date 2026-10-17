@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { dataTable, gridY, styleAxis, svg, v, type Figure } from './lib';
+import { dataTable, gridY, isNarrow, styleAxis, svg, v, type Figure } from './lib';
 
 const DATA = [
 	{ fruit: 'Apples', sold: 42 },
@@ -15,12 +15,15 @@ const figure: Figure = {
 		'The same five numbers twice. The line implies you can read between apples and oranges, and that something rises and falls along the way. Bars say these are separate things.',
 	credit: 'Made-up data.',
 	mount(el) {
-		const PW = 330;
-		const H = 270;
-		const m = { top: 40, bottom: 32, left: 34, right: 6 };
+		// Phone layout: panels stack; each SVG is as wide as the body and the fruit names
+		// alternate between two lines so they don't collide.
+		const narrow = isNarrow(el);
+		const PW = narrow ? el.clientWidth : 330;
+		const H = narrow ? 284 : 270;
+		const m = { top: 40, bottom: narrow ? 46 : 32, left: 34, right: 6 };
 		const ih = H - m.top - m.bottom;
 		const wrap = document.createElement('div');
-		wrap.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 12px 24px;';
+		wrap.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fit, minmax(min(270px, 100%), 1fr)); gap: 12px 24px;';
 		el.append(wrap);
 		const x = d3
 			.scaleBand()
@@ -48,7 +51,8 @@ const figure: Figure = {
 			const g = root.append('g').attr('transform', `translate(${m.left},${m.top})`);
 			gridY(g.append('g'), y, PW - m.left - m.right, 3);
 			styleAxis(g.append('g').call(d3.axisLeft(y).ticks(3).tickSize(0).tickPadding(6))).select('.domain').remove();
-			styleAxis(g.append('g').attr('transform', `translate(0,${ih})`).call(d3.axisBottom(x).tickSize(0).tickPadding(8)));
+			const xa = styleAxis(g.append('g').attr('transform', `translate(0,${ih})`).call(d3.axisBottom(x).tickSize(0).tickPadding(8)));
+			if (narrow) xa.selectAll<SVGTextElement, string>('.tick text').attr('dy', (_, j) => (j % 2 ? '2.1em' : '0.71em'));
 			g.append('text')
 				.attr('x', 0)
 				.attr('y', -18)

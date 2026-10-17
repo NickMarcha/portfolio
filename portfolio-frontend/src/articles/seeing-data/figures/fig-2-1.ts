@@ -1,4 +1,16 @@
-import { svg, v, type Figure } from './lib';
+import type * as d3 from 'd3';
+import { isNarrow, svg, v, type Figure } from './lib';
+
+/** Greedy word wrap to at most n characters per line. */
+function wrap(s: string, n: number): string[] {
+	const out: string[] = [];
+	for (const w of s.split(' ')) {
+		const last = out[out.length - 1];
+		if (last !== undefined && last.length + 1 + w.length <= n) out[out.length - 1] = `${last} ${w}`;
+		else out.push(w);
+	}
+	return out;
+}
 
 // Data products (boxes) and the steps between them (arrows), with the sunshine map
 // from the next section as a running example.
@@ -17,12 +29,20 @@ const figure: Figure = {
 		'Each step turns one data product into the next. Domain knowledge and the task sit over the whole chain, and the choices made early on, in analysis and filtering, already shape the picture. The grey notes follow my sunshine map, described below.',
 	credit: 'After the INF252 course slides.',
 	mount(el) {
-		const W = 460;
-		const boxW = 300;
-		const boxH = 50;
+		// Phone layout: SVG as wide as the body, the "shape every step" label turned to run
+		// along the bracket, and the grey notes wrapped onto two lines.
+		const narrow = isNarrow(el);
+		const W = narrow ? el.clientWidth : 460;
+		const x0 = narrow ? 4 : 16;
+		const boxW = narrow ? W - x0 - 44 : 300;
+		const wrapAt = narrow ? Math.floor((boxW - 20) / 6.6) : 99;
+		const lines = (s: string) => wrap(s, wrapAt);
+		const boxH = narrow ? 50 + 16 * (Math.max(...PRODUCTS.map((p) => lines(p.eg).length)) - 1) : 50;
 		const gap = 42;
-		const top = 92;
-		const x0 = 16;
+		const ctxW = narrow ? (W - x0 * 2 - 12) / 2 : 200;
+		const ctxWrap = narrow ? Math.floor((ctxW - 20) / 6.6) : 99;
+		const ctxH = narrow ? 50 + 16 * (Math.max(...['what the numbers mean', 'the question you ask'].map((s) => wrap(s, ctxWrap).length)) - 1) : 50;
+		const top = ctxH + 42;
 		const H = top + PRODUCTS.length * boxH + (PRODUCTS.length - 1) * gap + 12;
 		const root = svg(
 			el,
@@ -43,47 +63,60 @@ const figure: Figure = {
 			.attr('d', 'M0,0 L10,5 L0,10 z')
 			.style('fill', v('muted'));
 
+		const multi = (t: d3.Selection<SVGTextElement, unknown, null, undefined>, x: number, ls: string[]) =>
+			ls.forEach((l, i) => t.append('tspan').attr('x', x).attr('dy', i ? 16 : 0).text(l));
+
 		// Domain and task: two boxes on top, a bracket down the right side over every step.
 		const ctx = [
 			{ name: 'Domain', eg: 'what the numbers mean', x: x0 },
-			{ name: 'Task', eg: 'the question you ask', x: x0 + 220 },
+			{ name: 'Task', eg: 'the question you ask', x: x0 + ctxW + (narrow ? 12 : 20) },
 		];
 		const cg = root.append('g');
 		for (const c of ctx) {
 			cg.append('rect')
 				.attr('x', c.x)
 				.attr('y', 8)
-				.attr('width', 200)
-				.attr('height', 50)
+				.attr('width', ctxW)
+				.attr('height', ctxH)
 				.attr('rx', 6)
 				.style('fill', 'none')
 				.style('stroke', v('series-2'))
 				.style('stroke-width', 2)
 				.style('stroke-dasharray', '6 4');
 			cg.append('text').attr('x', c.x + 12).attr('y', 30).style('fill', v('ink')).style('font-size', '15px').style('font-weight', '700').text(c.name);
-			cg.append('text').attr('x', c.x + 12).attr('y', 48).style('fill', v('muted')).style('font-size', '13px').text(c.eg);
+			multi(cg.append('text').attr('y', 48).style('fill', v('muted')).style('font-size', '13px'), c.x + 12, wrap(c.eg, ctxWrap));
 		}
-		const bx = x0 + boxW + 24;
+		const bx = x0 + boxW + (narrow ? 4 : 24);
 		const bTop = top;
 		const bBot = H - 12;
+		const cTop = 8 + ctxH;
 		cg.append('path')
-			.attr('d', `M${x0 + 100},58 V${top - 18} H${bx + 20} M${x0 + 320},58 V${top - 18} M${bx + 20},${top - 18} V${bBot} M${bx + 20},${bTop} H${bx + 10} M${bx + 20},${bBot} H${bx + 10}`)
+			.attr('d', `M${ctx[0].x + ctxW / 2},${cTop} V${top - 18} H${bx + 20} M${ctx[1].x + ctxW / 2},${cTop} V${top - 18} M${bx + 20},${top - 18} V${bBot} M${bx + 20},${bTop} H${bx + 10} M${bx + 20},${bBot} H${bx + 10}`)
 			.style('fill', 'none')
 			.style('stroke', v('series-2'))
 			.style('stroke-width', 2)
 			.style('stroke-dasharray', '6 4');
-		cg.append('text')
-			.attr('x', bx + 30)
-			.attr('y', (bTop + bBot) / 2 - 8)
-			.style('fill', v('ink'))
-			.style('font-size', '13px')
-			.text('shape');
-		cg.append('text')
-			.attr('x', bx + 30)
-			.attr('y', (bTop + bBot) / 2 + 10)
-			.style('fill', v('ink'))
-			.style('font-size', '13px')
-			.text('every step');
+		if (narrow) {
+			cg.append('text')
+				.attr('transform', `translate(${bx + 24},${(bTop + bBot) / 2}) rotate(90)`)
+				.attr('text-anchor', 'middle')
+				.style('fill', v('ink'))
+				.style('font-size', '13px')
+				.text('shape every step');
+		} else {
+			cg.append('text')
+				.attr('x', bx + 30)
+				.attr('y', (bTop + bBot) / 2 - 8)
+				.style('fill', v('ink'))
+				.style('font-size', '13px')
+				.text('shape');
+			cg.append('text')
+				.attr('x', bx + 30)
+				.attr('y', (bTop + bBot) / 2 + 10)
+				.style('fill', v('ink'))
+				.style('font-size', '13px')
+				.text('every step');
+		}
 
 		const g = root.append('g');
 		PRODUCTS.forEach((p, i) => {
@@ -99,7 +132,7 @@ const figure: Figure = {
 				.style('stroke', v('series-1'))
 				.style('stroke-width', 2);
 			g.append('text').attr('x', x0 + 12).attr('y', y + 21).style('fill', v('ink')).style('font-size', '15px').style('font-weight', '700').text(p.name);
-			g.append('text').attr('x', x0 + 12).attr('y', y + 40).style('fill', v('muted')).style('font-size', '13px').text(p.eg);
+			multi(g.append('text').attr('y', y + 40).style('fill', v('muted')).style('font-size', '13px'), x0 + 12, lines(p.eg));
 			if (i < STEPS.length) {
 				const ay = y + boxH;
 				g.append('line')

@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { controls, dataTable, readout, rng, styleAxis, svg, toggle, v, viridis, type Figure } from './lib';
+import { controls, dataTable, isNarrow, readout, rng, styleAxis, svg, toggle, v, viridis, type Figure } from './lib';
 
 const DATA = [
 	{ k: 'A', n: 21 },
@@ -18,9 +18,14 @@ const figure: Figure = {
 	mount(el) {
 		const row = controls(el);
 		const grid = document.createElement('div');
-		grid.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px 24px;';
+		grid.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr)); gap: 16px 24px;';
 		el.append(grid);
-		const W = 300;
+		// Phone layout: panels stack; each SVG is as wide as the body so labels stay 12-13px,
+		// and the circles and squares shrink to fit their spacing.
+		const narrow = isNarrow(el);
+		const W = narrow ? el.clientWidth : 300;
+		const PAD = narrow ? 24 : 34;
+		const step = (W - 2 * PAD) / (DATA.length - 1);
 		const H = 200;
 		const HS = 120; // shorter panels for the single-row charts
 		const valueLabels: d3.Selection<d3.BaseType, (typeof DATA)[number], any, any>[] = [];
@@ -137,8 +142,8 @@ const figure: Figure = {
 		// 4. Area
 		{
 			const root = panel('5. Area', 'Five circles whose areas show the values.', HS);
-			const rad = d3.scaleSqrt().domain([0, MAX]).range([0, 30]);
-			const x = d3.scalePoint().domain(DATA.map((d) => d.k)).range([34, W - 34]);
+			const rad = d3.scaleSqrt().domain([0, MAX]).range([0, Math.min(30, step * 0.48)]);
+			const x = d3.scalePoint().domain(DATA.map((d) => d.k)).range([PAD, W - PAD]);
 			root.append('g')
 				.selectAll('circle')
 				.data(DATA)
@@ -164,15 +169,15 @@ const figure: Figure = {
 		// 5. Color intensity
 		{
 			const root = panel('6. Color intensity', 'Five squares whose color, from dark to light, shows the values.', HS);
-			const x = d3.scalePoint().domain(DATA.map((d) => d.k)).range([34, W - 34]);
+			const x = d3.scalePoint().domain(DATA.map((d) => d.k)).range([PAD, W - PAD]);
 			root.append('g')
 				.selectAll('rect')
 				.data(DATA)
 				.join('rect')
-				.attr('x', (d) => x(d.k)! - 22)
-				.attr('y', 26)
-				.attr('width', 44)
-				.attr('height', 44)
+				.attr('x', (d) => x(d.k)! - Math.min(44, step - 6) / 2)
+				.attr('y', 48 - Math.min(44, step - 6) / 2)
+				.attr('width', Math.min(44, step - 6))
+				.attr('height', Math.min(44, step - 6))
 				.attr('rx', 3)
 				.style('fill', (d) => viridis(d.n / MAX));
 			ink(root.append('g').selectAll('text').data(DATA).join('text'))

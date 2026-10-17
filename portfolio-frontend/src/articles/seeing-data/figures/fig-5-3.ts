@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { controls, dataTable, readout, reducedMotion, svg, toggle, v, type Figure } from './lib';
+import { controls, dataTable, isNarrow, readout, reducedMotion, svg, toggle, v, type Figure } from './lib';
 
 // Only the two numbers in the text: 21 million believe both claims, and 74% (about
 // 191 million) believe neither. The total and the middle group follow from them.
@@ -22,11 +22,14 @@ const figure: Figure = {
 	credit:
 		'Numbers as quoted in the course lecture: 21 million believe both, 74% (about 191 million) believe neither. The total (about 258 million) and the middle group are worked out from those two.',
 	mount(el) {
-		const W = 480;
-		const H = 150;
-		const m = { left: 20, right: 20 };
+		// Phone layout: the title wraps onto two lines and the 'Neither' label gets its own
+		// line under the bar, so it can't run into 'One of the two'.
+		const narrow = isNarrow(el);
+		const W = narrow ? el.clientWidth : 480;
+		const H = narrow ? 196 : 150;
+		const m = narrow ? { left: 4, right: 4 } : { left: 20, right: 20 };
 		const iw = W - m.left - m.right;
-		const by = 62;
+		const by = narrow ? 84 : 62;
 		const bh = 46;
 
 		const row = controls(el);
@@ -74,13 +77,16 @@ const figure: Figure = {
 				.attr('x', (_, i) => x0[i])
 				.attr('width', (d) => Math.max(0, x(d.value) - x(0) - 2))
 				.style('opacity', (d) => (whole || d.key === 'both' ? 1 : 0));
-			title.text(whole ? `Everyone it speaks for, about ${TOTAL} million` : '21 million Americans believe both');
+			const tl = whole ? ['Everyone it speaks for,', `about ${TOTAL} million`] : ['21 million Americans', 'believe both'];
+			title.selectAll('tspan').remove();
+			if (narrow) tl.forEach((l, i) => title.append('tspan').attr('x', 0).attr('dy', i ? 24 : 0).text(l));
+			else title.text(tl.join(' '));
 			// 'Both' sits above the bar; the other two go below, one from each end.
 			labels
 				.style('opacity', (d) => (whole || d.key === 'both' ? 1 : 0))
 				.attr('text-anchor', (d) => (d.key === 'neither' ? 'end' : 'start'))
 				.attr('x', (d, i) => (d.key === 'neither' ? iw : x0[i] + (i ? 2 : 0)))
-				.attr('y', (d) => (d.key === 'both' && whole ? by - 8 : by + bh + 20))
+				.attr('y', (d) => (d.key === 'both' && whole ? by - 8 : narrow && d.key === 'neither' ? by + bh + 42 : by + bh + 20))
 				.text((d) =>
 					whole
 						? `${d.short}: ${d.key === 'one' ? '≈' : ''}${d.value}M (${Math.round((d.value / TOTAL) * 100)}%)`

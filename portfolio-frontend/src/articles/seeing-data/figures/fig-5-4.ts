@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { button, controls, dataTable, readout, reducedMotion, styleAxis, svg, v, type Figure } from './lib';
+import { button, controls, dataTable, isNarrow, readout, reducedMotion, styleAxis, svg, v, type Figure } from './lib';
 
 // Nick's own aggregate from Programming Exercise 2 (INF252): mean gap per primary genre
 // between the IMDB rating rescaled to 0-100 and the Metascore, over the 843 films in the
@@ -37,9 +37,17 @@ const figure: Figure = {
 	credit:
 		'Nick Marcha, INF252 Programming Exercise 2. Per-genre averages computed from the “IMDB Movies Dataset” of the top 1000 films on Kaggle (Harshit Shankhdhar); only the aggregates are shown here, not the underlying dataset.',
 	mount(el) {
-		const W = 640;
-		const rowH = 26;
-		const m = { top: 92, right: 70, bottom: 34, left: 92 };
+		// Phone layout: each genre gets a label line (name left, value right) above a
+		// full-width bar, so the bars keep a usable length; titles wrap onto two lines.
+		const narrow = isNarrow(el);
+		const W = narrow ? el.clientWidth : 640;
+		const rowH = narrow ? 44 : 26;
+		const m = narrow ? { top: 136, right: 8, bottom: 34, left: 8 } : { top: 92, right: 70, bottom: 34, left: 92 };
+		const bannerH = narrow ? 50 : 30;
+		const lines = (t: d3.Selection<SVGTextElement, unknown, null, undefined>, x: number, ls: string[], lh: number) => {
+			t.selectAll('tspan').remove();
+			ls.forEach((l, i) => t.append('tspan').attr('x', x).attr('dy', i ? lh : 0).text(l));
+		};
 		const H = m.top + DATA.length * rowH + m.bottom;
 		const iw = W - m.left - m.right;
 		const ih = DATA.length * rowH;
@@ -52,25 +60,26 @@ const figure: Figure = {
 			.attr('x', 1)
 			.attr('y', 1)
 			.attr('width', W - 2)
-			.attr('height', 30)
+			.attr('height', bannerH)
 			.attr('rx', 4)
 			.style('fill', 'none')
 			.style('stroke', v('highlight'))
 			.style('stroke-width', 2)
 			.style('stroke-dasharray', '6 4');
-		banner
+		const bannerText = banner
 			.append('text')
 			.attr('x', W / 2)
 			.attr('y', 21)
 			.attr('text-anchor', 'middle')
 			.style('fill', v('ink'))
 			.style('font-size', '14px')
-			.style('font-weight', '700')
-			.text('Deliberately misleading version: do not read it at face value');
+			.style('font-weight', '700');
+		if (narrow) lines(bannerText, W / 2, ['Deliberately misleading version:', 'do not read it at face value'], 18);
+		else bannerText.text('Deliberately misleading version: do not read it at face value');
 		const title = root
 			.append('text')
 			.attr('x', 0)
-			.attr('y', 56)
+			.attr('y', narrow ? 80 : 56)
 			.style('fill', v('ink'))
 			.style('font-size', '16px')
 			.style('font-weight', '600');
@@ -89,8 +98,8 @@ const figure: Figure = {
 			.style('stroke', v('ink'))
 			.style('stroke-width', 1.5);
 		const sides = g.append('g').style('fill', v('muted')).style('font-size', '13px');
-		sides.append('text').attr('x', x(0) - 6).attr('y', ih + 22).attr('text-anchor', 'end').text('← Critics rated higher');
-		sides.append('text').attr('x', x(0) + 6).attr('y', ih + 22).text('Audiences →');
+		sides.append('text').attr('x', narrow ? 0 : x(0) - 6).attr('y', ih + 22).attr('text-anchor', narrow ? 'start' : 'end').text('← Critics rated higher');
+		sides.append('text').attr('x', narrow ? iw : x(0) + 6).attr('y', ih + 22).attr('text-anchor', narrow ? 'end' : 'start').text('Audiences →');
 
 		const rowsG = g.append('g');
 		const out = readout(el);
@@ -104,7 +113,10 @@ const figure: Figure = {
 				.scaleBand()
 				.domain(order.map((d) => d.genre))
 				.range([0, ih])
-				.padding(0.18);
+				.padding(narrow ? 0.1 : 0.18);
+			// Bar band within a row: below the label line on phones.
+			const barY = narrow ? 18 : 0;
+			const labelY = narrow ? 8 : y.bandwidth() / 2;
 			const t = d3.transition().duration(animate && !reducedMotion() ? 600 : 0);
 
 			const rows = rowsG
@@ -121,30 +133,35 @@ const figure: Figure = {
 			rows.select('rect')
 				.attr('x', (d) => x(Math.min(0, d.gap)))
 				.attr('width', (d) => Math.abs(x(d.gap) - x(0)))
-				.attr('height', y.bandwidth())
+				.attr('y', barY)
+				.attr('height', y.bandwidth() - barY)
 				.style('fill', (d) => (honest ? (d.gap > 0 ? v('div-low') : v('div-high')) : TRAFFIC(d)))
 				.style('fill-opacity', (d) => (honest && d.n < SMALL ? 0.45 : 1));
 			// Genre names sit on the opposite side of zero from their bar.
 			rows.select('text.name')
-				.attr('x', (d) => (d.gap < 0 ? x(0) + 6 : x(0) - 6))
-				.attr('y', y.bandwidth() / 2)
-				.attr('text-anchor', (d) => (d.gap < 0 ? 'start' : 'end'))
+				.attr('x', (d) => (narrow ? 0 : d.gap < 0 ? x(0) + 6 : x(0) - 6))
+				.attr('y', labelY)
+				.attr('text-anchor', (d) => (narrow || d.gap < 0 ? 'start' : 'end'))
 				.style('font-weight', (d) => (!honest && Math.abs(d.gap) >= 3 ? '700' : '400'))
-				.text((d) => d.genre);
+				// On phones the value follows the name on the label line, left of the zero line.
+				.text((d) => (narrow ? `${d.genre}  ${honest ? `${signed(d.gap)} (n=${d.n})` : signed(d.gap)}` : d.genre));
 			rows.select('text.val')
 				.attr('x', (d) => x(d.gap) + (d.gap < 0 ? -5 : 5))
-				.attr('y', y.bandwidth() / 2)
+				.attr('y', labelY)
 				.attr('text-anchor', (d) => (d.gap < 0 ? 'end' : 'start'))
 				.style('font-weight', (d) => (!honest && Math.abs(d.gap) >= 3 ? '700' : '400'))
-				.text((d) => (honest ? `${signed(d.gap)} (n=${d.n})` : signed(d.gap)));
+				.text((d) => (narrow ? '' : honest ? `${signed(d.gap)} (n=${d.n})` : signed(d.gap)));
 
 			banner.attr('display', honest ? 'none' : null);
 			sides.attr('display', honest ? null : 'none');
-			title.text(
-				honest
-					? 'Where do audiences and critics disagree? Mean gap by genre'
-					: 'Which genres are most controversial?',
-			);
+			if (narrow)
+				lines(title, 0, honest ? ['Where do audiences and critics', 'disagree? Mean gap by genre'] : ['Which genres are most controversial?'], 20);
+			else
+				title.text(
+					honest
+						? 'Where do audiences and critics disagree? Mean gap by genre'
+						: 'Which genres are most controversial?',
+				);
 			root.attr(
 				'aria-label',
 				honest

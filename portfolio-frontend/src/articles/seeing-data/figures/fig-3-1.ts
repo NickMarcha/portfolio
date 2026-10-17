@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { button, controls, dataTable, readout, rng, select, svg, v, type Figure } from './lib';
+import { button, controls, dataTable, isNarrow, readout, rng, select, svg, v, type Figure } from './lib';
 
 type Mode = 'feature' | 'conjunction';
 interface Item {
@@ -18,10 +18,6 @@ interface Trial {
 	ms: number;
 }
 
-const W = 640;
-const H = 340;
-const COLS = 16;
-const ROWS = 8;
 const S = 18; // item size in px
 
 const MODE_LABEL: Record<Mode, string> = {
@@ -35,6 +31,12 @@ const figure: Figure = {
 		'With color only, the red square pops out and the time hardly changes with the number of items. With color and shape, it hides among red circles and blue squares, and you have to search.',
 	credit: 'After Treisman’s visual search experiments, via Munzner 2014.',
 	mount(el) {
+		// Phone layout: a taller, narrower field with the same item size and enough cells for 60.
+		const narrow = isNarrow(el);
+		const W = narrow ? el.clientWidth : 640;
+		const COLS = narrow ? Math.max(6, Math.floor(W / 32)) : 16;
+		const ROWS = narrow ? Math.ceil(80 / COLS) : 8;
+		const H = narrow ? Math.round(ROWS * (W / COLS)) : 340;
 		const random = rng(31);
 		let mode: Mode = 'feature';
 		let size = 30;
@@ -101,7 +103,10 @@ const figure: Figure = {
 			field.selectAll('*').remove();
 			started = 0;
 			setAnswering(false);
-			prompt.text(`${MODE_LABEL[mode]}, ${size} items. Press Start trial.`);
+			const msg = [`${MODE_LABEL[mode]}, ${size} items.`, 'Press Start trial.'];
+			prompt.selectAll('tspan').remove();
+			if (narrow) msg.forEach((m, i) => prompt.append('tspan').attr('x', W / 2).attr('dy', i ? '1.3em' : '-0.15em').text(m));
+			else prompt.text(msg.join(' '));
 			out.textContent = '';
 		}
 
@@ -138,6 +143,7 @@ const figure: Figure = {
 
 		function newTrial() {
 			items = layout();
+			prompt.selectAll('tspan').remove();
 			prompt.text('');
 			field
 				.selectAll('path')

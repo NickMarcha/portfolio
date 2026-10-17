@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { button, controls, dataTable, gridY, readout, styleAxis, svg, v, type Figure } from './lib';
+import { button, controls, dataTable, gridY, isNarrow, readout, styleAxis, svg, v, type Figure } from './lib';
 import gistemp from './data/5-2-gistemp.json';
 
 // GISTEMP anomalies are relative to 1951-1980. GISS puts the absolute global mean
@@ -28,9 +28,10 @@ const figure: Figure = {
 	credit:
 		'Data: NASA GISS Surface Temperature Analysis (GISTEMP v4), annual global means and total 95% uncertainty (Lenssen et al. 2019), public domain. Absolute values assume the GISS estimate of about 14 °C (57.2 °F) for 1951–1980. Idea after Correll’s essay “An inconvenient graph”.',
 	mount(el) {
-		const W = 640;
+		const narrow = isNarrow(el);
+		const W = narrow ? el.clientWidth : 640;
 		const H = 320;
-		const m = { top: 20, right: 20, bottom: 36, left: 56 };
+		const m = narrow ? { top: 20, right: 10, bottom: 36, left: 52 } : { top: 20, right: 20, bottom: 36, left: 56 };
 		const iw = W - m.left - m.right;
 		const ih = H - m.top - m.bottom;
 
@@ -44,7 +45,7 @@ const figure: Figure = {
 			g
 				.append('g')
 				.attr('transform', `translate(0,${ih})`)
-				.call(d3.axisBottom(x).ticks(7).tickFormat(d3.format('d'))),
+				.call(d3.axisBottom(x).ticks(narrow ? 4 : 7).tickFormat(d3.format('d'))),
 		);
 		const band = g.append('path').style('fill', v('series-1')).style('fill-opacity', 0.22);
 		const zero = g.append('line').attr('x1', 0).attr('x2', iw).style('stroke', v('muted')).style('stroke-dasharray', '4 3');
