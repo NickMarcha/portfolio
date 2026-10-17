@@ -19,7 +19,8 @@ const P = ALL.filter((d) => d.body_mass_g != null && d.flipper_length_mm != null
 const SPECIES = ['Adelie', 'Chinstrap', 'Gentoo'];
 const ISLANDS = ['Biscoe', 'Dream', 'Torgersen'];
 const color = (s: string) => v(`series-${SPECIES.indexOf(s) + 1}`);
-const SYMBOLS = [d3.symbolCircle, d3.symbolTriangle, d3.symbolSquare];
+// Same species-to-shape order as figures 2.3, 7.1 and 7.4.
+const SYMBOLS = [d3.symbolCircle, d3.symbolSquare, d3.symbolTriangle];
 
 const TW = 200;
 const TH = 150;

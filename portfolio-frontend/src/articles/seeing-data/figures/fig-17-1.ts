@@ -46,20 +46,24 @@ const figure: Figure = {
 			const h = document.createElement('p');
 			h.style.cssText = 'margin: 0 0 6px; font-size: 15px;';
 			h.innerHTML = `<strong>${i + 1}. ${l.name}.</strong> ${l.question}`;
+			// Each term runs inline with its text, so the innermost box still reads well on a phone.
 			const dl = document.createElement('dl');
-			dl.style.cssText = 'display: grid; grid-template-columns: max-content 1fr; gap: 2px 10px; margin: 0; font-size: 14px;';
+			dl.style.cssText = 'margin: 0; font-size: 14px;';
 			for (const [k, val] of [
 				['Threat', l.threat],
 				['During development', l.during],
 				['Afterwards', l.after],
 			]) {
+				const item = document.createElement('div');
+				item.style.margin = '2px 0';
 				const dt = document.createElement('dt');
-				dt.textContent = k;
-				dt.style.cssText = 'font-weight: 700;';
+				dt.textContent = `${k}: `;
+				dt.style.cssText = 'display: inline; font-weight: 700;';
 				const dd = document.createElement('dd');
 				dd.textContent = val;
-				dd.style.margin = '0';
-				dl.append(dt, dd);
+				dd.style.cssText = 'display: inline; margin: 0;';
+				item.append(dt, dd);
+				dl.append(item);
 			}
 			box.append(h, dl);
 			parent.append(box);

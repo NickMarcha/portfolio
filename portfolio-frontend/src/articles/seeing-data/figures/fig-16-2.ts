@@ -35,7 +35,7 @@ const PANELS = ['Mean ± 1 standard deviation', 'Box plot (whiskers to min and m
 const figure: Figure = {
 	title: 'Same box, different data',
 	caption:
-		'Two groups with identical minimum, quartiles, median and maximum. The box plots are identical and the error bars barely differ. The violin and the raw values show what both hide: group B has two peaks and few values near its median.',
+		'Two groups with identical minimum, quartiles, median and maximum. The box plots are identical, and the error bars only say that B is a bit more spread out. The violin and the raw values show what both hide: group B has two peaks and few values near its median.',
 	credit: 'Synthetic data. Strategies after Potter, Rosen and Johnson 2012.',
 	mount(el) {
 		const W = 680;
@@ -48,7 +48,7 @@ const figure: Figure = {
 			el,
 			W,
 			H,
-			'Two groups shown four ways. Mean and standard deviation bars and box plots look nearly identical for both. The violin plot and the raw values show group A as one central hump and group B as two humps near the quartiles.',
+			'Two groups shown four ways. The box plots are identical and the standard deviation bars are only a little wider for group B. The violin plot and the raw values show group A as one central hump and group B as two humps near the quartiles.',
 		);
 		const g = root.append('g').attr('transform', `translate(${m.left},${m.top})`);
 		const x = d3.scaleLinear().domain([Q[0] - 4, Q[4] + 4]).nice().range([0, iw]);

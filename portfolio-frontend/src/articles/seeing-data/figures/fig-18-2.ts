@@ -85,8 +85,11 @@ const figure: Figure = {
 			osc = null;
 			amp = null;
 			cursor.style('display', 'none');
+			// Keep keyboard focus on a usable button when the focused one gets disabled.
+			const refocus = document.activeElement === stopBtn;
 			playBtn.disabled = false;
 			stopBtn.disabled = true;
+			if (refocus) playBtn.focus();
 		}
 
 		function play() {
@@ -94,13 +97,14 @@ const figure: Figure = {
 			ctx ??= new AudioContext();
 			void ctx.resume();
 			const t0 = ctx.currentTime + 0.05;
+			const st = step; // a speed change mid-play applies from the next Play
 			osc = ctx.createOscillator();
 			osc.type = 'sine';
 			amp = ctx.createGain();
 			amp.gain.setValueAtTime(0, t0);
 			amp.gain.linearRampToValueAtTime(GAIN, t0 + 0.08);
-			DATA.forEach((d, i) => osc!.frequency.setValueAtTime(pitch(d.t), t0 + i * step));
-			const end = t0 + DATA.length * step;
+			DATA.forEach((d, i) => osc!.frequency.setValueAtTime(pitch(d.t), t0 + i * st));
+			const end = t0 + DATA.length * st;
 			amp.gain.setValueAtTime(GAIN, end - 0.08);
 			amp.gain.linearRampToValueAtTime(0, end);
 			osc.connect(amp).connect(ctx.destination);
@@ -113,13 +117,15 @@ const figure: Figure = {
 					out.textContent = 'Finished. Press Play to hear it again.';
 				}
 			};
+			const refocus = document.activeElement === playBtn;
 			playBtn.disabled = true;
 			stopBtn.disabled = false;
+			if (refocus) stopBtn.focus();
 			out.textContent = `Playing ${DATA[0].year} to ${DATA[DATA.length - 1].year}: low pitch is cooler, high pitch is warmer.`;
 			cursor.style('display', null);
 			const audio = ctx;
 			const tick = () => {
-				const i = Math.min(DATA.length - 1, Math.max(0, Math.floor((audio.currentTime - t0) / step)));
+				const i = Math.min(DATA.length - 1, Math.max(0, Math.floor((audio.currentTime - t0) / st)));
 				const d = DATA[i];
 				cursor.attr('transform', `translate(${x(d.year)},0)`);
 				dot.attr('cy', y(d.t));

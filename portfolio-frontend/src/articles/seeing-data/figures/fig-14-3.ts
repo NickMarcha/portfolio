@@ -22,43 +22,62 @@ function vel(x: number, y: number): P {
 }
 
 const RES = 240;
-const toWorld = (p: number) => (p / (RES - 1)) * 2 - 1;
 
-/** Line integral convolution: average the noise along a short streamline through each pixel. */
-function lic(noise: Float32Array, L: number): Float32Array {
-	const out = new Float32Array(RES * RES);
+/**
+ * Line integral convolution: average the noise along a short streamline through each pixel.
+ * res is the texture size; L is in pixels of the full RES texture. The velocity code is
+ * inlined because this loop runs millions of times on the main thread.
+ */
+function lic(noise: Float32Array, res: number, L: number): Float32Array {
+	const out = new Float32Array(res * res);
 	const h = 0.6;
-	const steps = Math.round(L / h);
-	const sample = (px: number, py: number) => {
-		const i = Math.min(RES - 1, Math.max(0, Math.round(px)));
-		const j = Math.min(RES - 1, Math.max(0, Math.round(py)));
-		return noise[i + RES * j];
-	};
-	// Direction in pixel space (y down), normalized.
-	const dir = (px: number, py: number): P => {
-		const [u, w] = vel(toWorld(px), -toWorld(py));
-		const m = Math.hypot(u, w) || 1;
-		return [u / m, -w / m];
-	};
-	for (let j = 0; j < RES; j++)
-		for (let i = 0; i < RES; i++) {
-			let sum = noise[i + RES * j];
+	const steps = Math.round((L * res) / RES / h);
+	const k = 2 / (res - 1);
+	const [A, B] = VORTICES;
+	for (let j = 0; j < res; j++)
+		for (let i = 0; i < res; i++) {
+			let sum = noise[i + res * j];
 			let n = 1;
-			for (const sign of [1, -1]) {
+			for (let sign = 1; sign >= -1; sign -= 2) {
+				const sh = sign * h;
 				let px = i;
 				let py = j;
 				for (let s = 0; s < steps; s++) {
-					// Midpoint step (Runge-Kutta 2), so streaks follow the curves.
-					const [a, b] = dir(px, py);
-					const [c, d] = dir(px + (sign * h * a) / 2, py + (sign * h * b) / 2);
-					px += sign * h * c;
-					py += sign * h * d;
-					if (px < 0 || py < 0 || px > RES - 1 || py > RES - 1) break;
-					sum += sample(px, py);
+					// Midpoint step (Runge-Kutta 2), so streaks follow the curves. Pixel y points down.
+					let x = px * k - 1;
+					let y = 1 - py * k;
+					let dx = x - A.x;
+					let dy = y - A.y;
+					let r2 = dx * dx + dy * dy + 0.02;
+					let u = 0.45 - (A.s * dy) / r2;
+					let w = (A.s * dx) / r2;
+					dx = x - B.x;
+					dy = y - B.y;
+					r2 = dx * dx + dy * dy + 0.02;
+					u -= (B.s * dy) / r2;
+					w += (B.s * dx) / r2;
+					let m = Math.sqrt(u * u + w * w) || 1;
+					x = (px + (sh * u) / m / 2) * k - 1;
+					y = 1 - (py - (sh * w) / m / 2) * k;
+					dx = x - A.x;
+					dy = y - A.y;
+					r2 = dx * dx + dy * dy + 0.02;
+					u = 0.45 - (A.s * dy) / r2;
+					w = (A.s * dx) / r2;
+					dx = x - B.x;
+					dy = y - B.y;
+					r2 = dx * dx + dy * dy + 0.02;
+					u -= (B.s * dy) / r2;
+					w += (B.s * dx) / r2;
+					m = Math.sqrt(u * u + w * w) || 1;
+					px += (sh * u) / m;
+					py -= (sh * w) / m;
+					if (px < 0 || py < 0 || px > res - 1 || py > res - 1) break;
+					sum += noise[Math.round(px) + res * Math.round(py)];
 					n++;
 				}
 			}
-			out[i + RES * j] = sum / n;
+			out[i + res * j] = sum / n;
 		}
 	return out;
 }
@@ -121,29 +140,40 @@ const figure: Figure = {
 
 		// Seeded white noise, so the texture is the same on every load.
 		const r = rng(14);
-		const noise = Float32Array.from({ length: RES * RES }, () => (r() < 0.5 ? 0 : 1));
-		const speed = new Float32Array(RES * RES);
-		for (let j = 0; j < RES; j++) for (let i = 0; i < RES; i++) speed[i + RES * j] = Math.hypot(...vel(toWorld(i), -toWorld(j)));
-		const maxSpeed = d3.quantile(Array.from(speed).sort(d3.ascending), 0.98)!;
+		const fullNoise = Float32Array.from({ length: RES * RES }, () => (r() < 0.5 ? 0 : 1));
+		// A full-size level, and a half-size one for quick previews while the slider moves.
+		const level = (res: number) => {
+			const step = RES / res;
+			const noise = res === RES ? fullNoise : Float32Array.from({ length: res * res }, (_, k) => fullNoise[(k % res) * step + RES * Math.floor(k / res) * step]);
+			const speed = new Float32Array(res * res);
+			const w = (p: number) => (p / (res - 1)) * 2 - 1;
+			for (let j = 0; j < res; j++) for (let i = 0; i < res; i++) speed[i + res * j] = Math.hypot(...vel(w(i), -w(j)));
+			return { res, noise, speed };
+		};
+		const full = level(RES);
+		const preview = level(RES / 2);
+		const maxSpeed = d3.quantile(Array.from(full.speed).sort(d3.ascending), 0.98)!;
 
 		let L = 14;
 		let colorBySpeed = false;
-		let tex = lic(noise, L);
+		let lv = full;
+		let tex = lic(full.noise, RES, L);
 		const out = readout(el);
 
 		function paint() {
 			// Averaging squeezes contrast towards grey; stretch it back.
 			const mean = d3.mean(tex)!;
 			const sd = d3.deviation(tex) || 1;
-			const img = new ImageData(RES, RES);
+			const img = new ImageData(lv.res, lv.res);
 			for (let k = 0; k < tex.length; k++) {
 				const g = Math.min(1, Math.max(0, 0.5 + (tex[k] - mean) / (4 * sd)));
 				if (colorBySpeed) {
-					const c = d3.rgb(d3.interpolateViridis(Math.min(1, speed[k] / maxSpeed)));
+					const c = d3.rgb(d3.interpolateViridis(Math.min(1, lv.speed[k] / maxSpeed)));
 					const f = 0.45 + 0.75 * g;
 					img.data.set([c.r * f, c.g * f, c.b * f, 255], k * 4);
 				} else img.data.set([255 * g, 255 * g, 255 * g, 255], k * 4);
 			}
+			canvas.width = canvas.height = lv.res;
 			canvas.getContext('2d')!.putImageData(img, 0, 0);
 			canvas.setAttribute(
 				'aria-label',
@@ -154,17 +184,24 @@ const figure: Figure = {
 			out.textContent =
 				L === 0
 					? 'Streak length 0: this is the raw noise the method starts from.'
-					: `Each pixel averages the noise along ${L} pixels of streamline in each direction, so pixels on the same streamline end up alike.`;
+					: `Each pixel averages the noise along ${L} pixels of streamline in each direction, so pixels on the same streamline end up alike.${colorBySpeed ? ' Color shows speed: yellow is fast, dark purple is slow.' : ''}`;
 		}
 
+		// A full-size texture takes a few hundred milliseconds on a slow machine, so while the
+		// slider moves show a half-size preview, and draw the full one once it rests.
 		let frame = 0;
+		let timer = 0;
+		const compute = (target: typeof full) => {
+			lv = target;
+			tex = lic(lv.noise, lv.res, L);
+			paint();
+		};
 		slider(row, 'Streak length', { min: 0, max: 30, step: 2, value: L, format: (n) => `${n} px` }, (n) => {
 			L = n;
 			cancelAnimationFrame(frame);
-			frame = requestAnimationFrame(() => {
-				tex = lic(noise, L);
-				paint();
-			});
+			clearTimeout(timer);
+			frame = requestAnimationFrame(() => compute(preview));
+			timer = window.setTimeout(() => compute(full), 250);
 		});
 		toggle(row, 'Color by speed', (on) => {
 			colorBySpeed = on;
@@ -188,7 +225,10 @@ const figure: Figure = {
 			coarse,
 			'Show the field on a coarse grid',
 		);
-		return () => cancelAnimationFrame(frame);
+		return () => {
+			cancelAnimationFrame(frame);
+			clearTimeout(timer);
+		};
 	},
 };
 

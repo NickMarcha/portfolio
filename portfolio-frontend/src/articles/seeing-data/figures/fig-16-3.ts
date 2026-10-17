@@ -124,7 +124,7 @@ const figure: Figure = {
 		const H2 = Math.round((yMax - yMin) * k + 110);
 		const sx = (vx: number) => 50 + (vx - xMin) * k;
 		const sy = (vy: number) => 60 + (vy - yMin) * k;
-		const root2 = svg(el, W, H2, `A synthetic hurricane forecast over five days. The storm starts at the lower left and heads up and to the right, curving right. The uncertainty widens from zero to about ${Math.round((RADIUS[STEPS] * KM_PER_UNIT) / 10) * 10} kilometres by day five.`);
+		const root2 = svg(el, W, H2, `A synthetic hurricane forecast over five days. The storm starts at the lower left and heads up and to the right, curving right. The uncertainty widens from zero to about ${Math.round((RADIUS[STEPS] * KM_PER_UNIT) / 10) * 10} kilometers by day five.`);
 		const clipId = `clip-16-3-${Math.random().toString(36).slice(2)}`;
 		root2.append('clipPath').attr('id', clipId).append('rect').attr('width', W).attr('height', H2);
 		const g2 = root2.append('g').attr('clip-path', `url(#${clipId})`);
@@ -175,6 +175,10 @@ const figure: Figure = {
 					.attr('y', sy(CENTER[s].y) - 10)
 					.style('fill', v('ink'))
 					.style('font-size', '13px')
+					// A halo in the cone's fill keeps the label readable where it crosses the outline.
+					.style('paint-order', 'stroke')
+					.style('stroke', v('dim'))
+					.style('stroke-width', '4px')
 					.text(`Day ${s / 2}`);
 		});
 		g2.append('circle').attr('cx', sx(0)).attr('cy', sy(0)).attr('r', 5).style('fill', v('ink'));
@@ -212,8 +216,8 @@ const figure: Figure = {
 			newBtn.disabled = view !== 'tracks';
 			out2.textContent =
 				view === 'cone'
-					? 'The cone holds the storm’s centre about two times in three. It says nothing about the storm’s size, yet the widening outline is easy to read as a storm that grows, and its edge as a safe line.'
-					: 'Each line is one possible path for the storm’s centre, drawn from the same forecast. The spread is visible, and there is no edge to mistake for a boundary.';
+					? 'The cone holds the storm’s center about two times in three. It says nothing about the storm’s size, yet the widening outline is easy to read as a storm that grows, and its edge as a safe line.'
+					: 'Each line is one possible path for the storm’s center, drawn from the same forecast. The spread is visible, and there is no edge to mistake for a boundary.';
 		}
 		select<View>(
 			row2,

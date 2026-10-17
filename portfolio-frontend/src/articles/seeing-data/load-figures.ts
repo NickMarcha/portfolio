@@ -3,6 +3,7 @@
 // Figures without a module show their entry from the figure plan as a placeholder.
 
 import type { Figure } from './figures/lib';
+import { isNarrow } from './figures/narrow';
 import plan from './figures/plan.json';
 
 type PlanEntry = { heading: string; what: string; status: string; interactive: string; data: string; credit: string };
@@ -58,9 +59,19 @@ async function load(fig: HTMLElement) {
 		const body = document.createElement('div');
 		body.className = 'viz-body';
 		fig.append(body);
-		f.mount(body);
 		caption(fig, id, f);
 		fig.id = `fig-${id.replace('.', '-')}`;
+		let cleanup = f.mount(body);
+		// Figures pick a phone or desktop layout at mount (isNarrow in lib.ts). When the
+		// figure crosses that width, e.g. a phone is rotated, mount it again.
+		let narrow = isNarrow(body);
+		new ResizeObserver(() => {
+			if (isNarrow(body) === narrow) return;
+			narrow = !narrow;
+			cleanup?.();
+			body.replaceChildren();
+			cleanup = f.mount(body);
+		}).observe(body);
 	} catch (err) {
 		console.error(`[figure ${id}]`, err);
 		fig.replaceChildren();

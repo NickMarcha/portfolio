@@ -176,9 +176,12 @@ const figure: Figure = {
 			const right = said === present;
 			const same = trials.filter((x) => x.mode === mode && x.size === size && x.answer === x.present);
 			const mean = same.length ? Math.round(d3.mean(same, (x) => x.ms)!) : 0;
+			const setting = `${MODE_LABEL[mode].toLowerCase()} with ${size} items`;
 			out.textContent =
-				`${right ? 'Correct' : 'Not quite'}: the red square was ${present ? 'there (circled)' : 'not there'}. ` +
-				`You took ${ms} ms. Average for correct answers, ${MODE_LABEL[mode].toLowerCase()} with ${size} items: ${mean} ms over ${same.length} trial${same.length === 1 ? '' : 's'}.`;
+				`${right ? 'Correct' : 'Not quite'}: the red square was ${present ? 'there (circled)' : 'not there'}. You took ${ms} ms. ` +
+				(same.length
+					? `Average for correct answers, ${setting}: ${mean} ms over ${same.length} trial${same.length === 1 ? '' : 's'}.`
+					: `No correct answers yet for ${setting}.`);
 			start.focus({ preventScroll: true });
 			table();
 		}

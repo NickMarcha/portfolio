@@ -40,7 +40,7 @@ const figure: Figure = {
 		function draw(base: number) {
 			const y = d3.scaleLinear().domain([base, 7.2]).range([ih, 0]);
 			gridY(grid, y, iw);
-			styleAxis(yAxis.call(d3.axisLeft(y).ticks(5).tickFormat((d) => (d === 0 ? "0" : `${d}M`))));
+			styleAxis(yAxis.call(d3.axisLeft(y).ticks(5).tickFormat((d) => (d === 0 ? '0' : `${d}M`))));
 			bars
 				.selectAll('rect')
 				.data(DATA)
@@ -69,7 +69,7 @@ const figure: Figure = {
 			out.textContent =
 				base === 0
 					? `Axis starts at zero. The target bar is ${shown.toFixed(2)} times as tall as the sign-ups bar, the same as the data. Lie factor 1.`
-					: `Axis starts at ${base} million. The target bar now looks ${shown.toFixed(1)} times as tall, against a real ratio of ${real.toFixed(2)}. Lie factor ${lie.toFixed(1)}.`;
+					: `Axis starts at ${base} million. The target bar now looks ${shown.toFixed(2)} times as tall, against a real ratio of ${real.toFixed(2)}. Lie factor ${lie.toFixed(1)}.`;
 		}
 
 		slider(

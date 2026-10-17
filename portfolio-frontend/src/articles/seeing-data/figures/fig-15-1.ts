@@ -30,7 +30,7 @@ const figure: Figure = {
 		const banked = 1 / d3.median(slopes)!;
 
 		const row = controls(el);
-		const root = svg(el, W, 200, 'Line chart of monthly carbon dioxide at Mauna Loa from 2005 to 2024, rising from about 378 to 424 parts per million with a yearly up-and-down cycle.');
+		const root = svg(el, W, 200, 'Line chart of monthly carbon dioxide at Mauna Loa from 2005 to 2024, rising from about 379 to 425 parts per million with a yearly up-and-down cycle.');
 		const g = root.append('g').attr('transform', `translate(${m.left},${m.top})`);
 		const grid = g.append('g');
 		const xAxis = g.append('g');
@@ -41,6 +41,14 @@ const figure: Figure = {
 			.style('stroke', v('series-1'))
 			.style('stroke-width', 2)
 			.style('stroke-linejoin', 'round');
+		g
+			.append('text')
+			.attr('x', -8)
+			.attr('y', -4)
+			.attr('text-anchor', 'end')
+			.style('fill', v('muted'))
+			.style('font-size', '12px')
+			.text('ppm');
 		const out = readout(el);
 
 		const x = d3.scaleLinear().domain(tExt).range([0, iw]);

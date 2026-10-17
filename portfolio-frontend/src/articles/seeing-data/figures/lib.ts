@@ -19,6 +19,8 @@
 
 import * as d3 from 'd3';
 
+export { isNarrow, NARROW_PX } from './narrow';
+
 export interface Figure {
 	title: string;
 	/** One or two sentences stating the point of the figure. */

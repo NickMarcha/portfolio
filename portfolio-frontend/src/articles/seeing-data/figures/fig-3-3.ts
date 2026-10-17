@@ -127,8 +127,9 @@ const figure: Figure = {
 				`${ANSWER} is ${SORTED[1].value}% against ${SORTED[2].label}’s ${SORTED[2].value}%, a gap the bars show at once.`;
 			table();
 		}
+		// Picking only records the guess; the bars wait for the button, as the text says.
 		guess.addEventListener('change', () => {
-			if (guess.value) show();
+			if (shown) show();
 		});
 
 		function table() {

@@ -104,7 +104,7 @@ const figure: Figure = {
 			el,
 			[
 				{ label: 'Board', value: (d) => d.name },
-				{ label: 'Average dart’s distance from bullseye (board radius = 1)', value: (d) => d.off.toFixed(2), numeric: true },
+				{ label: 'Distance from the bullseye to the darts’ average (board radius = 1)', value: (d) => d.off.toFixed(2), numeric: true },
 				{ label: 'Spread around their own average', value: (d) => d.spread.toFixed(2), numeric: true },
 			],
 			stats,

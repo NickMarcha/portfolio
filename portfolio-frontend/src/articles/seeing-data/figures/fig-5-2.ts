@@ -18,11 +18,13 @@ type View = 'zero' | 'anomaly';
 const first = ROWS[0];
 const last = ROWS[ROWS.length - 1];
 const warmest = ROWS.reduce((a, b) => (b.c > a.c ? b : a));
+// Signed number with a real minus sign, to match the axis ticks d3 draws elsewhere.
+const signed = (n: number, digits: number) => `${n > 0 ? '+' : ''}${n.toFixed(digits).replace('-', '−')}`;
 
 const figure: Figure = {
 	title: 'Honest about zero, dishonest about the change',
 	caption:
-		'The same NASA record of global temperature, 1880 to 2025. Drawn from 0 °F, warming of about 2 °F is a flat line. As anomalies from the 1951–1980 average, with the 95% uncertainty band, the change and how sure we are of it both show.',
+		'The same NASA record of global temperature, 1880 to 2025. Drawn from 0 °F, warming of more than 2 °F is a flat line. As anomalies from the 1951–1980 average, with the 95% uncertainty band, the change and how sure we are of it both show.',
 	credit:
 		'Data: NASA GISS Surface Temperature Analysis (GISTEMP v4), annual global means and total 95% uncertainty (Lenssen et al. 2019), public domain. Absolute values assume the GISS estimate of about 14 °C (57.2 °F) for 1951–1980. Idea after Correll’s essay “An inconvenient graph”.',
 	mount(el) {
@@ -80,7 +82,7 @@ const figure: Figure = {
 			} else {
 				const y = d3.scaleLinear().domain([-1, 2.6]).range([ih, 0]);
 				gridY(grid, y, iw, 6);
-				styleAxis(yAxis.call(d3.axisLeft(y).ticks(6).tickFormat((d) => `${+d > 0 ? '+' : ''}${d} °F`)));
+				styleAxis(yAxis.call(d3.axisLeft(y).ticks(6).tickFormat((d) => `${signed(+d, String(d).split('.')[1]?.length ?? 0)} °F`)));
 				band.attr(
 					'd',
 					d3
@@ -98,9 +100,9 @@ const figure: Figure = {
 					.text(`${warmest.year}: +${warmest.anomF.toFixed(1)} °F, warmest on record`);
 				root.attr(
 					'aria-label',
-					`Global temperature anomaly in Fahrenheit relative to 1951 to 1980, 1880 to 2025, with a 95% uncertainty band. It rises from about ${first.anomF.toFixed(1)} °F to +${warmest.anomF.toFixed(1)} °F in ${warmest.year}.`,
+					`Global temperature anomaly in Fahrenheit relative to 1951 to 1980, 1880 to 2025, with a 95% uncertainty band. It rises from about ${signed(first.anomF, 1)} °F to ${signed(warmest.anomF, 1)} °F in ${warmest.year}.`,
 				);
-				out.textContent = `As anomalies, the rise is plain: from ${first.anomF.toFixed(1)} °F in 1880 to +${warmest.anomF.toFixed(1)} °F in ${warmest.year} (+${warmest.c.toFixed(2)} °C). The band is the 95% uncertainty, ±${first.ciF.toFixed(2)} °F in 1880 and ±${last.ciF.toFixed(2)} °F today.`;
+				out.textContent = `As anomalies, the rise is plain: from ${signed(first.anomF, 1)} °F in 1880 to ${signed(warmest.anomF, 1)} °F in ${warmest.year} (+${warmest.c.toFixed(2)} °C). The band is the 95% uncertainty, ±${first.ciF.toFixed(2)} °F in 1880 and ±${last.ciF.toFixed(2)} °F today.`;
 			}
 		}
 

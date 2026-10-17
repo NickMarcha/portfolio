@@ -5,7 +5,7 @@ const LETTERS = 'LKVJHLVKJHVLKJHKLJVHKLJHVLKJHLKJVHKJLHVKLJ';
 const figure: Figure = {
 	title: 'Counting by reading, then by seeing',
 	caption:
-		'The same 42 letters, plain and with every V in red. Only the color changes.',
+		'The same 42 letters, plain and with every V in bold red. The letters stay the same.',
 	credit: 'Demo idea after Munzner 2014.',
 	mount(el) {
 		const row = controls(el);

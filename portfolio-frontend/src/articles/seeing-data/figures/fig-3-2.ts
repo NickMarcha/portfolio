@@ -78,12 +78,13 @@ const PANELS: { name: string; note: string; label: string; draw: (g: G) => void 
 	{
 		name: 'Figure and ground',
 		note: 'A vase, or two faces?',
-		label: 'Rubin’s vase: a light vase on a dark background, whose outline also forms two dark faces looking at each other.',
+		label: 'Rubin’s vase: a vase in the middle whose outline also forms two faces looking at each other.',
 		draw(g) {
 			// Half-width of the vase from top to bottom; the faces' profiles are its edges.
+			// The ends overshoot the dark rect by 2px so no hairline of ink shows above the rim.
 			const hw: [number, number][] = [
-				[6, 44], [16, 42], [26, 30], [36, 24], [44, 26], [52, 14], [60, 20], [66, 15],
-				[72, 19], [78, 16], [86, 24], [100, 30], [116, 34], [134, 44],
+				[4, 44], [16, 42], [26, 30], [36, 24], [44, 26], [52, 14], [60, 20], [66, 15],
+				[72, 19], [78, 16], [86, 24], [100, 30], [116, 34], [136, 44],
 			];
 			const right = hw.map(([y, w]) => [80 + w, y] as [number, number]);
 			const left = hw.map(([y, w]) => [80 - w, y] as [number, number]).reverse();
