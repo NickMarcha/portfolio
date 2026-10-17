@@ -1,0 +1,23 @@
+{
+	"name": "my-site",
+	"children": [
+		{
+			"name": "src",
+			"children": [
+				{ "name": "components", "children": [{ "name": "Header.astro", "size": 4 }, { "name": "Footer.astro", "size": 3 }, { "name": "Chart.ts", "size": 12 }] },
+				{ "name": "pages", "children": [{ "name": "index.astro", "size": 6 }, { "name": "about.astro", "size": 3 }, { "name": "blog.astro", "size": 5 }] },
+				{ "name": "styles", "children": [{ "name": "global.css", "size": 9 }] }
+			]
+		},
+		{
+			"name": "public",
+			"children": [
+				{ "name": "images", "children": [{ "name": "hero.jpg", "size": 240 }, { "name": "team.jpg", "size": 160 }, { "name": "logo.svg", "size": 8 }] },
+				{ "name": "fonts", "children": [{ "name": "Atkinson.woff2", "size": 64 }] },
+				{ "name": "favicon.ico", "size": 15 }
+			]
+		},
+		{ "name": "docs", "children": [{ "name": "README.md", "size": 6 }, { "name": "notes.md", "size": 11 }] },
+		{ "name": "package.json", "size": 2 }
+	]
+}
