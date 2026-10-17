@@ -341,6 +341,17 @@ details.viz-table th.num {
 	margin: 0;
 }
 
+/* On phones a 700-wide chart would shrink its 12px labels to about 6px. Wide charts
+   keep a minimum width instead and scroll sideways inside the figure. */
+.viz-scroll {
+	overflow-x: auto;
+}
+@media (max-width: 600px) {
+	.viz-scroll > svg.viz-wide {
+		min-width: 500px;
+	}
+}
+
 @media (max-width: 720px) {
 	.article {
 		font-size: 17px;

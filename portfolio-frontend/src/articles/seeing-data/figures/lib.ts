@@ -73,13 +73,16 @@ export const fmt = {
 
 /** Responsive SVG with a viewBox. label is the text alternative for screen readers. */
 export function svg(parent: HTMLElement, width: number, height: number, label: string) {
-	return d3
-		.select(parent)
+	// Wide charts get a scroll wrapper so they can keep a readable minimum width on phones.
+	const host = width >= 560 ? d3.select(parent).append('div').attr('class', 'viz-scroll') : d3.select(parent);
+	return host
 		.append('svg')
 		.attr('viewBox', `0 0 ${width} ${height}`)
 		.attr('width', '100%')
 		.attr('role', 'img')
 		.attr('aria-label', label)
+		// Wide charts keep a minimum width on phones (see .viz-wide in the CSS).
+		.classed('viz-wide', width >= 560)
 		.style('max-width', `${width}px`)
 		.style('height', 'auto')
 		.style('display', 'block');
