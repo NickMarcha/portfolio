@@ -90,8 +90,9 @@ const figure: Figure = {
 		for (const h of ['', ...all.map((s) => (narrow ? s.name : `Dataset ${s.name}`))]) {
 			const th = document.createElement('th');
 			th.scope = 'col';
-			th.textContent = h;
 			th.style.textAlign = h ? 'right' : 'left';
+			if (h) th.textContent = h;
+			else th.innerHTML = '<span class="sr-only">Statistic</span>';
 			head.append(th);
 		}
 		const body = table.createTBody();
