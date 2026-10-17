@@ -283,8 +283,8 @@ const figure: Figure = {
 			const ob = hist.setOverlay(sel.map((c) => c.temp));
 			out.textContent = full
 				? `No brush: every cell is colored by temperature (viridis, dark is cool, yellow is hot). Brush the histogram or use the sliders.`
-				: `${sel.length} of ${cells.length} cells are between ${r[0].toFixed(1)} and ${r[1].toFixed(1)} °C.` +
-					(r[0] >= 110 ? ' The hottest cells hug the bore walls, most of all in the slow water just behind each bore.' : '');
+				: `${sel.length} of ${cells.length} cells are between ${r[0].toFixed(0)} and ${r[1].toFixed(0)} °C.` +
+					(r[0] >= 110 ? ' The hottest cells hug the bore walls, where the water slows down just in front of and behind each bore.' : '');
 			dataTable(
 				el,
 				[

@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { controls, dataTable, readout, select, v, type Figure } from './lib';
+import { controls, dataTable, isNarrow, readout, select, v, type Figure } from './lib';
 import contexts from './data/12-4-alice-contexts.json';
 
 type Root = keyof typeof contexts;
@@ -45,7 +45,9 @@ const figure: Figure = {
 	credit:
 		'Text: Lewis Carroll, Alice’s Adventures in Wonderland, Project Gutenberg eBook #11, public domain. Technique after Wattenberg and Viégas 2008.',
 	mount(el) {
-		const W = 680;
+		// Drawn at the real width on phones: scaling a 680-wide tree down makes 12px text unreadable.
+		const W = isNarrow(el) ? Math.max(300, Math.round(el.clientWidth)) : 680;
+		const BIG = W < 500 ? 22 : 30; // size of the root word
 		const RH = 22;
 		const GAP = 16;
 		const row = controls(el);
@@ -62,11 +64,11 @@ const figure: Figure = {
 		function draw(rootWord: Root) {
 			const phrases = contexts[rootWord] as string[];
 			const t = trie(phrases);
-			const fs = d3.scaleSqrt().domain([1, t.count]).range([12, 30]);
+			const fs = d3.scaleSqrt().domain([1, t.count]).range([12, BIG]);
 			let leafRow = 0;
 
 			function build(n: Node, depth: number, x: number, text: string): Drawn {
-				const size = depth === 0 ? 30 : Math.round(fs(n.count));
+				const size = depth === 0 ? BIG : Math.round(fs(n.count));
 				const weight = depth === 0 ? 700 : 400;
 				let label = text;
 				// A branch only one phrase follows is printed as the rest of that phrase.

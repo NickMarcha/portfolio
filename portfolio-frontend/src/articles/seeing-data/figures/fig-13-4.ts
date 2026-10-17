@@ -11,7 +11,7 @@ const PRESETS: Record<string, { label: string; op: Opacities }> = {
 };
 const BG: [number, number, number] = [0.08, 0.08, 0.08];
 const MODES: { value: Mode; label: string }[] = [
-	{ value: 'composite', label: 'Composite (uses the transfer function)' },
+	{ value: 'composite', label: 'Composite' },
 	{ value: 'mip', label: 'Maximum intensity projection' },
 	{ value: 'average', label: 'Average (like an X-ray)' },
 ];
@@ -25,7 +25,7 @@ const figure: Figure = {
 		const vol = phantom();
 		const op: Opacities = { ...PRESETS.layers.op };
 		let mode: Mode = 'composite';
-		let yaw = 0.6;
+		let yaw = (35 * Math.PI) / 180;
 
 		const row = controls(el);
 		const presetSel = select(
@@ -136,6 +136,11 @@ const figure: Figure = {
 			.attr('text-anchor', (d) => (d.key === 'spots' ? 'end' : 'middle'))
 			.style('fill', v('ink'))
 			.style('font-size', '15px')
+			// A halo in the surface color keeps the label readable over the histogram bars.
+			.style('paint-order', 'stroke')
+			.style('stroke', v('surface'))
+			.style('stroke-width', '4px')
+			.style('stroke-linejoin', 'round')
 			.text((d) => d.label);
 
 		// Sliders: the keyboard way to do what dragging the handles does.
@@ -184,6 +189,7 @@ const figure: Figure = {
 
 		const out = readout(el);
 		let frame = 0;
+		let refine = 0;
 
 		function update() {
 			const tf = opacityTF(op);
@@ -194,8 +200,15 @@ const figure: Figure = {
 			const dim = mode !== 'composite';
 			line.style('opacity', dim ? 0.3 : 1);
 			handles.style('opacity', dim ? 0.3 : 1);
+			// A full render takes 60-100 ms on a desktop, too slow to follow a drag. Draw a coarse
+			// preview right away and the full image once the input has been still for a moment.
 			cancelAnimationFrame(frame);
+			clearTimeout(refine);
 			frame = requestAnimationFrame(() => {
+				blit(canvas, render(vol, { size: 96, yaw, tf, mode, background: BG }).image);
+				refine = window.setTimeout(full, 150);
+			});
+			function full() {
 				const { image, samples } = render(vol, { size: 160, yaw, tf, mode, background: BG });
 				blit(canvas, image);
 				const shown = MATERIALS.filter((mat) => op[mat.key] > 0).map((mat) => mat.label.toLowerCase());
@@ -204,7 +217,7 @@ const figure: Figure = {
 					mode === 'composite'
 						? `Visible: ${shown.length ? shown.join(', ') : 'nothing'}. ${fmt.int(samples)} samples taken for 160 × 160 rays; rays stop early once a pixel is 98% opaque.`
 						: `${mode === 'mip' ? 'Each pixel shows the densest sample on its ray, so the dense spots stand out through everything.' : 'Each pixel shows the mean density along its ray.'} The transfer function plays no part here.`;
-			});
+			}
 		}
 		update();
 		dataTable(
@@ -216,7 +229,10 @@ const figure: Figure = {
 			],
 			[...MATERIALS],
 		);
-		return () => cancelAnimationFrame(frame);
+		return () => {
+			cancelAnimationFrame(frame);
+			clearTimeout(refine);
+		};
 	},
 };
 

@@ -152,7 +152,7 @@ const figure: Figure = {
 			out.textContent =
 				mode === 'count'
 					? `Raw count. The brightest states are ${top.map((d) => d.name).join(', ')}: the states with the most people of any age. The map mostly repeats population.`
-					: `Per capita. The brightest states are ${top.map((d) => d.name).join(', ')}. California, the brightest state on the count map, is ${MODES.share.fmt(
+					: `Share of each state. The brightest states are ${top.map((d) => d.name).join(', ')}. California, the brightest state on the count map, is ${MODES.share.fmt(
 							MODES.share.value(byId.get('06')!),
 						)}, below the national ${MODES.share.fmt(d3.sum(people, (d) => d.pop65) / d3.sum(people, (d) => d.pop))}.`;
 		}

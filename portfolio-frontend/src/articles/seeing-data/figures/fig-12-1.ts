@@ -29,7 +29,7 @@ interface Note {
 const figure: Figure = {
 	title: 'Venn and Euler',
 	caption:
-		'The same three sets. The Venn diagram draws all seven regions, four of them empty. The Euler diagram draws only what exists.',
+		'The same three sets. The Venn diagram draws all seven regions inside the circles, and four of them are empty. The Euler diagram draws only what exists.',
 	credit: 'Example from the course. Made-up members.',
 	mount(el) {
 		const W = 680;

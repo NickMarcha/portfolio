@@ -35,7 +35,7 @@ const figure: Figure = {
 
 		// --- Top: eye, screen, voxel grid, ray, samples ---
 		const eyeX = 34;
-		const rayY = 118;
+		const rayY = 112;
 		root.append('path')
 			.attr('d', `M${eyeX - 14},${rayY} Q${eyeX},${rayY - 14} ${eyeX + 14},${rayY} Q${eyeX},${rayY + 14} ${eyeX - 14},${rayY}Z`)
 			.style('fill', 'none')
@@ -70,12 +70,13 @@ const figure: Figure = {
 			.attr('cy', ([, j]) => gy(j))
 			.attr('r', 6)
 			.attr('fill', ([i, j]) => d3.interpolateViridis(dens(i, j) / 100))
-			.style('stroke', v('surface'))
-			.style('stroke-width', '1.5px');
+			// A muted ring keeps the darkest voxels visible on the dark theme.
+			.style('stroke', v('muted'))
+			.style('stroke-width', '1px');
 		label(320, 226, 'Voxels (dot color = density)');
 
-		// The ray, slightly tilted so samples fall between voxels.
-		const rayEnd = { x: 520, y: rayY + 30 };
+		// The ray, slightly tilted, runs between two rows of voxels so the samples fall between them.
+		const rayEnd = { x: 520, y: rayY + 10 };
 		const rayAt = (t: number) => ({ x: eyeX + 16 + t * (rayEnd.x - eyeX - 16), y: rayY + t * (rayEnd.y - rayY) });
 		root.append('line')
 			.attr('x1', eyeX + 16)

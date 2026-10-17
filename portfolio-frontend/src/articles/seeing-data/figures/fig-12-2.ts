@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { controls, dataTable, gridY, select, styleAxis, svg, v, type Figure } from './lib';
+import { controls, dataTable, isNarrow, select, styleAxis, svg, v, type Figure } from './lib';
 
 const SETS = ['Drama', 'Comedy', 'Action', 'Thriller', 'Romance'];
 
@@ -25,14 +25,23 @@ type Sort = 'size' | 'degree';
 const figure: Figure = {
 	title: 'An UpSet plot of film genres',
 	caption:
-		'Each column is one combination of genres, marked by the dots below it, and the bar on top counts the films with exactly that combination. The bars on the left give the size of each genre. Five sets would need 31 regions in a Venn diagram; here only the 13 that occur take up space.',
+		'Each row is one combination of genres, marked by the dots in it, and the bar to its right counts the films with exactly that combination. The bars above the genre names give the size of each genre. Five sets would need 31 regions in a Venn diagram; here only the 13 that occur take up space.',
 	credit: 'Made-up collection of 124 films. Technique: Lex et al. 2014.',
 	mount(el) {
-		const W = 680;
-		const L = 168; // set labels and set-size bars
-		const T = 180; // intersection bars
-		const RH = 26;
-		const H = T + 16 + SETS.length * RH + 10;
+		// Phones get a compact layout at their real width (slanted genre names, narrower columns)
+		// instead of a scroll box that would hide the combination bars off to the side.
+		const narrow = isNarrow(el);
+		const W = narrow ? Math.max(300, Math.round(el.clientWidth)) : 580;
+		const CW = narrow ? 38 : 60; // one matrix column per genre
+		const ML = narrow ? 16 : 12;
+		const MW = SETS.length * CW;
+		const BX = ML + MW + (narrow ? 12 : 20); // combination bars start here
+		const BW = W - BX - (narrow ? 24 : 34); // room for the count label at the end
+		const SH = narrow ? 56 : 70; // genre-size bars
+		const top = 18 + SH; // baseline of the genre-size bars
+		const M0 = top + (narrow ? 46 : 26); // matrix starts under the genre names
+		const RH = 24;
+		const H = M0 + COMBOS.length * RH + 34;
 		const total = d3.sum(COMBOS, (c) => c.n);
 		const size = new Map(SETS.map((s) => [s, d3.sum(COMBOS.filter((c) => c.sets.includes(s)), (c) => c.n)]));
 
@@ -41,117 +50,128 @@ const figure: Figure = {
 			el,
 			W,
 			H,
-			`UpSet plot of ${total} made-up films in five genres: a matrix of the 13 genre combinations that occur, with a bar of film counts above each combination and genre sizes on the left.`,
+			`UpSet plot of ${total} made-up films in five genres: a matrix with one row for each of the 13 genre combinations that occur, a bar of film counts to the right of each row, and genre sizes above the genre names.`,
 		);
+		const colX = (i: number) => ML + i * CW + CW / 2;
+		const sy = d3
+			.scaleLinear()
+			.domain([0, d3.max(size.values())!])
+			.range([0, SH]);
 		const x = d3
-			.scaleBand<number>()
-			.domain(d3.range(COMBOS.length))
-			.range([L + 10, W - 10])
-			.padding(0.25);
-		const y = d3
 			.scaleLinear()
 			.domain([0, d3.max(COMBOS, (c) => c.n)!])
 			.nice()
-			.range([T, 18]);
-		const rowY = (i: number) => T + 16 + i * RH + RH / 2;
-		const sx = d3
-			.scaleLinear()
-			.domain([0, d3.max(size.values())!])
-			.range([0, L - 104]);
+			.range([BX, BX + BW]);
 
-		gridY(root.append('g').attr('transform', `translate(${L + 10},0)`), y, W - L - 20, 4);
-		styleAxis(root.append('g').attr('transform', `translate(${L + 10},0)`).call(d3.axisLeft(y).ticks(4)));
+		// Genre sizes: a bar above each matrix column, with the name as the column header.
+		const head = root.append('g');
+		head.selectAll('rect')
+			.data(SETS)
+			.join('rect')
+			.attr('x', (_, i) => colX(i) - (narrow ? 11 : 14))
+			.attr('width', narrow ? 22 : 28)
+			.attr('y', (s) => top - sy(size.get(s)!))
+			.attr('height', (s) => sy(size.get(s)!))
+			.attr('rx', 2)
+			.style('fill', v('series-1'));
+		head.selectAll('text.n')
+			.data(SETS)
+			.join('text')
+			.attr('class', 'n')
+			.attr('x', (_, i) => colX(i))
+			.attr('y', (s) => top - sy(size.get(s)!) - 5)
+			.attr('text-anchor', 'middle')
+			.style('fill', v('ink'))
+			.style('font-size', '12px')
+			.text((s) => size.get(s)!);
+		head.selectAll('text.name')
+			.data(SETS)
+			.join('text')
+			.attr('class', 'name')
+			.attr('transform', (_, i) => (narrow ? `translate(${colX(i) - 6},${M0 - 6}) rotate(-40)` : `translate(${colX(i)},${top + 18})`))
+			.attr('text-anchor', narrow ? 'start' : 'middle')
+			.style('fill', v('ink'))
+			.style('font-size', narrow ? '12px' : '13px')
+			.text((s) => s);
+		head.append('text')
+			.attr('x', BX)
+			.attr('y', M0 - 8)
+			.style('fill', v('muted'))
+			.style('font-size', '12px')
+			.text(narrow ? 'Films' : 'Films with exactly this combination');
+
+		const rowsTop = M0;
+		const gx = root.append('g');
+		gx.selectAll('line')
+			.data((narrow ? [0, 20] : x.ticks(5)))
+			.join('line')
+			.attr('x1', (d) => x(d))
+			.attr('x2', (d) => x(d))
+			.attr('y1', rowsTop)
+			.attr('y2', rowsTop + COMBOS.length * RH)
+			.style('stroke', v('grid'));
+		styleAxis(
+			root.append('g')
+				.attr('transform', `translate(0,${rowsTop + COMBOS.length * RH})`)
+				.call(d3.axisBottom(x).tickValues(narrow ? [0, 20] : x.ticks(5))),
+		);
 		root.append('text')
-			.attr('x', L + 4)
-			.attr('y', 8)
+			.attr('x', BX + BW)
+			.attr('y', H - 2)
 			.attr('text-anchor', 'end')
 			.style('fill', v('muted'))
 			.style('font-size', '12px')
 			.text('films');
 
-		// Zebra stripes help the eye follow a row across the matrix.
-		root.append('g')
-			.selectAll('rect')
-			.data(SETS)
-			.join('rect')
-			.attr('x', 0)
-			.attr('width', W)
-			.attr('y', (_, i) => rowY(i) - RH / 2)
-			.attr('height', RH)
-			.style('fill', (_, i) => (i % 2 ? 'transparent' : v('grid')));
-		const sets = root.append('g');
-		sets.selectAll('text')
-			.data(SETS)
-			.join('text')
-			.attr('x', L - 4)
-			.attr('y', (_, i) => rowY(i))
-			.attr('dy', '0.35em')
-			.attr('text-anchor', 'end')
-			.style('fill', v('ink'))
-			.style('font-size', '13px')
-			.text((s) => s);
-		sets.selectAll('rect')
-			.data(SETS)
-			.join('rect')
-			.attr('x', (s) => L - 66 - sx(size.get(s)!))
-			.attr('width', (s) => sx(size.get(s)!))
-			.attr('y', (_, i) => rowY(i) - 8)
-			.attr('height', 16)
-			.attr('rx', 2)
-			.style('fill', v('series-1'));
-		sets.selectAll('text.n')
-			.data(SETS)
-			.join('text')
-			.attr('class', 'n')
-			.attr('x', (s) => L - 70 - sx(size.get(s)!))
-			.attr('y', (_, i) => rowY(i))
-			.attr('dy', '0.35em')
-			.attr('text-anchor', 'end')
-			.style('fill', v('ink'))
-			.style('font-size', '12px')
-			.text((s) => size.get(s)!);
-
-		const cols = root.append('g');
+		const rows = root.append('g');
 		function draw(sort: Sort) {
 			const order = [...COMBOS].sort((a, b) =>
 				sort === 'size' ? b.n - a.n : a.sets.length - b.sets.length || b.n - a.n,
 			);
-			const col = cols
-				.selectAll<SVGGElement, (typeof COMBOS)[number]>('g.col')
+			const r = rows
+				.selectAll<SVGGElement, (typeof COMBOS)[number]>('g.combo')
 				.data(order, (c) => c.sets.join('+'))
 				.join((enter) => {
-					const g = enter.append('g').attr('class', 'col');
-					g.append('rect').attr('class', 'bar').attr('rx', 2).style('fill', v('series-1'));
-					g.append('text')
-						.attr('class', 'n')
-						.attr('text-anchor', 'middle')
-						.style('fill', v('ink'))
-						.style('font-size', '12px');
-					g.append('line').style('stroke', v('ink')).style('stroke-width', 2);
+					const g = enter.append('g').attr('class', 'combo');
+					// Zebra stripe, so the eye can follow a row from the dots to its bar.
+					g.append('rect')
+						.attr('class', 'stripe')
+						.attr('x', ML - 6)
+						.attr('width', BX + BW + 30 - ML)
+						.attr('height', RH);
+					g.append('line')
+						.style('stroke', v('ink'))
+						.style('stroke-width', 2)
+						.attr('y1', RH / 2)
+						.attr('y2', RH / 2)
+						.attr('x1', (c) => colX(d3.min(c.sets, (s) => SETS.indexOf(s))!))
+						.attr('x2', (c) => colX(d3.max(c.sets, (s) => SETS.indexOf(s))!));
 					g.selectAll('circle')
 						.data((c) => SETS.map((s, i) => ({ i, on: c.sets.includes(s) })))
 						.join('circle')
-						.attr('cy', (d) => rowY(d.i))
+						.attr('cx', (d) => colX(d.i))
+						.attr('cy', RH / 2)
 						.attr('r', 6)
 						.style('fill', (d) => (d.on ? v('ink') : v('dim')));
+					g.append('rect')
+						.attr('class', 'bar')
+						.attr('x', BX)
+						.attr('y', 4)
+						.attr('height', RH - 8)
+						.attr('width', (c) => x(c.n) - BX)
+						.attr('rx', 2)
+						.style('fill', v('series-1'));
+					g.append('text')
+						.attr('x', (c) => x(c.n) + 5)
+						.attr('y', RH / 2)
+						.attr('dy', '0.35em')
+						.style('fill', v('ink'))
+						.style('font-size', '12px')
+						.text((c) => c.n);
 					return g;
 				});
-			col.attr('transform', (_, i) => `translate(${x(i)},0)`);
-			const bw = x.bandwidth();
-			col.select('rect.bar')
-				.attr('width', bw)
-				.attr('y', (c) => y(c.n))
-				.attr('height', (c) => T - y(c.n));
-			col.select('text.n')
-				.attr('x', bw / 2)
-				.attr('y', (c) => y(c.n) - 4)
-				.text((c) => c.n);
-			col.select('line')
-				.attr('x1', bw / 2)
-				.attr('x2', bw / 2)
-				.attr('y1', (c) => rowY(d3.min(c.sets, (s) => SETS.indexOf(s))!))
-				.attr('y2', (c) => rowY(d3.max(c.sets, (s) => SETS.indexOf(s))!));
-			col.selectAll('circle').attr('cx', bw / 2);
+			r.attr('transform', (_, i) => `translate(0,${rowsTop + i * RH})`);
+			r.select('rect.stripe').style('fill', (_, i) => (i % 2 ? 'transparent' : v('grid')));
 		}
 
 		select(

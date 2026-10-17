@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { controls, dataTable, readout, slider, svg, styleAxis, v, type Figure } from './lib';
+import { controls, dataTable, isNarrow, readout, slider, svg, styleAxis, v, type Figure } from './lib';
 import { blit, densityColor, MATERIALS, N, opacityTF, phantom, render, sliceZ } from './vol-13';
 
 const OPACITY = { skin: 0.25, tissue: 0, bone: 0.12, spots: 0.8 };
@@ -42,7 +42,7 @@ const figure: Figure = {
 		const vol = phantom();
 		let k = 32;
 		let iso = 52;
-		let yaw = 0.6;
+		let yaw = (35 * Math.PI) / 180;
 
 		const row = controls(el);
 		const grid = document.createElement('div');
@@ -81,8 +81,9 @@ const figure: Figure = {
 		);
 
 		// Color key for the slice and the rendering.
-		const KW = 640;
-		const key = svg(el, KW, 54, 'Color key: density 0 to 100 in viridis, dark purple low to yellow high.');
+		// On phones the key is drawn at the real width rather than in a scroll box.
+		const KW = isNarrow(el) ? Math.max(300, Math.round(el.clientWidth)) : 640;
+		const key = svg(el, KW, 66, 'Color key: density 0 to 100 in viridis, dark purple low to yellow high.');
 		key.style('margin-top', '10px');
 		const kx = d3.scaleLinear().domain([0, 100]).range([20, KW - 20]);
 		const grad = key.append('defs').append('linearGradient').attr('id', 'f13-1-grad');
@@ -98,9 +99,11 @@ const figure: Figure = {
 				d3
 					.axisBottom(kx)
 					.tickValues(MATERIALS.map((m) => m.density))
-					.tickFormat((d) => `${MATERIALS.find((m) => m.density === d)!.label} ${d}`),
+					.tickFormat((d) => MATERIALS.find((m) => m.density === d)!.label),
 			),
 		);
+		// Density under each name keeps the labels narrow enough not to collide on phones.
+		ax.selectAll<SVGTextElement, number>('.tick text').append('tspan').attr('x', 0).attr('dy', '1.2em').text((d) => d);
 		const isoMark = key.append('path').style('fill', v('highlight'));
 
 		const out = readout(el);
@@ -135,12 +138,17 @@ const figure: Figure = {
 			out.textContent = `Slice ${k + 1} of ${N}. The isoline at density ${iso} sits ${nearest(iso)}; ${d3.format('.0%')(inside / s.length)} of this slice lies above it. Everything else about the slice is invisible to the isoline: it is either inside or outside.`;
 		}
 
+		// A full render takes up to ~100 ms on a desktop, so while the slider moves we draw a
+		// coarse preview and refine once it has been still for a moment.
 		let frame = 0;
+		let refine = 0;
+		const tf = opacityTF(OPACITY);
 		function drawVolume() {
 			cancelAnimationFrame(frame);
+			clearTimeout(refine);
 			frame = requestAnimationFrame(() => {
-				const { image } = render(vol, { size: 128, yaw, tf: opacityTF(OPACITY), background: BG });
-				blit(dvrCanvas, image);
+				blit(dvrCanvas, render(vol, { size: 72, yaw, tf, background: BG }).image);
+				refine = window.setTimeout(() => blit(dvrCanvas, render(vol, { size: 128, yaw, tf, background: BG }).image), 150);
 			});
 		}
 
@@ -173,7 +181,10 @@ const figure: Figure = {
 			],
 			[...MATERIALS],
 		);
-		return () => cancelAnimationFrame(frame);
+		return () => {
+			cancelAnimationFrame(frame);
+			clearTimeout(refine);
+		};
 	},
 };
 
