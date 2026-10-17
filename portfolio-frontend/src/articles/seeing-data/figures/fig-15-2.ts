@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { SERIES, controls, dataTable, gridY, readout, select, styleAxis, svg, v, type Figure } from './lib';
+import { SERIES, controls, dataTable, gridY, isNarrow, readout, select, styleAxis, svg, v, type Figure } from './lib';
 
 // Made-up numbers: cups of coffee sold per day at four cafés, by month.
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -18,9 +18,11 @@ const figure: Figure = {
 		'The same four lines, named two ways. With a legend, you match each color to its line by looking back and forth. With the name written at the end of each line, you just read it.',
 	credit: 'Made-up data. Advice from Franconeri et al. 2021.',
 	mount(el) {
-		const W = 680;
+		// Phone: full width, the legend sits above the chart in two columns, fewer month ticks.
+		const narrow = isNarrow(el);
+		const W = narrow ? el.clientWidth : 680;
 		const H = 340;
-		const m = { top: 16, right: 96, bottom: 32, left: 48 };
+		const m = narrow ? { top: 60, right: 62, bottom: 32, left: 40 } : { top: 16, right: 96, bottom: 32, left: 48 };
 		const iw = W - m.left - m.right;
 		const ih = H - m.top - m.bottom;
 
@@ -30,7 +32,7 @@ const figure: Figure = {
 		const x = d3.scalePoint().domain(MONTHS).range([0, iw]);
 		const y = d3.scaleLinear().domain([0, 500]).range([ih, 0]);
 		gridY(g.append('g'), y, iw);
-		styleAxis(g.append('g').attr('transform', `translate(0,${ih})`).call(d3.axisBottom(x).tickSizeOuter(0)));
+		styleAxis(g.append('g').attr('transform', `translate(0,${ih})`).call(d3.axisBottom(x).tickSizeOuter(0).tickValues(narrow ? MONTHS.filter((_, i) => i % 3 === 0) : MONTHS)));
 		styleAxis(g.append('g').call(d3.axisLeft(y).ticks(5)));
 
 		const line = d3
@@ -61,13 +63,13 @@ const figure: Figure = {
 			.style('font-size', '13px')
 			.text((d) => d.name);
 
-		const legend = g.append('g').attr('transform', `translate(${iw + 16},8)`);
+		const legend = g.append('g').attr('transform', narrow ? 'translate(8,-46)' : `translate(${iw + 16},8)`);
 		legend
 			.append('rect')
 			.attr('x', -8)
 			.attr('y', -6)
-			.attr('width', 84)
-			.attr('height', CAFES.length * 18 + 8)
+			.attr('width', narrow ? 184 : 84)
+			.attr('height', (narrow ? 2 : CAFES.length) * 18 + 8)
 			.attr('rx', 4)
 			.style('fill', v('surface'))
 			.style('stroke', v('axis'));
@@ -75,7 +77,7 @@ const figure: Figure = {
 			.selectAll('g')
 			.data(CAFES)
 			.join('g')
-			.attr('transform', (_, i) => `translate(0,${i * 18 + 6})`);
+			.attr('transform', (_, i) => (narrow ? `translate(${(i % 2) * 92},${Math.floor(i / 2) * 18 + 6})` : `translate(0,${i * 18 + 6})`));
 		item
 			.append('line')
 			.attr('x1', 0)

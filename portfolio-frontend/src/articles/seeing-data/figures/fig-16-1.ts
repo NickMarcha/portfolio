@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { dataTable, rng, svg, v, type Figure } from './lib';
+import { dataTable, isNarrow, rng, svg, v, type Figure } from './lib';
 
 // Board radius is 1. Each board: where the throws are aimed (bias) and how much they scatter.
 const BOARDS = [
@@ -30,13 +30,19 @@ const figure: Figure = {
 	caption:
 		'Ten darts on each board. Accuracy is how close the darts land to the bullseye on average; precision is how tightly they group.',
 	mount(el) {
-		const W = 640;
-		const H = 440;
-		const R = 78;
-		const left = 110;
-		const top = 40;
+		// Phone: the same two-by-two grid, full width, with each row's heading above its row.
+		const narrow = isNarrow(el);
+		const W = narrow ? el.clientWidth : 640;
+		const left = narrow ? 0 : 110;
+		const top = narrow ? 30 : 40;
 		const cellW = (W - left) / 2;
-		const cellH = (H - top) / 2;
+		const R = narrow ? Math.min(78, cellW / 2 - 8) : 78;
+		const rowHeadH = narrow ? 26 : 0;
+		const cellH = narrow ? rowHeadH + 2 * R + 16 : (440 - top) / 2;
+		const H = narrow ? top + 2 * cellH : 440;
+		// Center of a board, in grid column/row.
+		const cx = (col: number) => left + cellW * (col + 0.5);
+		const cy = (row: number) => top + cellH * row + rowHeadH + (cellH - rowHeadH) / 2;
 		const root = svg(
 			el,
 			W,
@@ -59,10 +65,10 @@ const figure: Figure = {
 		root.selectAll('text.row')
 			.data(rowHead)
 			.join('text')
-			.attr('x', left - 16)
-			.attr('y', (_, i) => top + cellH * (i + 0.5))
-			.attr('dy', '0.35em')
-			.attr('text-anchor', 'end')
+			.attr('x', narrow ? W / 2 : left - 16)
+			.attr('y', (_, i) => (narrow ? top + cellH * i + 18 : top + cellH * (i + 0.5)))
+			.attr('dy', narrow ? null : '0.35em')
+			.attr('text-anchor', narrow ? 'middle' : 'end')
 			.style('fill', v('ink'))
 			.style('font-size', '15px')
 			.style('font-weight', 700)
@@ -71,7 +77,7 @@ const figure: Figure = {
 		BOARDS.forEach((b, i) => {
 			const col = b.precise ? 0 : 1;
 			const row = b.accurate ? 0 : 1;
-			const g = root.append('g').attr('transform', `translate(${left + cellW * (col + 0.5)},${top + cellH * (row + 0.5)})`);
+			const g = root.append('g').attr('transform', `translate(${cx(col)},${cy(row)})`);
 			[1, 0.75, 0.5, 0.25].forEach((f, k) =>
 				g.append('circle')
 					.attr('r', R * f)

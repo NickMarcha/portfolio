@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { button, controls, dataTable, readout, reducedMotion, slider, svg, toggle, v, type Figure } from './lib';
+import { button, controls, dataTable, isNarrow, readout, reducedMotion, slider, svg, toggle, v, type Figure } from './lib';
 
 type P = [number, number];
 
@@ -51,7 +51,8 @@ const figure: Figure = {
 		'The wind swings up and down over time and blows harder higher up, so the four lines all differ.',
 	mount(el) {
 		const row = controls(el);
-		const W = 680;
+		const narrow = isNarrow(el);
+		const W = narrow ? el.clientWidth : 680;
 		const H = Math.round((W * (Y[1] - Y[0])) / (X[1] - X[0]));
 		const x = d3.scaleLinear().domain(X).range([0, W]);
 		const y = d3.scaleLinear().domain(Y).range([H, 0]);
@@ -66,14 +67,26 @@ const figure: Figure = {
 			.attr('width', x(0.2) - x(-0.2))
 			.attr('height', H - y(0))
 			.style('fill', v('muted'));
-		root.append('text')
-			.attr('x', x(-0.2) + 4)
-			.attr('y', H - 8)
-			.attr('transform', `rotate(-90 ${x(-0.2) + 4} ${H - 8})`)
-			.attr('dy', '1em')
-			.style('fill', v('surface'))
-			.style('font-size', '12px')
-			.text('chimney');
+		// Phone: the chimney is too short for its rotated label, so it sits beside it.
+		if (narrow)
+			root.append('text')
+				.attr('x', x(0.2) + 4)
+				.attr('y', H - 4)
+				.style('fill', v('muted'))
+				.style('font-size', '12px')
+				.style('paint-order', 'stroke')
+				.style('stroke', v('surface'))
+				.style('stroke-width', '3px')
+				.text('chimney');
+		else
+			root.append('text')
+				.attr('x', x(-0.2) + 4)
+				.attr('y', H - 8)
+				.attr('transform', `rotate(-90 ${x(-0.2) + 4} ${H - 8})`)
+				.attr('dy', '1em')
+				.style('fill', v('surface'))
+				.style('font-size', '12px')
+				.text('chimney');
 		const layers = Object.fromEntries(
 			KINDS.map((k) => [
 				k.key,
@@ -168,7 +181,7 @@ const figure: Figure = {
 				.map((e) => ({
 					kind: e.kind,
 					x: Math.min(W - 6, Math.max(6, x(e.p[0]))),
-					y: Math.min(H - 8, Math.max(36, y(e.p[1]) - 10)),
+					y: Math.min(H - 8, Math.max(narrow ? 14 : 36, y(e.p[1]) - 10)),
 				}))
 				.sort((a, b) => a.y - b.y);
 			for (let i = 1; i < lab.length; i++)

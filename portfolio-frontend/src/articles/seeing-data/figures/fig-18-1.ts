@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { SERIES, controls, dataTable, onThemeChange, readout, select, styleAxis, svg, token, tooltip, v, type Figure } from './lib';
+import { SERIES, controls, dataTable, isNarrow, onThemeChange, readout, select, styleAxis, svg, token, tooltip, v, type Figure } from './lib';
 
 // Penguins per species in the Palmer Penguins data (Horst, Hill and Gorman 2020, CC0).
 const DATA = [
@@ -37,9 +37,11 @@ const figure: Figure = {
 		summary.style.cssText = 'margin: 0 0 8px; font-size: 14px;';
 		el.append(title, summary);
 
-		const W = 560;
+		// Phone: full width, the legend moves above the bars.
+		const narrow = isNarrow(el);
+		const W = narrow ? el.clientWidth : 560;
 		const H = 280;
-		const m = { top: 28, right: 130, bottom: 34, left: 48 };
+		const m = narrow ? { top: 44, right: 8, bottom: 34, left: 40 } : { top: 28, right: 130, bottom: 34, left: 48 };
 		const iw = W - m.left - m.right;
 		const ih = H - m.top - m.bottom;
 		const root = svg(el, W, H, '');
@@ -67,12 +69,12 @@ const figure: Figure = {
 			.style('fill', v('ink'))
 			.style('font-size', '14px')
 			.text((d) => d.n);
-		const legend = g.append('g').attr('transform', `translate(${iw + 20},0)`);
+		const legend = g.append('g').attr('transform', narrow ? `translate(${4 - m.left},-38)` : `translate(${iw + 20},0)`);
 		const legendItems = legend
 			.selectAll('g')
 			.data(DATA)
 			.join('g')
-			.attr('transform', (_, i) => `translate(0,${i * 20})`);
+			.attr('transform', (_, i) => (narrow ? `translate(${i * Math.min(84, (W - 8) / 3)},0)` : `translate(0,${i * 20})`));
 		const legendSw = legendItems.append('rect').attr('width', 12).attr('height', 12);
 		legendItems
 			.append('text')

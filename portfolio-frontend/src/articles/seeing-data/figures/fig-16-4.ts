@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { controls, dataTable, readout, select, slider, svg, v, type Figure } from './lib';
+import { controls, dataTable, isNarrow, readout, select, slider, svg, v, type Figure } from './lib';
 
 type Mode = 'one' | 'mixed' | 'same';
 interface Arr {
@@ -18,7 +18,9 @@ const figure: Figure = {
 		'A risk of 3 in 100, drawn as 100 people with 3 of them marked. When you compare two risks, different totals mislead and the same total lets you count.',
 	credit: 'Advice from Franconeri et al. 2021.',
 	mount(el) {
-		const W = 680;
+		// Phone: full width, and the two arrays of a comparison stack, still equally wide.
+		const narrow = isNarrow(el);
+		const W = narrow ? el.clientWidth : 680;
 		const row = controls(el);
 		const root = svg(el, W, 300, 'Icon array.');
 		const out = readout(el);
@@ -64,8 +66,14 @@ const figure: Figure = {
 			const list = arrays();
 			let h = 0;
 			if (mode === 'one') {
-				const g = root.append('g').attr('transform', `translate(${(W - 300) / 2},20)`);
-				h = 20 + drawArray(g, list[0], 300);
+				const aw = Math.min(300, W);
+				const g = root.append('g').attr('transform', `translate(${(W - aw) / 2},20)`);
+				h = 20 + drawArray(g, list[0], aw);
+			} else if (narrow) {
+				list.forEach((a) => {
+					const g = root.append('g').attr('transform', `translate(0,${h + 20})`);
+					h += 20 + drawArray(g, a, W) + 16;
+				});
 			} else {
 				// Side by side, each array as wide as the other: icon size then follows the total.
 				const each = (W - 30) / 2;
@@ -101,13 +109,13 @@ const figure: Figure = {
 			risk = n;
 			draw();
 		});
-		select<Mode>(
+		const modeSelect = select<Mode>(
 			row,
 			'Show',
 			[
 				{ value: 'one', label: 'One risk' },
-				{ value: 'mixed', label: 'Compare: 3 in 100 vs 25 in 1,000' },
-				{ value: 'same', label: 'Compare: 30 in 1,000 vs 25 in 1,000' },
+				{ value: 'mixed', label: `${narrow ? '' : 'Compare: '}3 in 100 vs 25 in 1,000` },
+				{ value: 'same', label: `${narrow ? '' : 'Compare: '}30 in 1,000 vs 25 in 1,000` },
 			],
 			(m) => {
 				mode = m;
@@ -116,6 +124,8 @@ const figure: Figure = {
 			},
 			'one',
 		);
+		// The longest option is wider than a phone; let the select shrink and clip it.
+		if (narrow) modeSelect.style.maxWidth = `${W - 60}px`;
 		draw();
 	},
 };

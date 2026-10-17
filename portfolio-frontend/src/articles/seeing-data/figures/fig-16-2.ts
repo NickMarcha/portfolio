@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { dataTable, rng, styleAxis, svg, v, type Figure } from './lib';
+import { dataTable, isNarrow, rng, styleAxis, svg, v, type Figure } from './lib';
 
 // Two synthetic groups of 201 values with the exact same five-number summary.
 // A is bell-shaped. B is built to hit A's quartiles but piles its values up near
@@ -38,8 +38,9 @@ const figure: Figure = {
 		'Two groups with identical minimum, quartiles, median and maximum. The box plots are identical, and the error bars only say that B is a bit more spread out. The violin and the raw values show what both hide: group B has two peaks and few values near its median.',
 	credit: 'Synthetic data. Strategies after Potter, Rosen and Johnson 2012.',
 	mount(el) {
-		const W = 680;
-		const m = { top: 8, right: 20, bottom: 34, left: 76 };
+		const narrow = isNarrow(el);
+		const W = narrow ? el.clientWidth : 680;
+		const m = narrow ? { top: 8, right: 14, bottom: 34, left: 66 } : { top: 8, right: 20, bottom: 34, left: 76 };
 		const iw = W - m.left - m.right;
 		const rowH = 34;
 		const panelH = 22 + rowH * 2 + 14;
@@ -123,7 +124,7 @@ const figure: Figure = {
 				}
 			});
 		});
-		styleAxis(g.append('g').attr('transform', `translate(0,${H - m.top - m.bottom + 4})`).call(d3.axisBottom(x).ticks(8)));
+		styleAxis(g.append('g').attr('transform', `translate(0,${H - m.top - m.bottom + 4})`).call(d3.axisBottom(x).ticks(narrow ? 4 : 8)));
 
 		const stat = (vals: number[], p: number) => d3.quantile(vals, p)!.toFixed(1);
 		dataTable(

@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { button, controls, dataTable, gridY, readout, slider, styleAxis, svg, v, type Figure } from './lib';
+import { button, controls, dataTable, gridY, isNarrow, readout, slider, styleAxis, svg, v, type Figure } from './lib';
 import raw from './data/15-1-co2.json';
 
 // [year, month, ppm], monthly means at Mauna Loa, 2005-2024
@@ -12,8 +12,9 @@ const figure: Figure = {
 	credit:
 		'Data: Mauna Loa monthly mean CO₂, Xin Lan, NOAA Global Monitoring Laboratory (gml.noaa.gov/ccgg/trends), and Ralph Keeling, Scripps Institution of Oceanography; freely available US government data. Method after Cleveland, McGill and McGill 1988.',
 	mount(el) {
-		const W = 680;
-		const m = { top: 16, right: 20, bottom: 32, left: 52 };
+		const narrow = isNarrow(el);
+		const W = narrow ? el.clientWidth : 680;
+		const m = narrow ? { top: 16, right: 12, bottom: 32, left: 40 } : { top: 16, right: 20, bottom: 32, left: 52 };
 		const iw = W - m.left - m.right;
 
 		// Slopes of the segments in data units normalised to the axis ranges, so that the
@@ -59,7 +60,7 @@ const figure: Figure = {
 			const y = d3.scaleLinear().domain(vExt).range([ih, 0]);
 			const ticks = ih < 120 ? 2 : 5;
 			gridY(grid, y, iw, ticks);
-			styleAxis(xAxis.attr('transform', `translate(0,${ih})`).call(d3.axisBottom(x).ticks(8).tickFormat(d3.format('d'))));
+			styleAxis(xAxis.attr('transform', `translate(0,${ih})`).call(d3.axisBottom(x).ticks(narrow ? 4 : 8).tickFormat(d3.format('d'))));
 			styleAxis(yAxis.call(d3.axisLeft(y).ticks(ticks)));
 			path.attr(
 				'd',

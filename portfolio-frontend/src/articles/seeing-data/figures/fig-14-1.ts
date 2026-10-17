@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { controls, dataTable, readout, slider, svg, v, type Figure } from './lib';
+import { controls, dataTable, isNarrow, readout, slider, svg, v, type Figure } from './lib';
 
 type P = [number, number];
 // Circular flow: every point moves round the center at the same angular speed.
@@ -36,17 +36,20 @@ const figure: Figure = {
 		'Starting at the dot, each method follows a flow that goes round in circles, for exactly one turn. Euler overshoots on every step and spirals outwards; Runge-Kutta 2 and 4 stay close to the circle. With bigger steps, Runge-Kutta 2 starts drifting too, while Runge-Kutta 4 holds out longest.',
 	mount(el) {
 		const row = controls(el);
-		const W = 680;
-		const S = 212;
+		// Phone: the three panels stack, one per row, at the same scale.
+		const narrow = isNarrow(el);
+		const W = narrow ? el.clientWidth : 680;
+		const S = narrow ? Math.min(W - 4, 260) : 212;
 		const gap = (W - 3 * S) / 2;
-		const H = S + 34;
+		const H = narrow ? 3 * (S + 34) : S + 34;
+		const at = (k: number) => (narrow ? `translate(${(W - S) / 2},${k * (S + 34) + 30})` : `translate(${k * (S + gap)},30)`);
 		const root = svg(el, W, H, 'Three panels showing one turn of a circular flow traced by Euler, Runge-Kutta 2 and Runge-Kutta 4.');
 		const R = 2.5;
 		const sc = d3.scaleLinear().domain([-R, R]).range([0, S]);
 		const out = readout(el);
 
 		const panels = METHODS.map((m, k) => {
-			const g = root.append('g').attr('transform', `translate(${k * (S + gap)},30)`);
+			const g = root.append('g').attr('transform', at(k));
 			g.append('text')
 				.attr('x', S / 2)
 				.attr('y', -10)

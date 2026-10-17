@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { button, controls, dataTable, gridY, readout, rng, select, styleAxis, svg, toggle, v, type Figure } from './lib';
+import { button, controls, dataTable, gridY, isNarrow, readout, rng, select, styleAxis, svg, toggle, v, type Figure } from './lib';
 
 // Part 1: a bar with an error bar, and two points at the same distance from the mean.
 const MEAN = 50;
@@ -50,17 +50,22 @@ const figure: Figure = {
 	mount(el) {
 		// ---------- Part 1 ----------
 		const row1 = controls(el);
-		const W = 680;
+		// Phone: full width, a narrower bar, point labels on two lines, the spread curve beside them.
+		const narrow = isNarrow(el);
+		const W = narrow ? el.clientWidth : 680;
 		const H1 = 250;
-		const m = { top: 16, right: 20, bottom: 28, left: 48 };
+		const m = narrow ? { top: 16, right: 8, bottom: 28, left: 36 } : { top: 16, right: 20, bottom: 28, left: 48 };
 		const ih1 = H1 - m.top - m.bottom;
+		const iw1 = W - m.left - m.right;
 		const root1 = svg(el, W, H1, `A bar at ${MEAN} with an error bar of plus and minus ${SD}. Point A at ${POINTS[0].value} sits inside the bar, point B at ${POINTS[1].value} sits above it. Both are 8 from the mean.`);
 		const g1 = root1.append('g').attr('transform', `translate(${m.left},${m.top})`);
 		const y = d3.scaleLinear().domain([0, 80]).range([ih1, 0]);
-		gridY(g1.append('g'), y, 520, 4);
+		gridY(g1.append('g'), y, narrow ? iw1 : 520, 4);
 		styleAxis(g1.append('g').call(d3.axisLeft(y).ticks(4)));
-		const bx = 60;
-		const bw = 120;
+		const bx = narrow ? 10 : 60;
+		const bw = narrow ? 60 : 120;
+		const curveX = narrow ? iw1 - 40 : 330;
+		const curveW = narrow ? 40 : 70;
 		g1.append('rect').attr('x', bx).attr('width', bw).attr('y', y(MEAN)).attr('height', ih1 - y(MEAN)).style('fill', v('dim'));
 		const cx = bx + bw / 2;
 		g1.append('line').attr('x1', cx).attr('x2', cx).attr('y1', y(MEAN - SD)).attr('y2', y(MEAN + SD)).style('stroke', v('ink')).style('stroke-width', 2);
@@ -75,8 +80,8 @@ const figure: Figure = {
 				d3
 					.area<[number, number]>()
 					.y((d) => y(d[0]))
-					.x0(330)
-					.x1((d) => 330 + d[1] * 70)
+					.x0(curveX)
+					.x1((d) => curveX + d[1] * curveW)
 					.curve(d3.curveBasis)(dens),
 			)
 			.style('fill', v('series-1'))
@@ -84,22 +89,27 @@ const figure: Figure = {
 			.style('stroke', v('series-1'))
 			.style('stroke-width', 2);
 		dist.append('text')
-			.attr('x', 408)
-			.attr('y', y(MEAN))
+			.attr('x', narrow ? iw1 : 408)
+			.attr('y', narrow ? y(MEAN - 3 * SD) + 20 : y(MEAN))
 			.attr('dy', '0.35em')
+			.attr('text-anchor', narrow ? 'end' : null)
 			.style('fill', v('ink'))
 			.style('font-size', '13px')
 			.text('Spread of the data');
-		const px = cx + 40;
+		const px = cx + (narrow ? 26 : 40);
 		for (const p of POINTS) {
 			g1.append('circle').attr('cx', px).attr('cy', y(p.value)).attr('r', 6).style('fill', v('highlight'));
-			g1.append('text')
+			const t = g1
+				.append('text')
 				.attr('x', px + 12)
 				.attr('y', y(p.value))
 				.attr('dy', '0.35em')
 				.style('fill', v('ink'))
-				.style('font-size', '13px')
-				.text(`${p.name}: ${p.value}, ${p.note}`);
+				.style('font-size', '13px');
+			if (narrow) {
+				t.append('tspan').text(`${p.name}: ${p.value},`);
+				t.append('tspan').attr('x', px + 12).attr('dy', '1.25em').text(p.note);
+			} else t.text(`${p.name}: ${p.value}, ${p.note}`);
 		}
 		const out1 = readout(el);
 		const say1 = (on: boolean) =>
@@ -120,9 +130,10 @@ const figure: Figure = {
 		const xMax = d3.max(CENTER, (c, i) => c.x + RADIUS[i])!;
 		const yMin = d3.min(CENTER, (c, i) => c.y - RADIUS[i])!;
 		const yMax = d3.max(CENTER, (c, i) => c.y + RADIUS[i])!;
-		const k = (W - 100) / (xMax - xMin);
+		const pad = narrow ? 20 : 50;
+		const k = (W - 2 * pad) / (xMax - xMin);
 		const H2 = Math.round((yMax - yMin) * k + 110);
-		const sx = (vx: number) => 50 + (vx - xMin) * k;
+		const sx = (vx: number) => pad + (vx - xMin) * k;
 		const sy = (vy: number) => 60 + (vy - yMin) * k;
 		const root2 = svg(el, W, H2, `A synthetic hurricane forecast over five days. The storm starts at the lower left and heads up and to the right, curving right. The uncertainty widens from zero to about ${Math.round((RADIUS[STEPS] * KM_PER_UNIT) / 10) * 10} kilometers by day five.`);
 		const clipId = `clip-16-3-${Math.random().toString(36).slice(2)}`;
@@ -185,12 +196,13 @@ const figure: Figure = {
 		g2.append('text')
 			.attr('x', sx(0))
 			.attr('y', sy(0) + 22)
-			.attr('text-anchor', 'middle')
+			.attr('text-anchor', narrow ? 'start' : 'middle')
+			.attr('dx', narrow ? -8 : null)
 			.style('fill', v('ink'))
 			.style('font-size', '13px')
 			.text('Storm now');
 		// Scale bar
-		const bar = root2.append('g').attr('transform', `translate(${W - 160},${H2 - 20})`);
+		const bar = root2.append('g').attr('transform', `translate(${W - (narrow ? 110 : 160)},${H2 - 20})`);
 		bar.append('line').attr('x2', (100 / KM_PER_UNIT) * k * 2).style('stroke', v('muted')).style('stroke-width', 2);
 		bar.append('text').attr('y', -6).style('fill', v('muted')).style('font-size', '12px').text('200 km');
 

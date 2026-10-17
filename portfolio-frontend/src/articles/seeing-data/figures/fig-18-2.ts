@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { button, controls, dataTable, gridY, readout, select, styleAxis, svg, v, type Figure } from './lib';
+import { button, controls, dataTable, gridY, isNarrow, readout, select, styleAxis, svg, v, type Figure } from './lib';
 import raw from './data/18-2-gistemp.json';
 
 // [year, global temperature anomaly in °C against the 1951-1980 average]
@@ -23,9 +23,10 @@ const figure: Figure = {
 		el.append(note);
 		const row = controls(el);
 
-		const W = 680;
+		const narrow = isNarrow(el);
+		const W = narrow ? el.clientWidth : 680;
 		const H = 300;
-		const m = { top: 16, right: 20, bottom: 32, left: 52 };
+		const m = narrow ? { top: 16, right: 12, bottom: 32, left: 52 } : { top: 16, right: 20, bottom: 32, left: 52 };
 		const iw = W - m.left - m.right;
 		const ih = H - m.top - m.bottom;
 		const root = svg(
@@ -40,7 +41,7 @@ const figure: Figure = {
 		const y = d3.scaleLinear().domain(tExt).nice().range([ih, 0]);
 		gridY(g.append('g'), y, iw);
 		g.append('line').attr('x2', iw).attr('y1', y(0)).attr('y2', y(0)).style('stroke', v('axis')).style('stroke-width', 1.5);
-		styleAxis(g.append('g').attr('transform', `translate(0,${ih})`).call(d3.axisBottom(x).ticks(8).tickFormat(d3.format('d'))));
+		styleAxis(g.append('g').attr('transform', `translate(0,${ih})`).call(d3.axisBottom(x).ticks(narrow ? 4 : 8).tickFormat(d3.format('d'))));
 		styleAxis(g.append('g').call(d3.axisLeft(y).ticks(5).tickFormat((d) => `${d3.format('+.1f')(d as number)} °C`)));
 		g.append('path')
 			.datum(DATA)
