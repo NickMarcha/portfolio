@@ -116,7 +116,7 @@ const figure: Figure = {
 				.attr('y', (h) => Math.sin(a(h)) * (r - 12))
 				.attr('dy', '0.35em')
 				.attr('text-anchor', 'middle')
-				.style('font-size', '11px')
+				.style('font-size', '12px')
 				.style('fill', v('muted'))
 				.text((h) => String(h));
 			c.selectAll(null)
@@ -142,7 +142,8 @@ const figure: Figure = {
 				.attr('x', (d) => Math.cos(a(d.start)) * (r + 10))
 				.attr('y', (d) => Math.sin(a(d.start)) * (r + 10))
 				.attr('dy', '0.35em')
-				.attr('text-anchor', (d) => (Math.cos(a(d.start)) < -0.2 ? 'end' : Math.cos(a(d.start)) > 0.2 ? 'start' : 'middle'))
+				// Labels near the top of the dial go left, out of the way of a label just past the hour.
+				.attr('text-anchor', (d) => (Math.cos(a(d.start)) < 0.2 ? 'end' : 'start'))
 				.text((d) => `${d.name} ${String(d.start % 24).padStart(2, '0')}:00`);
 		}
 		function connection(g: G) {

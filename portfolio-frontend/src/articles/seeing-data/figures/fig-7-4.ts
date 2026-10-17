@@ -14,6 +14,7 @@ const LABEL: Record<Key, string> = {
 	flipper_length_mm: 'Flipper length (mm)',
 	body_mass_g: 'Body mass (g)',
 };
+const name = (k: Key) => LABEL[k].replace(/ \(.*\)$/, '').toLowerCase();
 const VIEWS: [Key, Key][] = [
 	['bill_length_mm', 'bill_depth_mm'],
 	['flipper_length_mm', 'body_mass_g'],
@@ -90,7 +91,7 @@ const figure: Figure = {
 					if (!sel) return setSelection(null, '', true);
 					const [[x0, y0], [x1, y1]] = sel;
 					const hit = DATA.filter((d) => x(d[kx]) >= x0 && x(d[kx]) <= x1 && y(d[ky]) >= y0 && y(d[ky]) <= y1);
-					setSelection(hit, `the box in the ${LABEL[kx].toLowerCase()} and ${LABEL[ky].toLowerCase()} view`, true);
+					setSelection(hit, `the box in the ${name(kx)} and ${name(ky)} view`, true);
 				});
 			const bg = g.append('g').call(brush);
 			bg.select('.selection').style('fill', v('ink')).style('fill-opacity', 0.08).style('stroke', v('ink'));

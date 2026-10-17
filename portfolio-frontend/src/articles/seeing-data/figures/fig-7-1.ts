@@ -40,7 +40,7 @@ const DATA: P[] = (penguinsRaw as Raw[])
 const figure: Figure = {
 	title: 'Overview, zoom and filter, details on demand',
 	caption:
-		'All 342 measured penguins first, then filtered by species or island, then one bird’s details. With "Keep axes fixed" off, the axes jump to fit whatever is left, and the same point lands somewhere else each time.',
+		'All 342 measured penguins first, then filtered by species or island, then one bird’s details. With “Keep axes fixed” off, the axes jump to fit whatever is left, and the same point lands somewhere else each time.',
 	credit: 'Data: Palmer Penguins, Gorman, Williams and Fraser 2014, via Horst, Hill and Gorman 2020 (CC0). Mantra: Shneiderman 1996.',
 	mount(el) {
 		const state = {
@@ -62,6 +62,8 @@ const figure: Figure = {
 			(val) => ((state.island = val), draw()),
 			'all',
 		);
+		// Outside the species group, so that group's label stays true.
+		toggle(row1, 'Keep axes fixed', (on) => ((state.pinned = on), draw()), true);
 		const row2 = controls(el);
 		row2.setAttribute('role', 'group');
 		row2.setAttribute('aria-label', 'Species to show');
@@ -78,7 +80,6 @@ const figure: Figure = {
 				true,
 			);
 		}
-		toggle(row2, 'Keep axes fixed', (on) => ((state.pinned = on), draw()), true);
 
 		const W = 600;
 		const H = 400;
@@ -133,7 +134,9 @@ const figure: Figure = {
 			} else {
 				state.picked = null;
 				ring.style('display', 'none');
-				out.textContent = `Showing ${visible.length} of ${DATA.length} penguins. Hover a point, click it, or step through them with the buttons for details.`;
+				out.textContent = visible.length
+					? `Showing ${visible.length} of ${DATA.length} penguins. Hover a point, click it, or step through them with the buttons for details.`
+					: 'No penguins match this filter. Turn on another species or pick another island.';
 			}
 		}
 		function step(dir: number) {

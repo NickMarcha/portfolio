@@ -107,7 +107,7 @@ const figure: Figure = {
 				rowLabel.attr('y', p + x.bandwidth() / 2).text(names[selected]);
 				colLabel.attr('x', Math.max(30, Math.min(side - 30, p + x.bandwidth() / 2))).text(names[selected]);
 				const k = cells.filter((c) => c.i === selected).length;
-				text += ` ${names[selected]} has ${k} filled cells in their row, one per co-star.`;
+				text += ` ${names[selected]} has ${k} filled cells in their row, one for each character they share a chapter with.`;
 			}
 			out.textContent = text;
 		}

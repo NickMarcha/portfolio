@@ -125,7 +125,7 @@ const figure: Figure = {
 		g.append('text').attr('x', iw).attr('y', ih + 34).attr('text-anchor', 'end').style('fill', v('muted')).style('font-size', '13px').text('Data value, low to high');
 		const ts = d3.range(65).map((i) => i / 64);
 		MAPS.forEach((cm, k) => {
-			const color = k === 0 ? v('series-2') : v('series-1');
+			const color = v(`series-${k + 1}`);
 			g.append('path')
 				.datum(ts)
 				.attr('d', d3.line<number>().x((t) => x(t)).y((t) => y(L(cm.f(t)))))

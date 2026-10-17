@@ -104,7 +104,7 @@ const VISION_LABEL: Record<Vision, string> = {
 const figure: Figure = {
 	title: 'A red-green palette through color-blind eyes',
 	caption:
-		'The same made-up survey drawn twice. Under protanopia or deuteranopia, the red-green palette’s "disagree" and "agree" become almost the same yellow-brown, and with deuteranopia so do the two ends. The red-blue palette keeps every pair apart. Labels in the bars fix it for any palette.',
+		'The same made-up survey drawn twice. Under protanopia or deuteranopia, the red-green palette’s “disagree” and “agree” become almost the same yellow-brown, and with deuteranopia so do the two ends. The red-blue palette keeps every pair apart. Labels in the bars fix it for any palette.',
 	credit:
 		'Made-up data. Palettes: ColorBrewer, Harrower and Brewer 2003. Simulation: Machado, Oliveira and Fernandes 2009, full severity. Difference is CIEDE2000, where 1 is about one just-noticeable step.',
 	mount(el) {
@@ -190,8 +190,8 @@ const figure: Figure = {
 			const ends = PALETTES.map((pal) => de2000(simulate(pal.colors[0], vision), simulate(pal.colors[4], vision)));
 			const near = PALETTES.map((pal) => de2000(simulate(pal.colors[1], vision), simulate(pal.colors[3], vision)));
 			out.textContent =
-				`With ${VISION_LABEL[vision]}, "strongly disagree" and "strongly agree" differ by ${ends[0].toFixed(0)} in the red-green palette and ${ends[1].toFixed(0)} in the red-blue one. ` +
-				`"Disagree" and "agree" differ by ${near[0].toFixed(0)} and ${near[1].toFixed(0)}.` +
+				`With ${VISION_LABEL[vision]}, “strongly disagree” and “strongly agree” differ by ${ends[0].toFixed(0)} in the red-green palette and ${ends[1].toFixed(0)} in the red-blue one. ` +
+				`“Disagree” and “agree” differ by ${near[0].toFixed(0)} and ${near[1].toFixed(0)}.` +
 				(vision !== 'normal' ? ' Under about 10, two colors are easy to mix up.' : '');
 		}
 

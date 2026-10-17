@@ -7,7 +7,7 @@ const short = (n: number) => (n >= 10000 ? `${Math.round(n / 1000)}k` : n >= 100
 const figure: Figure = {
 	title: 'Bike trips between Oslo’s districts',
 	caption:
-		'Every Oslo Bysykkel trip in 2025, counted by the district where it started (rows) and the district where it ended (columns). Read across a row to see where trips from one district go. The diagonal is trips that start and end in the same district. The color scale is logarithmic, because the busiest cell has thousands of times more trips than the quietest.',
+		'Every Oslo Bysykkel trip in 2025, counted by the district where it started (rows) and the district where it ended (columns). Read across a row to see where trips from one district go. The diagonal is trips that start and end in the same district. The color scale is logarithmic, because the busiest cell has tens of thousands of times more trips than the quietest.',
 	credit:
 		'Data: Oslo Bysykkel, NLOD. Rebuilt from the origin-destination matrix in Oslo on Two Wheels (INF252 team project), nickmarcha.github.io/INF252-Course-Project.',
 	mount(el) {
@@ -55,7 +55,7 @@ const figure: Figure = {
 			.attr('y', (cell - 1) / 2)
 			.attr('dy', '0.35em')
 			.attr('text-anchor', 'middle')
-			.style('font-size', '11px')
+			.style('font-size', '12px')
 			.style('fill', (d) =>
 				d.value === 0 ? v('muted') : d3.lab(color(d.value)).l > 60 ? '#1a1a1a' : '#ffffff',
 			)

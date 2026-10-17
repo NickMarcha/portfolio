@@ -60,11 +60,10 @@ const figure: Figure = {
 	credit: 'Synthetic tracks. Space-time cube after Hägerstrand 1970; taxi example after Kapler and Wright 2004.',
 	mount(el) {
 		const W = 680;
-		const H = 500;
+		const H = 520;
 		const S = 270; // floor side in px
 		const Z = 260; // cube height in px
 		const cx = W / 2;
-		const cy = 360;
 
 		const row = controls(el);
 		const root = svg(el, W, H, '');
@@ -81,6 +80,8 @@ const figure: Figure = {
 		function proj([x, y, t]: P): [number, number] {
 			const a = (yaw * Math.PI) / 180;
 			const e = (tilt * Math.PI) / 180;
+			// Floor centre moves with the tilt so the whole cube stays inside the picture.
+			const cy = H / 2 + (Z * Math.cos(e)) / 2 + 10;
 			const X = x - 0.5;
 			const Y = y - 0.5;
 			const rx = X * Math.cos(a) - Y * Math.sin(a);

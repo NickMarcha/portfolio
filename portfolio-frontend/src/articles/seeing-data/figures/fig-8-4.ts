@@ -17,7 +17,7 @@ type Flow = (typeof data.flows)[number];
 const figure: Figure = {
 	title: 'A small kriskogram of moves between western states',
 	caption:
-		'Seven western US states sit on one line, roughly west to east. Each arc is the number of people who moved from one state to another in 2023, and its width shows how many. Arcs above the line run left to right (eastward); arcs below run right to left (westward).',
+		'Seven western US states sit on one line, roughly west to east. Each arc stands for the people who moved from one state to another in 2023, and its width shows how many. Arcs above the line run left to right (eastward); arcs below run right to left (westward).',
 	credit:
 		'Data: U.S. Census Bureau, American Community Survey 2023 1-year state-to-state migration flows (public domain). Kriskogram after Xiao and Chun 2009.',
 	mount(el) {

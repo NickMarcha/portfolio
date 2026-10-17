@@ -171,7 +171,7 @@ const figure: Figure = {
 			const lo = d3.min(steps, (s) => s.d)!;
 			const hi = d3.max(steps, (s) => s.d)!;
 			out.textContent =
-				`${cm.label}: lightness ${rising ? 'rises at every step' : 'does not only rise'}, from ${pts[0].L.toFixed(0)} to ${pts[STEPS].L.toFixed(0)}` +
+				`${cm.label}: lightness ${rising ? 'rises at every step' : 'does not rise at every step'}, from ${pts[0].L.toFixed(0)} to ${pts[STEPS].L.toFixed(0)}` +
 				` (lowest ${d3.min(pts, (p) => p.L)!.toFixed(0)}, highest ${d3.max(pts, (p) => p.L)!.toFixed(0)}). ` +
 				`Step sizes run from ${lo.toFixed(1)} to ${hi.toFixed(1)}, so the biggest step is ${(hi / lo).toFixed(1)} times the smallest.`;
 

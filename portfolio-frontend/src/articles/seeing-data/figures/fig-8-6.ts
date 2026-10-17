@@ -1,6 +1,5 @@
 import * as d3 from 'd3';
-import { controls, dataTable, onThemeChange, readout, toggle, token, type Figure } from './lib';
-import data from './data/8-5-folders.json';
+import { controls, dataTable, fmt, onThemeChange, readout, rng, toggle, token, type Figure } from './lib';
 
 interface Raw {
 	name: string;
@@ -9,10 +8,55 @@ interface Raw {
 }
 type RectNode = d3.HierarchyRectangularNode<Raw>;
 
+// A made-up game project, bigger and deeper than Figure 8.5's website so the nesting has
+// something to show. Each leaf of SPEC is a folder: [file count, extension, min KB, max KB].
+type Spec = { [name: string]: Spec | [number, string, number, number] };
+const SPEC: Spec = {
+	src: {
+		engine: { render: [24, 'ts', 3, 40], physics: [18, 'ts', 3, 30], audio: [10, 'ts', 2, 20], input: [8, 'ts', 2, 12] },
+		game: {
+			levels: [30, 'ts', 4, 40],
+			entities: { player: [12, 'ts', 3, 25], enemies: [26, 'ts', 3, 25], items: [16, 'ts', 2, 15] },
+			ai: [14, 'ts', 4, 30],
+		},
+		ui: { menus: [16, 'ts', 3, 20], hud: [12, 'ts', 2, 15], widgets: [20, 'ts', 2, 12] },
+	},
+	assets: {
+		textures: {
+			characters: { hero: [14, 'png', 40, 220], enemies: [24, 'png', 30, 180], npcs: [12, 'png', 30, 160] },
+			terrain: [28, 'png', 40, 200],
+			ui: [40, 'png', 4, 40],
+		},
+		sounds: { sfx: [60, 'wav', 10, 120], music: [6, 'ogg', 200, 450] },
+		models: [18, 'glb', 60, 300],
+	},
+	docs: [12, 'md', 2, 20],
+	tests: { unit: [30, 'ts', 2, 15], e2e: [10, 'ts', 4, 20] },
+};
+
+function build(name: string, spec: Spec, rand: () => number): Raw {
+	return {
+		name,
+		children: Object.entries(spec).map(([k, s]) => {
+			if (!Array.isArray(s)) return build(k, s, rand);
+			const [n, ext, lo, hi] = s;
+			// Log-uniform sizes: many small files, a few big ones.
+			return {
+				name: k,
+				children: d3.range(n).map((i) => ({
+					name: `${k}-${String(i + 1).padStart(2, '0')}.${ext}`,
+					size: Math.round(lo * (hi / lo) ** rand()),
+				})),
+			};
+		}),
+	};
+}
+const data = build('my-game', SPEC, rng(86));
+
 // Cushion parameters after van Wijk and van de Wetering 1999 (ridge height, falloff per level),
 // with a flatter ridge and more ambient light so labels stay readable.
-const H0 = 0.2;
-const F = 0.8;
+const H0 = 0.3;
+const F = 0.85;
 const LIGHT = (() => {
 	// Light from the top left; screen y points down, so both x and y components are negative.
 	const l = [-0.09759, -0.19518, 0.9759];
@@ -25,7 +69,7 @@ const IS = 0.8;
 const figure: Figure = {
 	title: 'Flat and cushion treemaps',
 	caption:
-		'The same folder tree as a treemap with no borders between levels. Flat, the rectangles are a mosaic and the folders are invisible. With cushion shading, every level adds a ridge to the surface, so files in the same folder bulge together and the folder outlines appear as creases.',
+		'A made-up game project with a few hundred files in folders up to four levels deep, as a treemap with no borders between levels. Flat, the rectangles are a mosaic and the folders are invisible. With cushion shading, every level adds a ridge to the surface, so files in the same folder bulge together and the folder outlines appear as creases.',
 	credit: 'Shading after van Wijk and van de Wetering 1999.',
 	mount(el) {
 		const W = 680;
@@ -43,7 +87,9 @@ const figure: Figure = {
 		const surf = leaves.map((leaf) => {
 			const s = { x1: 0, x2: 0, y1: 0, y2: 0 };
 			for (const a of leaf.ancestors()) {
-				const h = H0 * F ** a.depth;
+				// The root's ridge spans the whole picture and only darkens the edges, so it is skipped.
+				if (a.depth === 0) continue;
+				const h = H0 * F ** (a.depth - 1);
 				const w = a.x1 - a.x0;
 				const hgt = a.y1 - a.y0;
 				if (w > 0) {
@@ -67,7 +113,8 @@ const figure: Figure = {
 		el.append(canvas);
 		const ctx = canvas.getContext('2d')!;
 		const out = readout(el);
-		let cushion = true;
+		let cushion = false;
+		const folders = tm.descendants().filter((d) => d.children && d.depth > 0);
 
 		function draw() {
 			const surface = d3.rgb(token('surface') || '#ffffff');
@@ -128,11 +175,11 @@ const figure: Figure = {
 			ctx.restore();
 			canvas.setAttribute(
 				'aria-label',
-				`Treemap of a small website project's files, ${cushion ? 'with cushion shading that shows the folder nesting' : 'flat, with the folder nesting invisible'}.`,
+				`Treemap of ${leaves.length} files in a made-up game project, ${cushion ? 'with cushion shading that shows the folder nesting' : 'flat, with the folder nesting invisible'}.`,
 			);
 			out.textContent = cushion
-				? 'Cushions on: the code files bunch into a few bumps on the right, one per folder, and the two photos share one ridge from the images folder.'
-				: 'Cushions off: fifteen rectangles of one color. You can read sizes, but not which files share a folder.';
+				? `Cushions on: the same ${leaves.length} files, but now files in one folder rise into one bump, and small bumps sit on bigger ones. The creases between bumps are the folder edges, so you can see which folders sit inside which.`
+				: `Cushions off: ${leaves.length} rectangles of one color. You can read sizes, but not which files share a folder.`;
 		}
 
 		toggle(
@@ -142,7 +189,7 @@ const figure: Figure = {
 				cushion = on;
 				draw();
 			},
-			true,
+			false,
 		);
 		draw();
 		const off = onThemeChange(draw);
@@ -153,13 +200,15 @@ const figure: Figure = {
 				.reverse()
 				.map((a) => a.data.name)
 				.join('/');
+		// One row per folder: a few hundred file rows would bury the structure the figure is about.
 		dataTable(
 			el,
 			[
-				{ label: 'File', value: (d: RectNode) => path(d) },
-				{ label: 'Size (KB)', value: (d) => d.value!, numeric: true },
+				{ label: 'Folder', value: (d: RectNode) => path(d) + '/' },
+				{ label: 'Files', value: (d) => d.leaves().length, numeric: true },
+				{ label: 'Size (KB)', value: (d) => fmt.int(d.value!), numeric: true },
 			],
-			leaves,
+			folders.sort((a, b) => d3.ascending(path(a), path(b))),
 		);
 		return off;
 	},

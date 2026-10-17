@@ -71,7 +71,7 @@ const figure: Figure = {
 			.style('stroke', v('surface'))
 			.style('stroke-width', '1.5px')
 			.style('cursor', 'grab');
-		nodeSel.append('title').text((d) => `${d.name}: ${d.degree} co-stars`);
+		nodeSel.append('title').text((d) => `${d.name}: linked to ${d.degree} characters`);
 		const labelSel = labelG
 			.selectAll('text')
 			.data(nodes)
@@ -98,7 +98,7 @@ const figure: Figure = {
 			nodeSel
 				.style('fill', (d) => (d.i === selected ? v('highlight') : v('series-1')))
 				.style('fill-opacity', (d) => (!on || near(d.i) ? 1 : 0.25));
-			labelSel.style('display', (d) => (d.i === selected || (!on && labelled.has(d.i)) ? null : 'none'));
+			showLabels();
 			if (on) {
 				const n = nodes[selected];
 				out.textContent = `${n.name} shares at least one chapter with ${n.degree} other characters. They stay lit; everyone else fades.`;
@@ -126,6 +126,28 @@ const figure: Figure = {
 				.attr('x', (d) => d.x! + (d.x! > W - 120 ? -1 : 1) * (r(d.degree) + 4))
 				.attr('y', (d) => d.y!)
 				.attr('text-anchor', (d) => (d.x! > W - 120 ? 'end' : 'start'));
+			showLabels();
+		}
+
+		// Labels for the most connected characters, skipping any that would overlap one already placed.
+		const byWeight = [...labelled].sort((a, b) => nodes[b].weight - nodes[a].weight);
+		function showLabels() {
+			const shown = new Set<number>();
+			if (selected >= 0) shown.add(selected);
+			else {
+				const boxes: [number, number, number, number][] = [];
+				for (const i of byWeight) {
+					const n = nodes[i];
+					const tw = n.name.length * 7.2;
+					const left = n.x! > W - 120;
+					const x0 = left ? n.x! - r(n.degree) - 4 - tw : n.x! + r(n.degree) + 4;
+					const b: [number, number, number, number] = [x0, n.y! - 9, x0 + tw, n.y! + 9];
+					if (boxes.some((o) => b[0] < o[2] && o[0] < b[2] && b[1] < o[3] && o[1] < b[3])) continue;
+					boxes.push(b);
+					shown.add(i);
+				}
+			}
+			labelSel.style('display', (d) => (shown.has(d.i) ? null : 'none'));
 		}
 
 		function start(seed: number) {
@@ -147,9 +169,11 @@ const figure: Figure = {
 						.id((d) => d.i)
 						.distance((d) => 60 - 4 * Math.min(8, d.value)),
 				)
-				.force('charge', d3.forceManyBody().strength(-150))
+				.force('charge', d3.forceManyBody().strength(-120))
+				// Keeps the whole layout centred, so new seeds don't pile nodes against an edge.
+				.force('center', d3.forceCenter(W / 2, H / 2))
 				.force('x', d3.forceX(W / 2).strength(0.035))
-				.force('y', d3.forceY(H / 2).strength(0.07))
+				.force('y', d3.forceY(H / 2).strength(0.1))
 				.force('collide', d3.forceCollide<N>((d) => r(d.degree) + 1.5))
 				.on('tick', place);
 			if (reducedMotion()) {
@@ -210,7 +234,7 @@ const figure: Figure = {
 			el,
 			[
 				{ label: 'Character', value: (d: N) => d.name },
-				{ label: 'Co-stars', value: (d: N) => d.degree, numeric: true },
+				{ label: 'Linked characters', value: (d: N) => d.degree, numeric: true },
 				{ label: 'Co-appearances, summed over pairs', value: (d: N) => d.weight, numeric: true },
 			],
 			[...nodes].sort((a, b) => b.weight - a.weight),
