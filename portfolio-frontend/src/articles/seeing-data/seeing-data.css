@@ -196,6 +196,15 @@
 	font-weight: 700;
 }
 
+/* Links in running text need more than color to stand out (the article's own
+   section 18; Tailwind's reset removes the underline). */
+.article a,
+.cite-pop a {
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 3px;
+}
+
 /* ---------- Citations ---------- */
 
 .article a.cite {
