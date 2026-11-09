@@ -3,7 +3,7 @@ version: '3.8'
 services:
   backend:
     build: .
-    image: portfolio-backend:0.0.14
+    image: portfolio-backend:0.0.15
     # Built on the host, never pulled: the tag only exists locally, so a
     # plain `docker compose pull` (Komodo runs one before every deploy) fails.
     pull_policy: build
