@@ -36,14 +36,14 @@ git push origin frontend-vX.Y.Z
 
 ---
 
-## Backend (Portainer + Cloudflare Tunnel)
+## Backend (Komodo + Cloudflare Tunnel)
 
 ### Flow
 
 1. Push tag `backend-v*` (e.g. `backend-v0.0.2`)
 2. GitHub Actions runs [`.github/workflows/deploy-backend.yml`](.github/workflows/deploy-backend.yml)
 3. Workflow force-pushes current commit to `backend-deploy` branch
-4. Portainer polls `backend-deploy`, rebuilds and redeploys the stack
+4. GitHub's push webhook tells Komodo on the homeserver, which clones `backend-deploy`, builds the image and redeploys the stack (pushes to other branches are ignored)
 5. Backend runs in Docker; cloudflared exposes it via Cloudflare Tunnel
 6. API is reachable at https://api-portfolio.nickmarcha.com
 
@@ -56,19 +56,21 @@ git commit -m "chore: bump backend to X.Y.Z"
 git push origin backend-vX.Y.Z
 ```
 
-### Portainer Setup
+### Komodo Setup
 
-- **Repo**: `https://github.com/NickMarcha/portfolio`
-- **Reference**: `refs/heads/backend-deploy`
-- **Compose path**: `portfolio-backend/docker-compose.yml`
-- **Auth**: GitHub PAT (Contents read-only)
-- **Auto-update**: Enabled (polling, e.g. 5–15 min)
-- **Environment**: Set `CLOUDFLARE_TOKEN`, `ADMIN_PASSWORD`, and optionally `NTFY_TOKEN`, `NTFY_BASE_URL`, `NTFY_TOPIC` in the stack's Environment variables (overrides `stack.env`). `ADMIN_PASSWORD` is required for the admin API (`/admin` visit analytics). For ntfy push notifications on each visit, set all three: `NTFY_TOKEN`, `NTFY_BASE_URL`, `NTFY_TOPIC`; if any are missing, notifications are skipped.
+- **Stack**: `portfolio`, defined in Komodo's `resources.toml` on the homeserver
+- **Repo**: `NickMarcha/portfolio`, branch `backend-deploy`
+- **Compose path**: `portfolio-backend/docker-compose.yml`, built by Komodo (`run_build`)
+- **Webhook**: GitHub push webhook to the stack's `/listener/github/stack/<id>/deploy` URL, with force-deploy on, since a code-only change leaves the compose file untouched
+- **Environment**: `CLOUDFLARE_TOKEN`, `ADMIN_PASSWORD`, and optionally `NTFY_TOKEN`, `NTFY_BASE_URL`, `NTFY_TOPIC` live in an env file on the homeserver outside the clone (mode 600), passed to compose with `--env-file`. `ADMIN_PASSWORD` is required for the admin API (`/admin` visit analytics). For ntfy push notifications on each visit, set all three ntfy values; if any are missing, notifications are skipped.
+- **Data**: SQLite visit log in the `portfolio_visit-data` volume
+
+The backend ran on Portainer (polling `backend-deploy`) until November 2026.
 
 ### Cloudflare Tunnel Setup
 
 1. Create a tunnel in Cloudflare Zero Trust (Networks → Tunnels)
-2. Copy the token into Portainer's stack env as `CLOUDFLARE_TOKEN`
+2. Put the token in the homeserver env file as `CLOUDFLARE_TOKEN`
 3. Add public hostname:
    - **Subdomain**: `api-portfolio`
    - **Domain**: `nickmarcha.com`
@@ -78,7 +80,7 @@ git push origin backend-vX.Y.Z
 ### Files
 
 - [`portfolio-backend/docker-compose.yml`](portfolio-backend/docker-compose.yml): backend + cloudflared
-- [`portfolio-backend/stack.env`](portfolio-backend/stack.env): env template (must exist for repo deploy; real token in Portainer UI)
+- [`portfolio-backend/stack.env`](portfolio-backend/stack.env): env template with empty values (must exist, the compose file loads it; real values in the homeserver env file)
 - [`portfolio-backend/Dockerfile`](portfolio-backend/Dockerfile): Node 25 slim, multi-stage build (build tools for `better-sqlite3`)
 
 ---
